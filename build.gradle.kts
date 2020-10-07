@@ -1,7 +1,9 @@
 import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintCheckTask
+import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -121,13 +123,13 @@ publishing {
       maven {
         name = "bintray"
         url = uri(
-          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USER")}/${project.group}/${project.name}/" +
+          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USER")!!}/${project.group}/${project.name}/" +
             ";publish=${if ("true".equals(project.properties["publish"] as? String?, true)) 1 else 0}" +
             ";override=${if ("true".equals(project.properties["override"] as? String?, true)) 1 else 0}"
         )
         credentials {
-          username = System.getenv("BINTRAY_USER")
-          password = System.getenv("BINTRAY_KEY")
+          username = System.getenv("BINTRAY_USER")!!
+          password = System.getenv("BINTRAY_KEY")!!
         }
       }
     }
@@ -153,16 +155,17 @@ afterEvaluate {
           """
           {
             "name": "${prj.name}",
-            "url": "https://bintray.com/${System.getenv("BINTRAY_USER")}/${prj.group}/${prj.name}/${prj.version}",
+            "url": "https://bintray.com/${System.getenv("BINTRAY_USER")!!}/${prj.group}/${prj.name}/${prj.version}",
             "link_type": "package"
           }
-          """.trimIndent()
+                    """.trimIndent()
 
-        val url = URL("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/releases")
+        val url = URL("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")!!}/releases")
         val con: HttpURLConnection = url.openConnection() as HttpURLConnection
         con.setRequestProperty("Content-Type", "application/json")
-        con.setRequestProperty("Authorization", "Bearer ${System.getenv("PRIVATE_TOKEN")}")
+        con.setRequestProperty("Authorization", "Bearer ${System.getenv("PRIVATE_TOKEN")!!}")
         con.requestMethod = "POST"
+        con.doOutput = true
 
         con.outputStream.use {
           it.write(
@@ -178,12 +181,24 @@ afterEvaluate {
               },
               "description": "## Changelog\n### Breaking Changes\nN/A\n\n### New Features\nN/A\n\n### Fixes\nN/A"
             }
-            """.trimIndent().toByteArray()
+                        """.trimIndent().toByteArray()
           )
         }
-        println(con.responseCode)
-        println(con.responseMessage)
+        val responseBody = BufferedReader(
+          InputStreamReader(con.inputStream, "utf-8")
+        ).use { br ->
+          val response = StringBuilder()
+          var responseLine: String?
+          while (br.readLine().also { responseLine = it } != null) {
+            response.append(responseLine!!.trim { it <= ' ' })
+          }
+          println(response.toString())
+        }
+        val responseStatus = con.responseCode
+        println(responseStatus)
+        println(responseBody)
         con.disconnect()
+        if (con.responseCode >= 400) throw GradleException("Invalid GitLab response. StatusCode: ${responseStatus}, message: $responseBody")
       }
     }
   }
