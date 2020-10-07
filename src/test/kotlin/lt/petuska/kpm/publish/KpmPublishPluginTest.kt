@@ -3,27 +3,50 @@
  */
 package lt.petuska.kpm.publish
 
-import io.kotest.core.spec.style.*
-import io.kotest.matchers.*
+import io.kotest.core.spec.style.WordSpec
+import io.kotest.core.spec.style.scopes.WordSpecTerminalScope
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import lt.petuska.kpm.publish.dsl.KpmPublishExtension.Companion.EXTENSION_NAME
-import org.gradle.testfixtures.*
+import org.gradle.testfixtures.ProjectBuilder
 
-class KpmPublishPluginTest : WordSpec({
-  "Using the Plugin ID" should {
-    "Apply the Plugin" {
-      val project = ProjectBuilder.builder().build()
-      project.pluginManager.apply("lt.petuska.kpm.publish")
-      
-      project.plugins.getPlugin(KpmPublishPlugin::class.java) shouldNotBe null
+class KpmPublishPluginTest : WordSpec(
+  {
+    "Using the Plugin ID" should {
+      "Apply the Plugin" {
+        val project = ProjectBuilder.builder().build()
+        project.pluginManager.apply("lt.petuska.kpm.publish")
+
+        project.plugins.getPlugin(KpmPublishPlugin::class.java) shouldNotBe null
+      }
     }
-  }
-  
-  "Applying the Plugin" should {
-    "Register the '$EXTENSION_NAME' extension" {
+
+    fun WordSpecTerminalScope.registeringTest(kotlinPlugin: String, registers: Boolean) {
       val project = ProjectBuilder.builder().build()
       project.pluginManager.apply(KpmPublishPlugin::class.java)
-      
-      project.kpmPublish() shouldNotBe null
+      project.pluginManager.apply(kotlinPlugin)
+
+      (
+        try {
+          project.kpmPublish()
+        } catch (e: Exception) {
+          println(e)
+          e.printStackTrace()
+          null
+        } != null
+        ) shouldBe registers
+    }
+
+    "Applying the Plugin" should {
+      "Register the '$EXTENSION_NAME' extension if JS plugin is applied" {
+        registeringTest("org.jetbrains.kotlin.js", true)
+      }
+      "Register the '$EXTENSION_NAME' extension if MPP plugin is applied" {
+        registeringTest("org.jetbrains.kotlin.multiplatform", true)
+      }
+      "Not register the '$EXTENSION_NAME' extension if JVM plugin is applied" {
+        registeringTest("org.jetbrains.kotlin.jvm", false)
+      }
     }
   }
-})
+)

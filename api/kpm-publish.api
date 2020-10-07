@@ -1,0 +1,98 @@
+public final class lt/petuska/kpm/publish/KpmPublishPlugin : org/gradle/api/Plugin {
+public static final field Companion Llt/petuska/kpm/publish/KpmPublishPlugin$Companion;
+public fun <init> ()V
+public synthetic fun apply (Ljava/lang/Object;)V
+public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class lt/petuska/kpm/publish/KpmPublishPlugin$Companion {
+}
+
+public class lt/petuska/kpm/publish/dsl/KpmPublication {
+public fun <init> (Ljava/lang/String;Lorg/gradle/api/Project;Llt/petuska/kpm/publish/dsl/KpmPublishExtension;)V
+public final fun getAccess ()Ljava/lang/String;
+public final fun getAuthToken ()Ljava/lang/String;
+public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation;
+public final fun getDestinationDir ()Ljava/io/File;
+public final fun getModuleName ()Ljava/lang/String;
+public final fun getName ()Ljava/lang/String;
+public final fun getOtp ()Ljava/lang/String;
+public final fun getReadme ()Ljava/io/File;
+public final fun getRegistry ()Ljava/lang/String;
+public final fun getScope ()Ljava/lang/String;
+public final fun setAccess (Ljava/lang/String;)V
+public final fun setAuthToken (Ljava/lang/String;)V
+public final fun setCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation;)V
+public final fun setDestinationDir (Ljava/io/File;)V
+public final fun setModuleName (Ljava/lang/String;)V
+public final fun setOtp (Ljava/lang/String;)V
+public final fun setReadme (Ljava/io/File;)V
+public final fun setRegistry (Ljava/lang/String;)V
+public final fun setScope (Ljava/lang/String;)V
+}
+
+public class lt/petuska/kpm/publish/dsl/KpmPublishExtension {
+public static final field AUTH_TOKEN_PROP Ljava/lang/String;
+public static final field Companion Llt/petuska/kpm/publish/dsl/KpmPublishExtension$Companion;
+public static final field DRY_RUN_PROP Ljava/lang/String;
+public static final field EXTENSION_NAME Ljava/lang/String;
+public static final field OTP_PROP Ljava/lang/String;
+public fun <init> (Lorg/gradle/api/Project;)V
+public final fun getAccess ()Ljava/lang/String;
+public final fun getAuthToken ()Ljava/lang/String;
+public final fun getOrganization ()Ljava/lang/String;
+public final fun getOtp ()Ljava/lang/String;
+public final fun getPublications ()Lorg/gradle/api/NamedDomainObjectContainer;
+public final fun getReadme ()Ljava/io/File;
+public final fun getRegistry ()Ljava/lang/String;
+public final fun publication (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Llt/petuska/kpm/publish/dsl/KpmPublication;
+public final fun publications (Lgroovy/lang/Closure;)V
+public final fun publications (Lkotlin/jvm/functions/Function1;)V
+public final fun setAccess (Ljava/lang/String;)V
+public final fun setAuthToken (Ljava/lang/String;)V
+public final fun setOrganization (Ljava/lang/String;)V
+public final fun setOtp (Ljava/lang/String;)V
+public final fun setPublications (Lorg/gradle/api/NamedDomainObjectContainer;)V
+public final fun setReadme (Ljava/io/File;)V
+public final fun setRegistry (Ljava/lang/String;)V
+}
+
+public final class lt/petuska/kpm/publish/dsl/KpmPublishExtension$Companion {
+}
+
+public class lt/petuska/kpm/publish/task/KpmPackagePrepareTask : org/gradle/api/DefaultTask {
+public fun <init> (Llt/petuska/kpm/publish/dsl/KpmPublication;)V
+public final fun doAction ()V
+public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation;
+public final fun getCompilationName ()Ljava/lang/String;
+public final fun getDestinationDir ()Ljava/io/File;
+public final fun getPackageName ()Ljava/lang/String;
+public final fun getReadme ()Ljava/io/File;
+public final fun getRegistry ()Ljava/lang/String;
+public final fun getScope ()Ljava/lang/String;
+public final fun getVersion ()Ljava/lang/String;
+public final fun setCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation;)V
+public final fun setDestinationDir (Ljava/io/File;)V
+public final fun setPackageName (Ljava/lang/String;)V
+public final fun setReadme (Ljava/io/File;)V
+public final fun setRegistry (Ljava/lang/String;)V
+public final fun setScope (Ljava/lang/String;)V
+}
+
+public class lt/petuska/kpm/publish/task/KpmPublishTask : org/gradle/api/DefaultTask {
+public fun <init> (Llt/petuska/kpm/publish/dsl/KpmPublication;)V
+public final fun doAction ()V
+public final fun getAccess ()Ljava/lang/String;
+public final fun getAuthToken ()Ljava/lang/String;
+public final fun getDry ()Z
+public final fun getOtp ()Ljava/lang/String;
+public final fun getPackageDir ()Ljava/io/File;
+public final fun getRegistry ()Ljava/lang/String;
+public final fun setAccess (Ljava/lang/String;)V
+public final fun setAuthToken (Ljava/lang/String;)V
+public final fun setDry (Z)V
+public final fun setOtp (Ljava/lang/String;)V
+public final fun setPackageDir (Ljava/io/File;)V
+public final fun setRegistry (Ljava/lang/String;)V
+}
+

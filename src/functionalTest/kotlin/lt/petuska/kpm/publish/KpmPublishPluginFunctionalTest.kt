@@ -3,12 +3,14 @@
  */
 package lt.petuska.kpm.publish
 
-import io.kotest.core.spec.style.*
-import io.kotest.core.spec.style.scopes.*
-import io.kotest.matchers.string.*
-import lt.petuska.kpm.publish.util.*
-import org.gradle.testkit.runner.*
-import java.io.*
+import io.kotest.core.spec.style.WordSpec
+import io.kotest.core.spec.style.scopes.WordSpecTerminalScope
+import io.kotest.matchers.string.shouldContainIgnoringCase
+import io.kotest.matchers.string.shouldNotContainIgnoringCase
+import lt.petuska.kpm.publish.util.buildGradleFile
+import lt.petuska.kpm.publish.util.gradleExec
+import org.gradle.testkit.runner.BuildResult
+import java.io.File
 
 private suspend fun WordSpecTerminalScope.taskCreationTest(
   kotlinPlugin: String,
@@ -29,15 +31,17 @@ private suspend fun WordSpecTerminalScope.taskCreationTest(
         $jsBlock
         $jvmBlock
         }
-      """.trimIndent()
-    return File("build/functionalTest").gradleExec(buildGradleFile(kotlinPlugin, kotlinBlock),
+    """.trimIndent()
+    return File("build/functionalTest").gradleExec(
+      buildGradleFile(kotlinPlugin, kotlinBlock),
       "tasks",
       "--all",
-      "--stacktrace")
+      "--stacktrace"
+    )
   }
-  
+
   val result = execute()
-  
+
   // Verify the result
   jsTargets.forEach {
     val name = if (jsPlugin) "" else it
@@ -53,63 +57,87 @@ private suspend fun WordSpecTerminalScope.taskCreationTest(
   }
 }
 
-class KpmPublishPluginFunctionalTest : WordSpec({
-  "Applying Plugin" should {
-    "Create tasks for Kotlin/multiplatform given [single JS target]"{
-      taskCreationTest(
-        "multiplatform",
-        jsTargets = listOf("js")
-      )
-    }
-    
-    "Not create tasks for Kotlin/multiplatform given [single JVM target]"{
-      taskCreationTest(
-        "multiplatform",
-        jvmTargets = listOf("jvm"),
-        expectedMissingTasks = listOf(
-          "assembleJsKpmPublication",
-          "publishJsKpmPublication"
+class KpmPublishPluginFunctionalTest : WordSpec(
+  {
+    "Applying Plugin" should {
+      "Create tasks for Kotlin/multiplatform given [single JS target]" {
+        taskCreationTest(
+          "multiplatform",
+          jsTargets = listOf("js")
         )
-      )
-    }
-    "Not create tasks for Kotlin/multiplatform given [multiple JS targets and single JVM target]"{
-      taskCreationTest(
-        "multiplatform",
-        jsTargets = listOf("jsOne", "jsTwo"),
-        jvmTargets = listOf("jvm"),
-        expectedMissingTasks = listOf(
-          "assembleJsKpmPublication",
-          "publishJsKpmPublication"
+      }
+
+      "Not create tasks for Kotlin/multiplatform given [single JVM target]" {
+        taskCreationTest(
+          "multiplatform",
+          jvmTargets = listOf("jvm"),
+          expectedMissingTasks = listOf(
+            "assembleJsKpmPublication",
+            "publishJsKpmPublication"
+          )
         )
-      )
-    }
-    "Create tasks for Kotlin/JS given [default JS target]"{
-      taskCreationTest(
-        "js",
-        jsTargets = listOf("jsOne"),
-        jvmTargets = listOf("jvm"),
-        expectedMissingTasks = listOf(
-          "assembleJsKpmPublication",
-          "publishJsKpmPublication"
+      }
+      "Not create tasks for Kotlin/multiplatform given [multiple JS targets and single JVM target]" {
+        taskCreationTest(
+          "multiplatform",
+          jsTargets = listOf("jsOne", "jsTwo"),
+          jvmTargets = listOf("jvm"),
+          expectedMissingTasks = listOf(
+            "assembleJsKpmPublication",
+            "publishJsKpmPublication"
+          )
         )
-      )
+      }
+      "Create tasks for Kotlin/JS given [default JS target]" {
+        taskCreationTest(
+          "js",
+          jsTargets = listOf("jsOne"),
+          jvmTargets = listOf("jvm"),
+          expectedMissingTasks = listOf(
+            "assembleJsKpmPublication",
+            "publishJsKpmPublication"
+          )
+        )
+      }
+      "Not create tasks for no kotlin plugin given [default JS target]" {
+        taskCreationTest(
+          "",
+          expectedMissingTasks = listOf(
+            "assembleJsKpmPublication",
+            "assembleKpmPublication",
+            "publishJsKpmPublication",
+            "publishKpmPublication"
+          )
+        )
+      }
     }
-    "Not create tasks for no kotlin plugin given [default JS target]"{
-      taskCreationTest(
-        "",
-        expectedMissingTasks = listOf(
-          "assembleJsKpmPublication",
+
+    "Running assembleKpmPublication" should {
+      "succeed" {
+        File("build/functionalTest").gradleExec(
+          buildGradleFile(
+            "js",
+            """
+      kotlin {
+        target {browser()}
+        dependencies {
+          implementation(npm("axios", "*"))
+          api(npm("snabbdom", "*"))
+        }
+      }
+            """.trimIndent()
+          ),
           "assembleKpmPublication",
-          "publishJsKpmPublication",
-          "publishKpmPublication"
+          "--stacktrace"
         )
-      )
+      }
     }
-  }
-  
-  "Running assembleKpmPublication" should {
-    "succeed" {
-      File("build/functionalTest").gradleExec(buildGradleFile("js", """
+    "Running publishKpmPublication" should {
+      "succeed" {
+        File("build/functionalTest").gradleExec(
+          buildGradleFile(
+            "js",
+            """
       kotlin {
         target {browser()}
         dependencies {
@@ -117,20 +145,13 @@ class KpmPublishPluginFunctionalTest : WordSpec({
           api(npm("snabbdom", "*"))
         }
       }
-    """.trimIndent()), "assembleKpmPublication", "--stacktrace")
-    }
-  }
-  "Running publishKpmPublication" should {
-    "succeed" {
-      File("build/functionalTest").gradleExec(buildGradleFile("js", """
-      kotlin {
-        target {browser()}
-        dependencies {
-          implementation(npm("axios", "*"))
-          api(npm("snabbdom", "*"))
-        }
+            """.trimIndent()
+          ),
+          "publishKpmPublication",
+          "--stacktrace",
+          "-Pkpm.publish.dry=true"
+        )
       }
-    """.trimIndent()), "publishKpmPublication", "--stacktrace", "-Pkpm.publish.dry=true")
     }
   }
-})
+)
