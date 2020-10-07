@@ -1,17 +1,17 @@
-import io.github.httpbuilderng.http.HttpTask
 import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintCheckTask
 import java.io.ByteArrayOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 plugins {
   kotlin("jvm") version "1.3.72"
   `java-gradle-plugin`
-  id("org.jetbrains.dokka") version "1.4.0"
-  id("com.gradle.plugin-publish") version "0.12.0"
-  id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
-  id("io.github.http-builder-ng.http-plugin") version "0.1.1"
   `maven-publish`
+  id("com.gradle.plugin-publish") version "0.12.0"
+  id("org.jetbrains.dokka") version "1.4.0"
+  id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
   idea
 }
 
@@ -142,17 +142,13 @@ afterEvaluate {
     }
     val lib = project
     val publish by getting
-    create<HttpTask>("gitLabRelease") {
+
+    register("gitLabRelease") {
       dependsOn(publish)
       group = publish.group!!
 
-      config {
-        it.request.setUri("https://gitlab.com")
-      }
-      post {
-        it.request.uri.setPath("/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/releases")
-        it.request.headers["Authorization"] = "Bearer ${System.getenv("PRIVATE_TOKEN")}"
-        it.request.setContentType("application/json")
+      doFirst {
+
         fun buildPackageLink(prj: Project) =
           """
           {
@@ -162,21 +158,32 @@ afterEvaluate {
           }
           """.trimIndent()
 
-        it.request.setBody(
-          """
-          {
-            "name": "Release v${lib.version}",
-            "tag_name": "v${lib.version}",
-            "ref": "${getCommitHash()}",
-            "assets": {
-                "links": [
-                    ${setOf(lib).joinToString(",", transform = ::buildPackageLink)}
-                ]
-            },
-            "description": "## Changelog\n### Breaking Changes\nN/A\n\n### New Features\nN/A\n\n### Fixes\nN/A"
-          }
-          """.trimIndent()
-        )
+        val url = URL("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/releases")
+        val con: HttpURLConnection = url.openConnection() as HttpURLConnection
+        con.setRequestProperty("Content-Type", "application/json")
+        con.setRequestProperty("Authorization", "Bearer ${System.getenv("PRIVATE_TOKEN")}")
+        con.requestMethod = "POST"
+
+        con.outputStream.use {
+          it.write(
+            """
+            {
+              "name": "Release v${lib.version}",
+              "tag_name": "v${lib.version}",
+              "ref": "${getCommitHash()}",
+              "assets": {
+                  "links": [
+                      ${setOf(lib).joinToString(",", transform = ::buildPackageLink)}
+                  ]
+              },
+              "description": "## Changelog\n### Breaking Changes\nN/A\n\n### New Features\nN/A\n\n### Fixes\nN/A"
+            }
+            """.trimIndent().toByteArray()
+          )
+        }
+        println(con.responseCode)
+        println(con.responseMessage)
+        con.disconnect()
       }
     }
   }
