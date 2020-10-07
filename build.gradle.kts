@@ -140,7 +140,7 @@ afterEvaluate {
       gradleVersion = "6.6.1"
       distributionType = Wrapper.DistributionType.ALL
     }
-    val lib = rootProject
+    val lib = project
     val publish by getting
     create<HttpTask>("gitLabRelease") {
       dependsOn(publish)
