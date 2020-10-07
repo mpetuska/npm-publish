@@ -12,12 +12,11 @@ fun buildGradleFile(
   """
 plugins {
   id("lt.petuska.kpm.publish")
-  ${if (kotlinPlugin.isNotEmpty()) "kotlin(\"$kotlinPlugin\")" else ""}
+  ${if (kotlinPlugin.isNotEmpty()) "kotlin(\"$kotlinPlugin\") version \"1.4.10\"" else ""}
 }
 
 version = "1.0.0"
 group = "test.group"
-
 
 repositories {
   jcenter()

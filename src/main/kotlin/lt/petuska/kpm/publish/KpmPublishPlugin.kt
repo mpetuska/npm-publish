@@ -5,11 +5,13 @@ import lt.petuska.kpm.publish.dsl.KpmPublishExtension
 import lt.petuska.kpm.publish.dsl.KpmPublishExtension.Companion.EXTENSION_NAME
 import lt.petuska.kpm.publish.task.KpmPackagePrepareTask
 import lt.petuska.kpm.publish.task.KpmPublishTask
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.util.GUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 
 class KpmPublishPlugin : Plugin<Project> {
@@ -19,7 +21,7 @@ class KpmPublishPlugin : Plugin<Project> {
       project.afterEvaluate {
         project.extensions.configure(KotlinMultiplatformExtension::class.java) {
           it.targets.filterIsInstance<KotlinJsTarget>().forEach { t ->
-            project.configure(t, true)
+            project.configureExtension(t.name, t.compilations, true)
           }
         }
       }
@@ -28,34 +30,35 @@ class KpmPublishPlugin : Plugin<Project> {
       project.createExtension()
       project.afterEvaluate {
         project.extensions.configure(KotlinJsProjectExtension::class.java) {
-          project.configure(it.target, false)
+          val target = it.js()
+          project.configureExtension(target.name, target.compilations, false)
         }
       }
     }
   }
-  
+
   companion object {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
-    
+
     private fun Project.createExtension() = extensions.findByType(KpmPublishExtension::class.java) ?: extensions.create(
       EXTENSION_NAME,
       KpmPublishExtension::class.java,
       this@createExtension
     )
-    
-    private fun Project.configure(target: KotlinJsTarget, mpp: Boolean) {
+
+    private fun Project.configureExtension(targetName: String, compilations: NamedDomainObjectContainer<out KotlinJsCompilation>, mpp: Boolean) {
       val publications = mutableListOf<KpmPublication>()
       kpmPublish {
         publications {
-          val comp = target.compilations.first { comp -> comp.name.contains("main", true) }
-          val pub = publication(target.name) {
+          val comp = compilations.first { comp -> comp.name.contains("main", true) }
+          val pub = publication(targetName) {
             compilation = comp
           }
           publications.add(pub)
         }
       }
-      
+
       val pubTasks = publications.mapNotNull { pub ->
         project.tasks.findByName("kotlinNodeJsSetup")?.let { nodeJsSetupTask ->
           val upperName = if (mpp) GUtil.toCamelCase(pub.name) else ""
@@ -71,7 +74,7 @@ class KpmPublishPlugin : Plugin<Project> {
           kpmPublishTask
         }
       }
-      
+
       tasks.findByName("publish")?.dependsOn(*pubTasks.toTypedArray())
     }
   }

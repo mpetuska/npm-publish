@@ -26,7 +26,7 @@ apply(plugin = "binary-compatibility-validator")
 configure<ApiValidationExtension> {}
 
 group = "lt.petuska"
-version = "0.0.2"
+version = "0.0.3"
 
 idea {
   module {
@@ -47,8 +47,9 @@ repositories {
 }
 
 dependencies {
-  api(platform(kotlin("bom")))
-  api(kotlin("gradle-plugin"))
+  api(platform(kotlin("bom", "1.4.10")))
+  api(kotlin("gradle-plugin", "1.4.10"))
+  api(kotlin("reflect", "1.4.10"))
   testImplementation("io.kotest:kotest-runner-junit5:4.1.0")
 }
 
@@ -76,16 +77,6 @@ tasks {
       jvmTarget = "1.8"
     }
   }
-  withType<Jar> {
-    manifest {
-      attributes += sortedMapOf(
-        "Built-By" to System.getProperty("user.name"),
-        "Build-Jdk" to System.getProperty("java.version"),
-        "Implementation-Version" to project.version,
-        "Created-By" to org.gradle.util.GradleVersion.current()
-      )
-    }
-  }
   withType<KtlintCheckTask> {
     dependsOn("ktlintFormat")
   }
@@ -109,12 +100,14 @@ val functionalTestSourceSet = sourceSets.create("functionalTest") {
 gradlePlugin.testSourceSets(functionalTestSourceSet)
 configurations.getByName("functionalTestImplementation").extendsFrom(configurations.getByName("testImplementation"))
 
-fun getCommitHash() = ByteArrayOutputStream().use { os ->
-  exec {
-    commandLine("git", "rev-parse", "HEAD")
-    standardOutput = os
+val gitCommitHash by lazy {
+  ByteArrayOutputStream().use { os ->
+    exec {
+      commandLine("git", "rev-parse", "HEAD")
+      standardOutput = os
+    }
+    os.toString().trim()
   }
-  os.toString().trim()
 }
 
 publishing {
@@ -123,13 +116,13 @@ publishing {
       maven {
         name = "bintray"
         url = uri(
-          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USER")!!}/${project.group}/${project.name}/" +
+          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USER")}/${project.group}/${project.name}/" +
             ";publish=${if ("true".equals(project.properties["publish"] as? String?, true)) 1 else 0}" +
             ";override=${if ("true".equals(project.properties["override"] as? String?, true)) 1 else 0}"
         )
         credentials {
-          username = System.getenv("BINTRAY_USER")!!
-          password = System.getenv("BINTRAY_KEY")!!
+          username = System.getenv("BINTRAY_USER")
+          password = System.getenv("BINTRAY_KEY")
         }
       }
     }
@@ -141,6 +134,17 @@ afterEvaluate {
     withType<Wrapper> {
       gradleVersion = "6.6.1"
       distributionType = Wrapper.DistributionType.ALL
+    }
+    withType<Jar> {
+      manifest {
+        attributes += sortedMapOf(
+          "Built-By" to System.getProperty("user.name"),
+          "Build-Jdk" to System.getProperty("java.version"),
+          "Implementation-Version" to project.version,
+          "Created-By" to org.gradle.util.GradleVersion.current(),
+          "Created-From" to gitCommitHash
+        )
+      }
     }
     val lib = project
     val publish by getting
@@ -173,7 +177,7 @@ afterEvaluate {
             {
               "name": "Release v${lib.version}",
               "tag_name": "v${lib.version}",
-              "ref": "${getCommitHash()}",
+              "ref": "$gitCommitHash",
               "assets": {
                   "links": [
                       ${setOf(lib).joinToString(",", transform = ::buildPackageLink)}

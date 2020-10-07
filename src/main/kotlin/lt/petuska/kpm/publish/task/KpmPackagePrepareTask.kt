@@ -56,6 +56,7 @@ open class KpmPackagePrepareTask @Inject constructor(
 
   @TaskAction
   fun doAction() {
+    destinationDir.deleteRecursively()
     project.copy { cp ->
       readme?.let {
         cp.from(it)
@@ -74,7 +75,12 @@ open class KpmPackagePrepareTask @Inject constructor(
       (scope?.let { PackageJson(it, packageName, npmVersion) } ?: PackageJson(packageName, npmVersion)).apply {
         main = compilation!!.compileKotlinTask.outputFile.name
         compilation!!.relatedConfigurationNames.forEach { conf ->
-          project.configurations.named(conf).get().dependencies.filterIsInstance<NpmDependency>().forEach { dep ->
+          val targetName = compilation!!.target.name
+          val mainName = "${targetName}Main${conf.substringAfter(targetName)}"
+          val normDeps = project.configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
+          val mainDeps = project.configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
+          val deps = (normDeps + mainDeps).filterIsInstance<NpmDependency>()
+          deps.forEach { dep ->
             when (dep.scope) {
               NpmDependency.Scope.NORMAL -> this.dependencies
               NpmDependency.Scope.DEV -> this.devDependencies

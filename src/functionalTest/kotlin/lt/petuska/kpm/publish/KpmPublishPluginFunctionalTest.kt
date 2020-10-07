@@ -92,7 +92,6 @@ class KpmPublishPluginFunctionalTest : WordSpec(
         taskCreationTest(
           "js",
           jsTargets = listOf("jsOne"),
-          jvmTargets = listOf("jvm"),
           expectedMissingTasks = listOf(
             "assembleJsKpmPublication",
             "publishJsKpmPublication"
@@ -113,13 +112,13 @@ class KpmPublishPluginFunctionalTest : WordSpec(
     }
 
     "Running assembleKpmPublication" should {
-      "succeed" {
+      "succeed [JS]" {
         File("build/functionalTest").gradleExec(
           buildGradleFile(
             "js",
             """
       kotlin {
-        target {browser()}
+        js {browser()}
         dependencies {
           implementation(npm("axios", "*"))
           api(npm("snabbdom", "*"))
@@ -131,15 +130,37 @@ class KpmPublishPluginFunctionalTest : WordSpec(
           "--stacktrace"
         )
       }
+      "succeed [MPP]" {
+        File("build/functionalTest").gradleExec(
+          buildGradleFile(
+            "multiplatform",
+            """
+      kotlin {
+        js {browser()}
+        sourceSets {
+          val jsMain by getting {            
+            dependencies {
+              implementation(npm("axios", "*"))
+              api(npm("snabbdom", "*"))
+            }
+          }
+        }
+      }
+            """.trimIndent()
+          ),
+          "assembleJsKpmPublication",
+          "--stacktrace"
+        )
+      }
     }
-    "Running publishKpmPublication" should {
-      "succeed" {
+    "Running publishKpmPublication [JS]" should {
+      "succeed [JS]" {
         File("build/functionalTest").gradleExec(
           buildGradleFile(
             "js",
             """
       kotlin {
-        target {browser()}
+        js {browser()}
         dependencies {
           implementation(npm("axios", "*"))
           api(npm("snabbdom", "*"))
@@ -148,6 +169,29 @@ class KpmPublishPluginFunctionalTest : WordSpec(
             """.trimIndent()
           ),
           "publishKpmPublication",
+          "--stacktrace",
+          "-Pkpm.publish.dry=true"
+        )
+      }
+      "succeed [MPP]" {
+        File("build/functionalTest").gradleExec(
+          buildGradleFile(
+            "multiplatform",
+            """
+      kotlin {
+        js("CustomJS") {browser()}
+        sourceSets {
+          val CustomJSMain by getting {            
+            dependencies {
+              implementation(npm("axios", "*"))
+              api(npm("snabbdom", "*"))
+            }
+          }
+        }
+      }
+            """.trimIndent()
+          ),
+          "publishCustomJsKpmPublication",
           "--stacktrace",
           "-Pkpm.publish.dry=true"
         )
