@@ -5,7 +5,7 @@ Gradle plugin enabling NPM publishing for Kotlin/JS (including MPP)
 ## Setup
 ```kotlin
 plugins {
-  id("lt.petuska.kpm.publish") version "0.0.1"
+  id("lt.petuska.kpm.publish") version "<VERSION>"
   kotlin("js") version "1.4.0"
 }
 
