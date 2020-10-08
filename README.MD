@@ -6,7 +6,7 @@ Gradle plugin enabling NPM publishing for Kotlin/JS (including MPP)
 ```kotlin
 plugins {
   id("lt.petuska.npm.publish") version "<VERSION>"
-  kotlin("js") version "1.4.0"
+  kotlin("js") version "1.4.0" // Optional
 }
 
 kotlin {
@@ -21,8 +21,9 @@ kotlin {
 ```
 
 ### Configuration
-The plugin will create a publication for each JS target you JS/MPP project has. You can add additional targets or override
-existing configuration defaults via npmPublishing extension:
+You can add publications and npm repositories or override existing configuration defaults via npmPublishing extension.
+When kotlin JS/MPP plugin is applied, this plugin will automatically create a publication for each JS target you JS/MPP project has.
+
 ```kotlin
 npmPublishing {
   readme = file("README.MD") // (optional) Default readme file
