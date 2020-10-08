@@ -44,7 +44,7 @@ open class NpmPublishTask @Inject constructor(
   )
 
   init {
-    group = "publish"
+    group = "publishing"
     description = "Publishes ${publication.name} NPM module to ${repository.name} NPM repository"
   }
 
@@ -79,17 +79,18 @@ open class NpmPublishTask @Inject constructor(
 
   @TaskAction
   fun doAction() {
+    val repo = "${registry!!.authority.trim()}${registry!!.path.trim()}/"
     project.exec {
       val cmd = listOfNotNull(
         node,
         npm,
         "publish",
         packageDir,
-        "--access $access",
-        "--registry=${registry!!.scheme}://${registry!!.authority}/",
-        "--//${registry!!.authority}/:_authToken=$authToken",
+        "--access","$access",
+        "--registry", "${registry!!.scheme.trim()}://$repo",
+        "--//$repo:_authToken=$authToken",
         if (otp != null) "--otp $otp" else null,
-        if (dry) "--dry-run" else ""
+        if (dry) "--dry-run" else null
       ).toTypedArray()
       it.commandLine(*cmd)
     }

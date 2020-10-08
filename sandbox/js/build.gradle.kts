@@ -1,6 +1,6 @@
 plugins {
   kotlin("js") version "1.4.10"
-  id("lt.petuska.npm.publish") version "0.0.4"
+  id("lt.petuska.npm.publish") version "0.0.5"
 }
 
 version = "1.0.0"
@@ -22,9 +22,9 @@ kotlin {
 
 npmPublishing {
   repositories {
-    repository("npmjs") {
-      registry = uri("https://registry.npmjs.org")
-      authToken = "asdhkjsdfjvhnsdrishdl"
+    repository("GitLab") {
+      registry = uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")?.trim()}/packages/npm")
+      authToken = System.getenv("PRIVATE_TOKEN")?.trim() ?: ""
     }
   }
 }

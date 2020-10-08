@@ -1,7 +1,5 @@
 package lt.petuska.npm.publish
 
-import lt.petuska.npm.publish.NpmPublishPlugin.Companion.configureExtension
-import lt.petuska.npm.publish.NpmPublishPlugin.Companion.configureTasks
 import lt.petuska.npm.publish.dsl.NpmPublishExtension
 import lt.petuska.npm.publish.dsl.NpmPublishExtension.Companion.EXTENSION_NAME
 import lt.petuska.npm.publish.task.NpmPackagePrepareTask
@@ -44,6 +42,7 @@ class NpmPublishPlugin : Plugin<Project> {
   companion object {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
+    private const val MAVEN_PUBLISH_PLUGIN = "org.gradle.maven-publish"
 
     private fun Project.createExtension() = extensions.findByType(NpmPublishExtension::class.java) ?: extensions.create(
       EXTENSION_NAME,
@@ -75,7 +74,8 @@ class NpmPublishPlugin : Plugin<Project> {
 
     private fun Project.configureTasks() {
       val nodeJsSetupTask = tasks.findByName("kotlinNodeJsSetup") as NodeJsSetupTask?
-      val publishTask = tasks.findByName("publish")
+
+      val publishTask = tasks.findByName("publish") ?: tasks.create("publish") { group = "publishing" }
       val assembleTask = tasks.findByName("assemble")
 
       val publications = npmPublishing.publications.mapNotNull { pub ->
@@ -97,27 +97,23 @@ class NpmPublishPlugin : Plugin<Project> {
         val upperName = GUtil.toCamelCase(pub.name)
 
         val assembleTaskName = "assemble${upperName}NpmPublication"
-        val assemblePackageTask = tasks.findByName(assembleTaskName)
-          ?: tasks.register(assembleTaskName, NpmPackagePrepareTask::class.java, pub).also { task ->
-            task.configure {
-              it.dependsOn(
-                *listOfNotNull(
-                  pub.compilation?.processResourcesTaskName,
-                  pub.compilation?.compileKotlinTaskName,
-                  nodeJsTask,
-                  assembleTask
-                ).toTypedArray()
-              )
-            }
+        val assemblePackageTask = tasks.findByName(assembleTaskName) as NpmPackagePrepareTask?
+          ?: tasks.create(assembleTaskName, NpmPackagePrepareTask::class.java, pub).also {
+            it.dependsOn(
+              *listOfNotNull(
+                pub.compilation?.processResourcesTaskName,
+                pub.compilation?.compileKotlinTaskName,
+                nodeJsTask,
+                assembleTask
+              ).toTypedArray()
+            )
           }
         repositories.map { repo ->
           val upperRepoName = GUtil.toCamelCase(repo.name)
           val publishTaskName = "publish${upperName}NpmPublicationTo$upperRepoName"
           tasks.findByName(publishTaskName)
-            ?: tasks.register(publishTaskName, NpmPublishTask::class.java, pub, repo).also { task ->
-              task.configure {
-                it.dependsOn(assemblePackageTask)
-              }
+            ?: tasks.create(publishTaskName, NpmPublishTask::class.java, pub, repo).also { task ->
+              task.dependsOn(assemblePackageTask)
               publishTask?.dependsOn(task)
             }
         }
