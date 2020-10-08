@@ -15,6 +15,7 @@ open class KpmPublishExtension(private val project: Project) {
   val repositories: KpmRepositoryContainer = project.container(KpmRepository::class.java) { name ->
     KpmRepository(name, project, this)
   }
+
   fun repositories(config: KpmRepositoryContainer.() -> Unit) {
     repositories.configure(
       object : Closure<Unit>(this, this) {
@@ -28,9 +29,11 @@ open class KpmPublishExtension(private val project: Project) {
       }
     )
   }
+
   fun repositories(config: Closure<Unit>) {
     repositories.configure(config)
   }
+
   fun KpmRepositoryContainer.repository(name: String, config: KpmRepository.() -> Unit): KpmRepository {
     val pub = KpmRepository(name, this@KpmPublishExtension.project, this@KpmPublishExtension).apply(config)
     add(pub)
@@ -40,6 +43,7 @@ open class KpmPublishExtension(private val project: Project) {
   val publications: KpmPublicationContainer = project.container(KpmPublication::class.java) { name ->
     KpmPublication(name, project, this)
   }
+
   fun publications(config: KpmPublicationContainer.() -> Unit) {
     publications.configure(
       object : Closure<Unit>(this, this) {
@@ -53,9 +57,11 @@ open class KpmPublishExtension(private val project: Project) {
       }
     )
   }
+
   fun publications(config: Closure<Unit>) {
     publications.configure(config)
   }
+
   fun KpmPublicationContainer.publication(name: String, config: KpmPublication.() -> Unit): KpmPublication {
     val pub = KpmPublication(name, this@KpmPublishExtension.project, this@KpmPublishExtension).apply(config)
     add(pub)

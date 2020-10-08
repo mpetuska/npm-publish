@@ -35,6 +35,7 @@ class KpmPublication internal constructor(
   fun MutableList<NpmDependency>.dependency(name: String, version: String, scope: NpmDependency.Scope) = NpmDependency(project, name, version, scope, false).also {
     add(it)
   }
+
   fun MutableList<NpmDependency>.npm(name: String, version: String) = dependency(name, version, NpmDependency.Scope.NORMAL)
   fun MutableList<NpmDependency>.npmDev(name: String, version: String) = dependency(name, version, NpmDependency.Scope.DEV)
   fun MutableList<NpmDependency>.npmOptional(name: String, version: String) = dependency(name, version, NpmDependency.Scope.OPTIONAL)

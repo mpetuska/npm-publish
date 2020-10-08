@@ -31,9 +31,10 @@ open class KpmPackagePrepareTask @Inject constructor(
   var npmDependencies by publication.fallbackDelegate(KpmPublication::npmDependencies)
 
   @get:Input
-  val npmDependenciesStr get() = npmDependencies.map {
-    it.toString()
-  }
+  val npmDependenciesStr
+    get() = npmDependencies.map {
+      it.toString()
+    }
 
   @get:Input
   var main by publication.fallbackDelegate(KpmPublication::main)

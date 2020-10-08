@@ -113,6 +113,26 @@ val gitCommitHash by lazy {
 publishing {
   publications {
     repositories {
+      // maven {
+      //   name = "GitLab"
+      //   url = uri(
+      //     "https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/packages"
+      //   )
+      //   credentials(HttpHeaderCredentials::class) {
+      //     val jobToken = System.getenv("CI_JOB_TOKEN")
+      //     if (jobToken != null) {
+      //       // GitLab CI
+      //       name = "Job-Token"
+      //       value = jobToken
+      //     } else {
+      //       name = "Private-Token"
+      //       value = System.getenv("PRIVATE_TOKEN")
+      //     }
+      //   }
+      //   authentication {
+      //     create<HttpHeaderAuthentication>("header")
+      //   }
+      // }
       maven {
         name = "Bintray"
         url = uri(
@@ -123,26 +143,6 @@ publishing {
         credentials {
           username = System.getenv("BINTRAY_USER")
           password = System.getenv("BINTRAY_KEY")
-        }
-      }
-      maven {
-        name = "GitLab"
-        url = uri(
-          "https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/packages"
-        )
-        credentials(HttpHeaderCredentials::class) {
-          val jobToken = System.getenv("CI_JOB_TOKEN")
-          if (jobToken != null) {
-            // GitLab CI
-            name = "Job-Token"
-            value = jobToken
-          } else {
-            name = "Private-Token"
-            value = System.getenv("PRIVATE_TOKEN")
-          }
-        }
-        authentication {
-          create<HttpHeaderAuthentication>("header")
         }
       }
     }
@@ -189,6 +189,10 @@ afterEvaluate {
         con.requestMethod = "POST"
         con.doOutput = true
 
+        val changelog = projectDir.resolve("CHANGELOG.MD")
+          .readText()
+          .replace("\"", "\\\"")
+          .replace("\n", "\\n")
         con.outputStream.use {
           it.write(
             """
@@ -201,9 +205,9 @@ afterEvaluate {
                       ${setOf(lib).joinToString(",", transform = ::buildPackageLink)}
                   ]
               },
-              "description": "## Changelog\n### Breaking Changes\nN/A\n\n### New Features\nN/A\n\n### Fixes\nN/A"
+              "description": "$changelog"
             }
-                        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
           )
         }
         val responseBody = BufferedReader(

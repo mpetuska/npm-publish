@@ -53,9 +53,15 @@ kpmPublish {
       readme = file("docs/OTHER.MD")
       destinationDir = file("$buildDir/vipPackage") // Package collection directory, defaults to File($buildDir/publications/kpm/$name")
       main = "my-module-name-override-js.js" // Main output file name, set automatically for default publications
-      
-      files { // Specifies what files should be packaged. Preconfigured for default publications, yet can be extended if needed
-        from("../dir")
+
+      dependencies {
+        npm("snabbdom", "*")
+        npmDev("typescript", "*")
+        npmOptional("webpack", "*")
+        npmPeer("react", "*")
+      }           
+      files { assemblyDir -> // Specifies what files should be packaged. Preconfigured for default publications, yet can be extended if needed
+        from("$assemblyDir/../dir")
         // Rest of your CopySpec     
       }
     }
