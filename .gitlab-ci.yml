@@ -1,5 +1,6 @@
 image: gradle:6.6.1-jdk8
 
+
 # Disable the Gradle daemon for Continuous Integration servers as correctness
 # is usually a priority over speed in CI environments. Using a fresh
 # runtime for each build is more reliable since the runtime is completely
@@ -62,3 +63,12 @@ release:gitLab:
     paths:
       - build
       - .gradle
+
+sast:
+  variables:
+    SAST_DEFAULT_ANALYZERS: spotbugs
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
