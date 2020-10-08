@@ -54,6 +54,8 @@ kpmPublish {
       destinationDir = file("$buildDir/vipPackage") // Package collection directory, defaults to File($buildDir/publications/kpm/$name")
       main = "my-module-name-override-js.js" // Main output file name, set automatically for default publications
 
+      // Entirely Optional
+
       dependencies {
         npm("snabbdom", "*")
         npmDev("typescript", "*")
@@ -63,6 +65,12 @@ kpmPublish {
       files { assemblyDir -> // Specifies what files should be packaged. Preconfigured for default publications, yet can be extended if needed
         from("$assemblyDir/../dir")
         // Rest of your CopySpec     
+      }
+      packagejson = { // Full package.json override
+        main = "./dist/yet-another-override.js"
+      }
+      packageJson { // Will be patched on top of default generated package.json
+        private = false
       }
     }
   }

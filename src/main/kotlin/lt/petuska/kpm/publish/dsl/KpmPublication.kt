@@ -8,6 +8,7 @@ import org.gradle.api.file.CopySpec
 import org.gradle.util.GUtil
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
 
 class KpmPublication internal constructor(
@@ -26,13 +27,19 @@ class KpmPublication internal constructor(
   internal var compilation by project.gradleNullableProperty<KotlinJsCompilation>()
 
   internal var fileSpecs = mutableListOf<CopySpec.(File) -> Unit>()
+  internal var packageJsonSpecs = mutableListOf<PackageJson.() -> Unit>()
+  var packageJson by project.gradleNullableProperty<(PackageJson.() -> Unit)>()
+
+  fun packageJson(config: PackageJson.() -> Unit) {
+    packageJsonSpecs.add(config)
+  }
 
   fun files(config: CopySpec.(destinationDir: File) -> Unit) {
     fileSpecs.add(config)
   }
 
   fun dependencies(config: MutableList<NpmDependency>.() -> Unit) = npmDependencies.config()
-  fun MutableList<NpmDependency>.dependency(name: String, version: String, scope: NpmDependency.Scope) = NpmDependency(project, name, version, scope, false).also {
+  private fun MutableList<NpmDependency>.dependency(name: String, version: String, scope: NpmDependency.Scope) = NpmDependency(project, name, version, scope, false).also {
     add(it)
   }
 

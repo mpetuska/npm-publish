@@ -19,24 +19,23 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 class KpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.createExtension()
-    project.pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
-      project.afterEvaluate {
-        project.extensions.configure(KotlinMultiplatformExtension::class.java) {
+    project.afterEvaluate { prj ->
+      prj.pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
+        prj.extensions.configure(KotlinMultiplatformExtension::class.java) {
           it.targets.filterIsInstance<KotlinJsTarget>().forEach { t ->
-            project.configureExtension(t.name, t.compilations, true)
+            prj.configureExtension(t.name, t.compilations, true)
+            prj.configureTasks()
           }
-          project.configureTasks()
         }
       }
-    }
-    project.pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
-      project.afterEvaluate {
-        project.extensions.configure(KotlinJsProjectExtension::class.java) {
+      prj.pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
+        prj.extensions.configure(KotlinJsProjectExtension::class.java) {
           val target = it.js()
-          project.configureExtension(target.name, target.compilations, false)
-          project.configureTasks()
+          prj.configureExtension(target.name, target.compilations, false)
+          prj.configureTasks()
         }
       }
+      prj.configureTasks()
     }
   }
 
@@ -75,6 +74,7 @@ class KpmPublishPlugin : Plugin<Project> {
     private fun Project.configureTasks() {
       val nodeJsSetupTask = tasks.findByName("kotlinNodeJsSetup") as NodeJsSetupTask?
       val publishTask = tasks.findByName("publish")
+      val assembleTask = tasks.findByName("assemble")
 
       val publications = kpmPublish.publications.mapNotNull { pub ->
         val needsNode = pub.nodeJsDir == null
@@ -94,25 +94,30 @@ class KpmPublishPlugin : Plugin<Project> {
         }
         val upperName = GUtil.toCamelCase(pub.name)
 
-        val packagePrepareTask =
-          tasks.register("assemble${upperName}KpmPublication", KpmPackagePrepareTask::class.java, pub)
-        packagePrepareTask.configure {
-          it.dependsOn(
-            *listOfNotNull(
-              pub.compilation?.processResourcesTaskName,
-              pub.compilation?.compileKotlinTaskName,
-              nodeJsTask
-            ).toTypedArray()
-          )
-        }
+        val assembleTaskName = "assemble${upperName}KpmPublication"
+        val assemblePackageTask = tasks.findByName(assembleTaskName)
+          ?: tasks.register(assembleTaskName, KpmPackagePrepareTask::class.java, pub).also { task ->
+            task.configure {
+              it.dependsOn(
+                *listOfNotNull(
+                  pub.compilation?.processResourcesTaskName,
+                  pub.compilation?.compileKotlinTaskName,
+                  nodeJsTask,
+                  assembleTask
+                ).toTypedArray()
+              )
+            }
+          }
         repositories.map { repo ->
           val upperRepoName = GUtil.toCamelCase(repo.name)
-          tasks.register("publish${upperName}KpmPublicationTo$upperRepoName", KpmPublishTask::class.java, pub, repo).also { task ->
-            task.configure {
-              it.dependsOn(packagePrepareTask)
+          val publishTaskName = "publish${upperName}KpmPublicationTo$upperRepoName"
+          tasks.findByName(publishTaskName)
+            ?: tasks.register(publishTaskName, KpmPublishTask::class.java, pub, repo).also { task ->
+              task.configure {
+                it.dependsOn(assemblePackageTask)
+              }
+              publishTask?.dependsOn(task)
             }
-            publishTask?.dependsOn(task)
-          }
         }
       }
     }

@@ -10,7 +10,6 @@ public final class lt/petuska/kpm/publish/KpmPublishPlugin$Companion {
 
 public final class lt/petuska/kpm/publish/dsl/KpmPublication {
 	public final fun dependencies (Lkotlin/jvm/functions/Function1;)V
-	public final fun dependency (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public final fun files (Lkotlin/jvm/functions/Function2;)V
 	public final fun getDestinationDir ()Ljava/io/File;
 	public final fun getMain ()Ljava/lang/String;
@@ -18,16 +17,19 @@ public final class lt/petuska/kpm/publish/dsl/KpmPublication {
 	public final fun getName ()Ljava/lang/String;
 	public final fun getNodeJsDir ()Ljava/io/File;
 	public final fun getNpmDependencies ()Ljava/util/List;
+	public final fun getPackageJson ()Lkotlin/jvm/functions/Function1;
 	public final fun getReadme ()Ljava/io/File;
 	public final fun getScope ()Ljava/lang/String;
 	public final fun npm (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public final fun npmDev (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public final fun npmOptional (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public final fun npmPeer (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
+	public final fun packageJson (Lkotlin/jvm/functions/Function1;)V
 	public final fun setDestinationDir (Ljava/io/File;)V
 	public final fun setMain (Ljava/lang/String;)V
 	public final fun setModuleName (Ljava/lang/String;)V
 	public final fun setNodeJsDir (Ljava/io/File;)V
+	public final fun setPackageJson (Lkotlin/jvm/functions/Function1;)V
 	public final fun setReadme (Ljava/io/File;)V
 	public final fun setScope (Ljava/lang/String;)V
 }

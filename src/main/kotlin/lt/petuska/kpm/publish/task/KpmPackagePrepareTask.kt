@@ -18,6 +18,8 @@ open class KpmPackagePrepareTask @Inject constructor(
   publication: KpmPublication
 ) : DefaultTask() {
   private val fileSpecs = publication.fileSpecs
+  private val packageJsonOverride = publication.packageJson
+  private val packageJsonSpecs = publication.packageJsonSpecs
 
   @get:InputFile
   @get:Optional
@@ -72,14 +74,21 @@ open class KpmPackagePrepareTask @Inject constructor(
       }
 
       (scope?.let { PackageJson(it, packageName, npmVersion) } ?: PackageJson(packageName, npmVersion)).apply {
-        main = this@KpmPackagePrepareTask.main
-        npmDependencies.forEach { dep ->
-          when (dep.scope) {
-            NpmDependency.Scope.NORMAL -> this.dependencies
-            NpmDependency.Scope.DEV -> this.devDependencies
-            NpmDependency.Scope.OPTIONAL -> this.optionalDependencies
-            NpmDependency.Scope.PEER -> this.peerDependencies
-          }[dep.name] = dep.version
+        if (packageJsonOverride != null) {
+          packageJsonOverride.invoke(this)
+        } else {
+          main = this@KpmPackagePrepareTask.main
+          npmDependencies.forEach { dep ->
+            when (dep.scope) {
+              NpmDependency.Scope.NORMAL -> this.dependencies
+              NpmDependency.Scope.DEV -> this.devDependencies
+              NpmDependency.Scope.OPTIONAL -> this.optionalDependencies
+              NpmDependency.Scope.PEER -> this.peerDependencies
+            }[dep.name] = dep.version
+          }
+          packageJsonSpecs.forEach {
+            it()
+          }
         }
       }.saveTo(File(destinationDir, "package.json"))
 //        file("$destinationDir/kotlinx-html-js").renameTo(File("$destinationDir/js-module/kotlinx-html-js"))
