@@ -86,7 +86,7 @@ open class NpmPublishTask @Inject constructor(
         npm,
         "publish",
         packageDir,
-        "--access","$access",
+        "--access", "$access",
         "--registry", "${registry!!.scheme.trim()}://$repo",
         "--//$repo:_authToken=$authToken",
         if (otp != null) "--otp $otp" else null,
