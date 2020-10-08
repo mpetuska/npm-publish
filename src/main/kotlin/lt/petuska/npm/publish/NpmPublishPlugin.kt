@@ -121,7 +121,7 @@ class NpmPublishPlugin : Plugin<Project> {
             }
         }
       }
-      if(pubTasks.isNotEmpty()) {
+      if (pubTasks.isNotEmpty()) {
         publishTask.enabled = true
       }
     }
