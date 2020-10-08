@@ -7,8 +7,11 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.core.spec.style.scopes.WordSpecTerminalScope
 import io.kotest.matchers.string.shouldContainIgnoringCase
 import io.kotest.matchers.string.shouldNotContainIgnoringCase
+import lt.petuska.kpm.publish.util.assembleTaskName
 import lt.petuska.kpm.publish.util.buildGradleFile
 import lt.petuska.kpm.publish.util.gradleExec
+import lt.petuska.kpm.publish.util.kpmPublishStub
+import lt.petuska.kpm.publish.util.publishTaskName
 import org.gradle.testkit.runner.BuildResult
 import java.io.File
 
@@ -16,11 +19,12 @@ private suspend fun WordSpecTerminalScope.taskCreationTest(
   kotlinPlugin: String,
   jsTargets: List<String> = listOf(),
   jvmTargets: List<String> = listOf(),
+  repositories: List<String> = listOf("npmjs"),
   expectedMissingTasks: List<String> = listOf()
 ) {
   val jsPlugin = kotlinPlugin.equals("js", true)
   fun execute(): BuildResult {
-    val jsBlock = jsTargets.joinToString(";") { "${if (!jsPlugin) "js(\"$it\")" else "target"} {browser()}" }
+    val jsBlock = jsTargets.joinToString(";") { "${if (!jsPlugin) "js(\"$it\")" else "js"} {browser()}" }
     val jvmBlock = if (jsPlugin) {
       ""
     } else {
@@ -33,7 +37,26 @@ private suspend fun WordSpecTerminalScope.taskCreationTest(
         }
     """.trimIndent()
     return File("build/functionalTest").gradleExec(
-      buildGradleFile(kotlinPlugin, kotlinBlock),
+      buildGradleFile(kotlinPlugin, kotlinBlock) {
+        val repos = repositories.joinToString("\n") {
+          """
+            repository("$it") {
+              registry = uri("https://registry.$it.org")
+              authToken = "asdhkjsdfjvhnsdrishdl"
+              otp = "gfahsdjglknamsdkpjnmasdl"
+            }
+          """.trimIndent()
+        }
+        appendln(
+          """
+          kpmPublish {
+            repositories {
+              $repos
+            }
+          }
+          """.trimIndent()
+        )
+      },
       "tasks",
       "--all",
       "--stacktrace"
@@ -43,14 +66,23 @@ private suspend fun WordSpecTerminalScope.taskCreationTest(
   val result = execute()
 
   // Verify the result
+  fun verifyRepos(pub: String, contains: Boolean) {
+    repositories.forEach {
+      if (contains) {
+        result.output shouldContainIgnoringCase publishTaskName(pub, it)
+      } else {
+        result.output shouldNotContainIgnoringCase publishTaskName(pub, it)
+      }
+    }
+  }
   jsTargets.forEach {
-    val name = if (jsPlugin) "" else it
-    result.output shouldContainIgnoringCase "assemble${name}KpmPublication"
-    result.output shouldContainIgnoringCase "publish${name}KpmPublication"
+    val name = if (jsPlugin) "js" else it
+    result.output shouldContainIgnoringCase assembleTaskName(name)
+    verifyRepos(name, true)
   }
   jvmTargets.forEach {
-    result.output shouldNotContainIgnoringCase "assemble${it}KpmPublication"
-    result.output shouldNotContainIgnoringCase "publish${it}KpmPublication"
+    result.output shouldNotContainIgnoringCase assembleTaskName(it)
+    verifyRepos(it, false)
   }
   expectedMissingTasks.forEach {
     result.output shouldNotContainIgnoringCase it
@@ -72,8 +104,8 @@ class KpmPublishPluginFunctionalTest : WordSpec(
           "multiplatform",
           jvmTargets = listOf("jvm"),
           expectedMissingTasks = listOf(
-            "assembleJsKpmPublication",
-            "publishJsKpmPublication"
+            assembleTaskName("js"),
+            publishTaskName("js")
           )
         )
       }
@@ -83,29 +115,23 @@ class KpmPublishPluginFunctionalTest : WordSpec(
           jsTargets = listOf("jsOne", "jsTwo"),
           jvmTargets = listOf("jvm"),
           expectedMissingTasks = listOf(
-            "assembleJsKpmPublication",
-            "publishJsKpmPublication"
+            assembleTaskName("js"),
+            publishTaskName("js")
           )
         )
       }
       "Create tasks for Kotlin/JS given [default JS target]" {
         taskCreationTest(
           "js",
-          jsTargets = listOf("jsOne"),
-          expectedMissingTasks = listOf(
-            "assembleJsKpmPublication",
-            "publishJsKpmPublication"
-          )
+          jsTargets = listOf("jsOne")
         )
       }
       "Not create tasks for no kotlin plugin given [default JS target]" {
         taskCreationTest(
           "",
           expectedMissingTasks = listOf(
-            "assembleJsKpmPublication",
-            "assembleKpmPublication",
-            "publishJsKpmPublication",
-            "publishKpmPublication"
+            assembleTaskName("js"),
+            publishTaskName("js")
           )
         )
       }
@@ -126,7 +152,7 @@ class KpmPublishPluginFunctionalTest : WordSpec(
       }
             """.trimIndent()
           ),
-          "assembleKpmPublication",
+          assembleTaskName("js"),
           "--stacktrace"
         )
       }
@@ -148,7 +174,7 @@ class KpmPublishPluginFunctionalTest : WordSpec(
       }
             """.trimIndent()
           ),
-          "assembleJsKpmPublication",
+          assembleTaskName("js"),
           "--stacktrace"
         )
       }
@@ -167,8 +193,10 @@ class KpmPublishPluginFunctionalTest : WordSpec(
         }
       }
             """.trimIndent()
-          ),
-          "publishKpmPublication",
+          ) {
+            appendln(kpmPublishStub)
+          },
+          publishTaskName("js"),
           "--stacktrace",
           "-Pkpm.publish.dry=true"
         )
@@ -190,8 +218,10 @@ class KpmPublishPluginFunctionalTest : WordSpec(
         }
       }
             """.trimIndent()
-          ),
-          "publishCustomJsKpmPublication",
+          ) {
+            appendln(kpmPublishStub)
+          },
+          publishTaskName("CustomJS"),
           "--stacktrace",
           "-Pkpm.publish.dry=true"
         )

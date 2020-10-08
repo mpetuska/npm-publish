@@ -44,9 +44,6 @@ class KpmPublishPluginTest : WordSpec(
       "Register the '$EXTENSION_NAME' extension if MPP plugin is applied" {
         registeringTest("org.jetbrains.kotlin.multiplatform", true)
       }
-      "Not register the '$EXTENSION_NAME' extension if JVM plugin is applied" {
-        registeringTest("org.jetbrains.kotlin.jvm", false)
-      }
     }
   }
 )

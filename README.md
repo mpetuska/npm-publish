@@ -10,7 +10,7 @@ plugins {
 }
 
 kotlin {
-  target {
+  js {
     browser() // or nodejs()
   }
   dependencies {
@@ -27,31 +27,43 @@ existing configuration defaults via kpmPublish extension:
 kpmPublish {
   readme = file("README.MD") // (optional) Default readme file
   organization = "my.org" // (Optional) Used as default scope for all publications
-  registry = "https://registry.npmjs.org" // (Optional) Default registry to publish to, defaults to "https://registry.npmjs.org"
-  authToken = "asdhkjsdfjvhnsdrishdl" // NPM registry authentication token
-  otp = "gfahsdjglknamsdkpjnmasdl" // NPM registry authentication OTP, can be overridden for each publication
-  access = "public" // or restricted. Specifies package visibility, defaults to "public"
+  access = NpmAccess.PUBLIC // or NpmAccess.RESTRICTED. Specifies package visibility, defaults to NpmAccess.PUBLIC
   
+  repositories {
+    repository("npmjs") {      
+      registry = uri("https://registry.npmjs.org") // Registry to publish to
+      authToken = "asdhkjsdfjvhnsdrishdl" // NPM registry authentication token
+      otp = "gfahsdjglknamsdkpjnmasdl" // NPM registry authentication OTP
+    }
+    repository("bintray") {   
+      access = NpmAccess.RESTRICTED   
+      registry = ("https://dl.bintray.com/mpetuska/lt.petuska.npm") // Registry to publish to
+      authToken = "sngamascdgb" // NPM registry authentication token
+      otp = "miopuhimpdfsazxfb" // (Optional) NPM registry authentication OTP
+    }
+  }
   publications {
     val jsOne by getting { // Publication build for target declared as `kotlin { js("jsOne") { nodejs() } }`
       scope = "not.my.org" // Overriding package scope that defaulted to organization property from before
     }
     publication("customPublication") { //Custom publication
-      compilation = jsOne.compilation // Set the kotlin JS compilation to get JS files from
+      nodeJsDir = file("~/nodejs") // NodeJs home directory. Defaults to $NODE_HOME if present or kotlinNodeJsSetup output for default publications
       moduleName = "my-module-name-override" // Defaults to project name
       scope = "other.comp"
       readme = file("docs/OTHER.MD")
-      registry = "https://registry.mycomp.com/private/"
-      authToken = "otherauthtokenihjzsd"
       destinationDir = file("$buildDir/vipPackage") // Package collection directory, defaults to File($buildDir/publications/kpm/$name")
-      otp = null
-      access = "restricted"
+      main = "my-module-name-override-js.js" // Main output file name, set automatically for default publications
+      
+      files { // Specifies what files should be packaged. Preconfigured for default publications, yet can be extended if needed
+        from("../dir")
+        // Rest of your CopySpec     
+      }
     }
   }
 }
 ```
 
 There are also few project properties you can use from cmd line (`./gradlew task -Pprop.name=propValue`):
-* `kpm.publish.authToken` To pass in authToken
-* `kpm.publish.otp` To pass in OTP
+* `kpm.publish.authToken.<repoName>` To pass in authToken
+* `kpm.publish.otp.<repoName>` To pass in OTP
 * `kpm.publish.dry` To run npm publishing with `--dry-run` (does everything except uploading the files)

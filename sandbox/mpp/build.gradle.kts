@@ -1,5 +1,5 @@
 plugins {
-  id("lt.petuska.kpm.publish") version "0.0.2"
+  id("lt.petuska.kpm.publish") version "0.0.4"
   kotlin("multiplatform") version "1.4.10"
 }
 
@@ -21,6 +21,15 @@ kotlin {
         implementation(npm("axios", "*"))
         api(npm("snabbdom", "*"))
       }
+    }
+  }
+}
+
+kpmPublish {
+  repositories {
+    repository("npmjs") {
+      registry = uri("https://registry.npmjs.org")
+      authToken = "asdhkjsdfjvhnsdrishdl"
     }
   }
 }

@@ -26,7 +26,7 @@ apply(plugin = "binary-compatibility-validator")
 configure<ApiValidationExtension> {}
 
 group = "lt.petuska"
-version = "0.0.3"
+version = "0.0.4"
 
 idea {
   module {
@@ -89,7 +89,7 @@ tasks {
     useJUnitPlatform()
     group = "verification"
   }
-  val check by getting(Task::class) {
+  named("check") {
     dependsOn(functionalTest)
   }
 }
@@ -114,7 +114,7 @@ publishing {
   publications {
     repositories {
       maven {
-        name = "bintray"
+        name = "Bintray"
         url = uri(
           "https://api.bintray.com/maven/${System.getenv("BINTRAY_USER")}/${project.group}/${project.name}/" +
             ";publish=${if ("true".equals(project.properties["publish"] as? String?, true)) 1 else 0}" +
@@ -123,6 +123,26 @@ publishing {
         credentials {
           username = System.getenv("BINTRAY_USER")
           password = System.getenv("BINTRAY_KEY")
+        }
+      }
+      maven {
+        name = "GitLab"
+        url = uri(
+          "https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/packages"
+        )
+        credentials(HttpHeaderCredentials::class) {
+          val jobToken = System.getenv("CI_JOB_TOKEN")
+          if (jobToken != null) {
+            // GitLab CI
+            name = "Job-Token"
+            value = jobToken
+          } else {
+            name = "Private-Token"
+            value = System.getenv("PRIVATE_TOKEN")
+          }
+        }
+        authentication {
+          create<HttpHeaderAuthentication>("header")
         }
       }
     }
@@ -150,11 +170,9 @@ afterEvaluate {
     val publish by getting
 
     register("gitLabRelease") {
-      dependsOn(publish)
       group = publish.group!!
 
       doFirst {
-
         fun buildPackageLink(prj: Project) =
           """
           {
@@ -202,7 +220,7 @@ afterEvaluate {
         println(responseStatus)
         println(responseBody)
         con.disconnect()
-        if (con.responseCode >= 400) throw GradleException("Invalid GitLab response. StatusCode: ${responseStatus}, message: $responseBody")
+        if (con.responseCode >= 400) throw GradleException("Invalid GitLab response. StatusCode: $responseStatus, message: $responseBody")
       }
     }
   }

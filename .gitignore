@@ -5,3 +5,4 @@
 build
 .idea/
 local.properties
+apiDiff.api

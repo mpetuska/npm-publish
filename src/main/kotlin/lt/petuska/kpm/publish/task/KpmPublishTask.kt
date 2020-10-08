@@ -2,6 +2,7 @@ package lt.petuska.kpm.publish.task
 
 import lt.petuska.kpm.publish.dsl.KpmPublication
 import lt.petuska.kpm.publish.dsl.KpmPublishExtension
+import lt.petuska.kpm.publish.dsl.KpmRepository
 import lt.petuska.kpm.publish.util.fallbackDelegate
 import lt.petuska.kpm.publish.util.gradleProperty
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -10,29 +11,31 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import javax.inject.Inject
 
 open class KpmPublishTask @Inject constructor(
-  kpmPublication: KpmPublication
+  publication: KpmPublication,
+  repository: KpmRepository
 ) : DefaultTask() {
+  @get:InputDirectory
+  var nodeJsDir by publication.fallbackDelegate(KpmPublication::nodeJsDir)
 
   @get:Input
-  var registry by kpmPublication.fallbackDelegate(KpmPublication::registry)
+  var registry by repository.fallbackDelegate(KpmRepository::registry)
 
   @get:Input
-  var access by kpmPublication.fallbackDelegate(KpmPublication::access)
+  var access by repository.fallbackDelegate(KpmRepository::access)
 
   @get:Input
   @get:Optional
-  var authToken by kpmPublication.fallbackDelegate(KpmPublication::authToken)
+  var authToken by repository.fallbackDelegate(KpmRepository::authToken)
 
   @get:InputDirectory
-  var packageDir by kpmPublication.fallbackDelegate(KpmPublication::destinationDir)
+  var packageDir by publication.fallbackDelegate(KpmPublication::destinationDir)
 
   @get:Input
   @get:Optional
-  var otp by kpmPublication.fallbackDelegate(KpmPublication::otp)
+  var otp by repository.fallbackDelegate(KpmRepository::otp)
 
   @get:Input
   var dry by project.gradleProperty(
@@ -40,24 +43,20 @@ open class KpmPublishTask @Inject constructor(
       ?: false
   )
 
-  private val kotlinNodeJsSetupTask by lazy {
-    project.tasks.getByName("kotlinNodeJsSetup") as NodeJsSetupTask
-  }
-
   init {
     group = "publish"
-    description = "Publishes ${kpmPublication.name} NPM module"
+    description = "Publishes ${publication.name} NPM module to ${repository.name} NPM repository"
   }
 
   private val npm by lazy {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-      kotlinNodeJsSetupTask.destination
+      nodeJsDir!!
         .resolve("node_modules")
         .resolve("npm")
         .resolve("bin")
         .resolve("npm-cli.js")
     } else {
-      kotlinNodeJsSetupTask.destination
+      nodeJsDir!!
         .resolve("lib")
         .resolve("node_modules")
         .resolve("npm")
@@ -69,10 +68,10 @@ open class KpmPublishTask @Inject constructor(
   private val node by lazy {
     // For some unknown reason, the node distribution's structure is different on Windows and UNIX.
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-      kotlinNodeJsSetupTask.destination
+      nodeJsDir!!
         .resolve("node.exe")
     } else {
-      kotlinNodeJsSetupTask.destination
+      nodeJsDir!!
         .resolve("bin")
         .resolve("node")
     }
@@ -87,8 +86,8 @@ open class KpmPublishTask @Inject constructor(
         "publish",
         packageDir,
         "--access $access",
-        "--registry=${registry.removeSuffix("/")}/",
-        "--//${registry.substringAfter("//").removeSuffix("/")}/:_authToken=$authToken",
+        "--registry=${registry!!.scheme}://${registry!!.authority}/",
+        "--//${registry!!.authority}/:_authToken=$authToken",
         if (otp != null) "--otp $otp" else null,
         if (dry) "--dry-run" else ""
       ).toTypedArray()

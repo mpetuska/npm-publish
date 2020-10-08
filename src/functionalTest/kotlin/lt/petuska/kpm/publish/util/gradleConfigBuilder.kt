@@ -50,3 +50,16 @@ fun File.gradleExec(buildFile: String, vararg args: String): BuildResult {
     .withArguments(*args)
     .build()
 }
+
+val kpmPublishStub =
+  """
+kpmPublish {
+  repositories {
+    repository("$defaultRepoName") {
+      registry = uri("https://registry.$defaultRepoName.org")
+      authToken = "asdhkjsdfjvhnsdrishdl"
+      otp = "gfahsdjglknamsdkpjnmasdl"
+    }
+  }
+}
+  """.trimIndent()
