@@ -9,4 +9,4 @@ pluginManagement {
         maven("https://kotlin.bintray.com/kotlinx")
     }
 }
-rootProject.name = "kpm-publish"
+rootProject.name = "npm-publish"

@@ -1,4 +1,4 @@
-package lt.petuska.kpm.publish.util
+package lt.petuska.npm.publish.util
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

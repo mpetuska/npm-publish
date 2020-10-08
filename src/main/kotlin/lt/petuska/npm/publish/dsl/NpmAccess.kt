@@ -1,4 +1,4 @@
-package lt.petuska.kpm.publish.dsl
+package lt.petuska.npm.publish.dsl
 
 enum class NpmAccess {
   PUBLIC,

@@ -1,4 +1,4 @@
-package lt.petuska.kpm.publish.util
+package lt.petuska.npm.publish.util
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -11,7 +11,7 @@ fun buildGradleFile(
 ) =
   """
 plugins {
-  id("lt.petuska.kpm.publish")
+  id("lt.petuska.npm.publish")
   ${if (kotlinPlugin.isNotEmpty()) "kotlin(\"$kotlinPlugin\") version \"1.4.10\"" else ""}
 }
 
@@ -51,9 +51,9 @@ fun File.gradleExec(buildFile: String, vararg args: String): BuildResult {
     .build()
 }
 
-val kpmPublishStub =
+val npmPublishStub =
   """
-kpmPublish {
+npmPublishing {
   repositories {
     repository("$defaultRepoName") {
       registry = uri("https://registry.$defaultRepoName.org")

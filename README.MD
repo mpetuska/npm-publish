@@ -1,11 +1,11 @@
-# kpm-publish
+# npm-publish
 
 Gradle plugin enabling NPM publishing for Kotlin/JS (including MPP)
 
 ## Setup
 ```kotlin
 plugins {
-  id("lt.petuska.kpm.publish") version "<VERSION>"
+  id("lt.petuska.npm.publish") version "<VERSION>"
   kotlin("js") version "1.4.0"
 }
 
@@ -22,9 +22,9 @@ kotlin {
 
 ### Configuration
 The plugin will create a publication for each JS target you JS/MPP project has. You can add additional targets or override
-existing configuration defaults via kpmPublish extension:
+existing configuration defaults via npmPublishing extension:
 ```kotlin
-kpmPublish {
+npmPublishing {
   readme = file("README.MD") // (optional) Default readme file
   organization = "my.org" // (Optional) Used as default scope for all publications
   access = NpmAccess.PUBLIC // or NpmAccess.RESTRICTED. Specifies package visibility, defaults to NpmAccess.PUBLIC
@@ -51,7 +51,7 @@ kpmPublish {
       moduleName = "my-module-name-override" // Defaults to project name
       scope = "other.comp"
       readme = file("docs/OTHER.MD")
-      destinationDir = file("$buildDir/vipPackage") // Package collection directory, defaults to File($buildDir/publications/kpm/$name")
+      destinationDir = file("$buildDir/vipPackage") // Package collection directory, defaults to File($buildDir/publications/npm/$name")
       main = "my-module-name-override-js.js" // Main output file name, set automatically for default publications
 
       // Entirely Optional
@@ -78,6 +78,6 @@ kpmPublish {
 ```
 
 There are also few project properties you can use from cmd line (`./gradlew task -Pprop.name=propValue`):
-* `kpm.publish.authToken.<repoName>` To pass in authToken
-* `kpm.publish.otp.<repoName>` To pass in OTP
-* `kpm.publish.dry` To run npm publishing with `--dry-run` (does everything except uploading the files)
+* `npm.publish.authToken.<repoName>` To pass in authToken
+* `npm.publish.otp.<repoName>` To pass in OTP
+* `npm.publish.dry` To run npm publishing with `--dry-run` (does everything except uploading the files)

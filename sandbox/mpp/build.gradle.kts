@@ -1,5 +1,5 @@
 plugins {
-  id("lt.petuska.kpm.publish") version "0.0.4"
+  id("lt.petuska.npm.publish") version "0.0.4"
   kotlin("multiplatform") version "1.4.10"
 }
 
@@ -25,7 +25,7 @@ kotlin {
   }
 }
 
-kpmPublish {
+npmPublishing {
   repositories {
     repository("npmjs") {
       registry = uri("https://registry.npmjs.org")

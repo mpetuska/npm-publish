@@ -26,7 +26,7 @@ apply(plugin = "binary-compatibility-validator")
 configure<ApiValidationExtension> {}
 
 group = "lt.petuska"
-version = "0.0.4"
+version = "0.0.5"
 
 idea {
     module {
@@ -47,27 +47,28 @@ repositories {
 }
 
 dependencies {
-    api(platform(kotlin("bom", "1.4.10")))
     api(kotlin("gradle-plugin", "1.4.10"))
-    api(kotlin("reflect", "1.4.10"))
     testImplementation("io.kotest:kotest-runner-junit5:4.1.0")
 }
 
 gradlePlugin {
     plugins {
         create(project.name) {
-            id = "lt.petuska.kpm.publish"
+            id = "lt.petuska.npm.publish"
             displayName = "Kotlin/JS publishing to NPM repositories"
             description =
-                "Integrates with kotlin JS/MPP plugins to setup publishing to NPM repositories for all JS targets"
-            implementationClass = "lt.petuska.kpm.publish.KpmPublishPlugin"
+                """
+              Integrates with kotlin JS/MPP plugins to setup publishing to NPM repositories for all JS targets.
+              Also allows for arbitrary non-kotlin publications
+                """.trimIndent()
+            implementationClass = "lt.petuska.npm.publish.NpmPublishPlugin"
         }
     }
 }
 
 pluginBundle {
-    website = "https://gitlab.com/lt.petuska/kpm-publish/-/wikis/home"
-    vcsUrl = "https://gitlab.com/lt.petuska/kpm-publish"
+    website = "https://gitlab.com/lt.petuska/npm-publish/-/wikis/home"
+    vcsUrl = "https://gitlab.com/lt.petuska/npm-publish"
     tags = listOf("npm", "publishing", "kotlin", "node")
 }
 

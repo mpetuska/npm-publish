@@ -1,10 +1,10 @@
-package lt.petuska.kpm.publish.task
+package lt.petuska.npm.publish.task
 
-import lt.petuska.kpm.publish.dsl.KpmPublication
-import lt.petuska.kpm.publish.dsl.KpmPublishExtension
-import lt.petuska.kpm.publish.dsl.KpmRepository
-import lt.petuska.kpm.publish.util.fallbackDelegate
-import lt.petuska.kpm.publish.util.gradleProperty
+import lt.petuska.npm.publish.dsl.NpmPublication
+import lt.petuska.npm.publish.dsl.NpmPublishExtension
+import lt.petuska.npm.publish.dsl.NpmRepository
+import lt.petuska.npm.publish.util.fallbackDelegate
+import lt.petuska.npm.publish.util.gradleProperty
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -13,33 +13,33 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
-open class KpmPublishTask @Inject constructor(
-  publication: KpmPublication,
-  repository: KpmRepository
+open class NpmPublishTask @Inject constructor(
+  publication: NpmPublication,
+  repository: NpmRepository
 ) : DefaultTask() {
   @get:InputDirectory
-  var nodeJsDir by publication.fallbackDelegate(KpmPublication::nodeJsDir)
+  var nodeJsDir by publication.fallbackDelegate(NpmPublication::nodeJsDir)
 
   @get:Input
-  var registry by repository.fallbackDelegate(KpmRepository::registry)
+  var registry by repository.fallbackDelegate(NpmRepository::registry)
 
   @get:Input
-  var access by repository.fallbackDelegate(KpmRepository::access)
+  var access by repository.fallbackDelegate(NpmRepository::access)
 
   @get:Input
   @get:Optional
-  var authToken by repository.fallbackDelegate(KpmRepository::authToken)
+  var authToken by repository.fallbackDelegate(NpmRepository::authToken)
 
   @get:InputDirectory
-  var packageDir by publication.fallbackDelegate(KpmPublication::destinationDir)
+  var packageDir by publication.fallbackDelegate(NpmPublication::destinationDir)
 
   @get:Input
   @get:Optional
-  var otp by repository.fallbackDelegate(KpmRepository::otp)
+  var otp by repository.fallbackDelegate(NpmRepository::otp)
 
   @get:Input
   var dry by project.gradleProperty(
-    (project.properties[KpmPublishExtension.DRY_RUN_PROP] as String?)?.toBoolean()
+    (project.properties[NpmPublishExtension.DRY_RUN_PROP] as String?)?.toBoolean()
       ?: false
   )
 

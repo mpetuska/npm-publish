@@ -1,7 +1,7 @@
-package lt.petuska.kpm.publish.task
+package lt.petuska.npm.publish.task
 
-import lt.petuska.kpm.publish.dsl.KpmPublication
-import lt.petuska.kpm.publish.util.fallbackDelegate
+import lt.petuska.npm.publish.dsl.NpmPublication
+import lt.petuska.npm.publish.util.fallbackDelegate
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ReplacedBy
 import org.gradle.api.tasks.Input
@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
 import javax.inject.Inject
 
-open class KpmPackagePrepareTask @Inject constructor(
-  publication: KpmPublication
+open class NpmPackagePrepareTask @Inject constructor(
+  publication: NpmPublication
 ) : DefaultTask() {
   private val fileSpecs = publication.fileSpecs
   private val packageJsonOverride = publication.packageJson
@@ -23,14 +23,14 @@ open class KpmPackagePrepareTask @Inject constructor(
 
   @get:InputFile
   @get:Optional
-  var readme by publication.fallbackDelegate(KpmPublication::readme)
+  var readme by publication.fallbackDelegate(NpmPublication::readme)
 
   @get:Input
   @get:Optional
-  var scope by publication.fallbackDelegate(KpmPublication::scope)
+  var scope by publication.fallbackDelegate(NpmPublication::scope)
 
   @get:ReplacedBy("npmDependenciesStr")
-  var npmDependencies by publication.fallbackDelegate(KpmPublication::npmDependencies)
+  var npmDependencies by publication.fallbackDelegate(NpmPublication::npmDependencies)
 
   @get:Input
   val npmDependenciesStr
@@ -39,16 +39,16 @@ open class KpmPackagePrepareTask @Inject constructor(
     }
 
   @get:Input
-  var main by publication.fallbackDelegate(KpmPublication::main)
+  var main by publication.fallbackDelegate(NpmPublication::main)
 
   @get:Input
-  var packageName by publication.fallbackDelegate(KpmPublication::moduleName)
+  var packageName by publication.fallbackDelegate(NpmPublication::moduleName)
 
   @get:Input
   val version = project.version as String
 
   @get:OutputDirectory
-  var destinationDir by publication.fallbackDelegate(KpmPublication::destinationDir)
+  var destinationDir by publication.fallbackDelegate(NpmPublication::destinationDir)
 
   init {
     group = "build"
@@ -77,7 +77,7 @@ open class KpmPackagePrepareTask @Inject constructor(
         if (packageJsonOverride != null) {
           packageJsonOverride.invoke(this)
         } else {
-          main = this@KpmPackagePrepareTask.main
+          main = this@NpmPackagePrepareTask.main
           npmDependencies.forEach { dep ->
             when (dep.scope) {
               NpmDependency.Scope.NORMAL -> this.dependencies

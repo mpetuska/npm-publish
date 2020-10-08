@@ -1,9 +1,11 @@
-package lt.petuska.kpm.publish
+package lt.petuska.npm.publish
 
-import lt.petuska.kpm.publish.dsl.KpmPublishExtension
-import lt.petuska.kpm.publish.dsl.KpmPublishExtension.Companion.EXTENSION_NAME
-import lt.petuska.kpm.publish.task.KpmPackagePrepareTask
-import lt.petuska.kpm.publish.task.KpmPublishTask
+import lt.petuska.npm.publish.NpmPublishPlugin.Companion.configureExtension
+import lt.petuska.npm.publish.NpmPublishPlugin.Companion.configureTasks
+import lt.petuska.npm.publish.dsl.NpmPublishExtension
+import lt.petuska.npm.publish.dsl.NpmPublishExtension.Companion.EXTENSION_NAME
+import lt.petuska.npm.publish.task.NpmPackagePrepareTask
+import lt.petuska.npm.publish.task.NpmPublishTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -16,22 +18,22 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
-class KpmPublishPlugin : Plugin<Project> {
+class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.createExtension()
     project.afterEvaluate { prj ->
       prj.pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
         prj.extensions.configure(KotlinMultiplatformExtension::class.java) {
           it.targets.filterIsInstance<KotlinJsTarget>().forEach { t ->
-            prj.configureExtension(t.name, t.compilations, true)
-            prj.configureTasks()
+            prj.configureExtension(t.name, t.compilations)
           }
+          prj.configureTasks()
         }
       }
       prj.pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
         prj.extensions.configure(KotlinJsProjectExtension::class.java) {
           val target = it.js()
-          prj.configureExtension(target.name, target.compilations, false)
+          prj.configureExtension(target.name, target.compilations)
           prj.configureTasks()
         }
       }
@@ -43,13 +45,13 @@ class KpmPublishPlugin : Plugin<Project> {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
 
-    private fun Project.createExtension() = extensions.findByType(KpmPublishExtension::class.java) ?: extensions.create(
+    private fun Project.createExtension() = extensions.findByType(NpmPublishExtension::class.java) ?: extensions.create(
       EXTENSION_NAME,
-      KpmPublishExtension::class.java,
+      NpmPublishExtension::class.java,
       this@createExtension
     )
 
-    private fun Project.configureExtension(targetName: String, compilations: NamedDomainObjectContainer<out KotlinJsCompilation>, mpp: Boolean) {
+    private fun Project.configureExtension(targetName: String, compilations: NamedDomainObjectContainer<out KotlinJsCompilation>) {
       val compilation = compilations.first { comp -> comp.name.contains("main", true) }
       val deps = compilation.relatedConfigurationNames.flatMap { conf ->
         val mainName = "${targetName}Main${conf.substringAfter(targetName)}"
@@ -58,7 +60,7 @@ class KpmPublishPlugin : Plugin<Project> {
         (normDeps + mainDeps).filterIsInstance<NpmDependency>()
       }
 
-      kpmPublish {
+      npmPublishing {
         publications {
           publication(targetName) {
             this.compilation = compilation
@@ -76,11 +78,11 @@ class KpmPublishPlugin : Plugin<Project> {
       val publishTask = tasks.findByName("publish")
       val assembleTask = tasks.findByName("assemble")
 
-      val publications = kpmPublish.publications.mapNotNull { pub ->
+      val publications = npmPublishing.publications.mapNotNull { pub ->
         val needsNode = pub.nodeJsDir == null
         pub.validate(nodeJsSetupTask?.destination)?.let { it to nodeJsSetupTask?.takeIf { needsNode } }
       }
-      val repositories = kpmPublish.repositories.mapNotNull { repo ->
+      val repositories = npmPublishing.repositories.mapNotNull { repo ->
         repo.validate()
       }
 
@@ -94,9 +96,9 @@ class KpmPublishPlugin : Plugin<Project> {
         }
         val upperName = GUtil.toCamelCase(pub.name)
 
-        val assembleTaskName = "assemble${upperName}KpmPublication"
+        val assembleTaskName = "assemble${upperName}NpmPublication"
         val assemblePackageTask = tasks.findByName(assembleTaskName)
-          ?: tasks.register(assembleTaskName, KpmPackagePrepareTask::class.java, pub).also { task ->
+          ?: tasks.register(assembleTaskName, NpmPackagePrepareTask::class.java, pub).also { task ->
             task.configure {
               it.dependsOn(
                 *listOfNotNull(
@@ -110,9 +112,9 @@ class KpmPublishPlugin : Plugin<Project> {
           }
         repositories.map { repo ->
           val upperRepoName = GUtil.toCamelCase(repo.name)
-          val publishTaskName = "publish${upperName}KpmPublicationTo$upperRepoName"
+          val publishTaskName = "publish${upperName}NpmPublicationTo$upperRepoName"
           tasks.findByName(publishTaskName)
-            ?: tasks.register(publishTaskName, KpmPublishTask::class.java, pub, repo).also { task ->
+            ?: tasks.register(publishTaskName, NpmPublishTask::class.java, pub, repo).also { task ->
               task.configure {
                 it.dependsOn(assemblePackageTask)
               }
@@ -124,9 +126,9 @@ class KpmPublishPlugin : Plugin<Project> {
   }
 }
 
-internal val Project.kpmPublish: KpmPublishExtension
-  get() = extensions.getByName(EXTENSION_NAME) as? KpmPublishExtension
+internal val Project.npmPublishing: NpmPublishExtension
+  get() = extensions.getByName(EXTENSION_NAME) as? NpmPublishExtension
     ?: throw IllegalStateException("$EXTENSION_NAME is not of the correct type")
 
-internal fun Project.kpmPublish(config: KpmPublishExtension.() -> Unit = {}): KpmPublishExtension =
-  kpmPublish.apply(config)
+internal fun Project.npmPublishing(config: NpmPublishExtension.() -> Unit = {}): NpmPublishExtension =
+  npmPublishing.apply(config)

@@ -1,8 +1,8 @@
-package lt.petuska.kpm.publish.dsl
+package lt.petuska.npm.publish.dsl
 
-import lt.petuska.kpm.publish.util.fallbackDelegate
-import lt.petuska.kpm.publish.util.gradleNullableProperty
-import lt.petuska.kpm.publish.util.gradleProperty
+import lt.petuska.npm.publish.util.fallbackDelegate
+import lt.petuska.npm.publish.util.gradleNullableProperty
+import lt.petuska.npm.publish.util.gradleProperty
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
 import org.gradle.util.GUtil
@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
 
-class KpmPublication internal constructor(
+class NpmPublication internal constructor(
   name: String,
   private val project: Project,
-  extension: KpmPublishExtension,
+  extension: NpmPublishExtension,
   val npmDependencies: MutableList<NpmDependency> = mutableListOf()
 ) {
   val name: String = GUtil.toLowerCamelCase(name)
   var moduleName: String by project.gradleProperty(project.name)
-  var scope by extension.fallbackDelegate(KpmPublishExtension::organization)
-  var readme by extension.fallbackDelegate(KpmPublishExtension::readme)
-  var destinationDir by project.gradleProperty(File("${project.buildDir}/publications/kpm/${this.name}"))
+  var scope by extension.fallbackDelegate(NpmPublishExtension::organization)
+  var readme by extension.fallbackDelegate(NpmPublishExtension::readme)
+  var destinationDir by project.gradleProperty(File("${project.buildDir}/publications/npm/${this.name}"))
   var main by project.gradleNullableProperty<String>()
   var nodeJsDir by project.gradleNullableProperty(System.getenv("NODE_HOME")?.let(::File))
   internal var compilation by project.gradleNullableProperty<KotlinJsCompilation>()
@@ -48,7 +48,7 @@ class KpmPublication internal constructor(
   fun MutableList<NpmDependency>.npmOptional(name: String, version: String) = dependency(name, version, NpmDependency.Scope.OPTIONAL)
   fun MutableList<NpmDependency>.npmPeer(name: String, version: String) = dependency(name, version, NpmDependency.Scope.PEER)
 
-  internal fun validate(alternativeNodeJsDir: File?): KpmPublication? {
+  internal fun validate(alternativeNodeJsDir: File?): NpmPublication? {
     nodeJsDir = nodeJsDir ?: alternativeNodeJsDir
     return takeIf { nodeJsDir != null }
   }

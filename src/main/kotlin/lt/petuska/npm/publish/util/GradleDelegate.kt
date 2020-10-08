@@ -1,4 +1,4 @@
-package lt.petuska.kpm.publish.util
+package lt.petuska.npm.publish.util
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
