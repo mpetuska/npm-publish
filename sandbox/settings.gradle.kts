@@ -1,4 +1,4 @@
-rootProject.name = "sandbox-mpp"
+rootProject.name = "sandbox"
 pluginManagement {
   repositories {
     mavenLocal()
@@ -11,3 +11,5 @@ pluginManagement {
     maven("https://dl.bintray.com/mpetuska/lt.petuska")
   }
 }
+
+include(":js", ":mpp")

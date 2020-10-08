@@ -1,22 +1,28 @@
 plugins {
-  id("lt.petuska.npm.publish")
-  kotlin("multiplatform")
-  `maven-publish`
+  id("lt.petuska.npm.publish") version "0.0.5"
+  kotlin("multiplatform") version "1.4.10"
 }
 
-repositories {
-  jcenter()
-  mavenCentral()
+allprojects {
+  group = "lt.petuska"
+  version = "0.0.5"
+
+  repositories {
+    jcenter()
+    mavenCentral()
+  }
 }
 
 kotlin {
   js { browser() }
+  jvm()
 
   sourceSets {
     val jsMain by getting {
       dependencies {
-        implementation(devNpm("axios", "*"))
-        api(npm("snabbdom", "*"))
+        implementation(npm("axios", "*"))
+        api(peerNpm("snabbdom", "*"))
+        api(optionalNpm("react", "*"))
       }
     }
   }
@@ -31,3 +37,4 @@ npmPublishing {
     }
   }
 }
+

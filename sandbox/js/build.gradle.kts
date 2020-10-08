@@ -1,13 +1,7 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
-  kotlin("js") version "1.4.10"
-  id("lt.petuska.npm.publish") version "0.0.5"
+  kotlin("js")
+  id("lt.petuska.npm.publish")
 }
-
-group = "lt.petuska"
-version = "0.0.5"
-
 
 repositories {
   jcenter()

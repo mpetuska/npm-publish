@@ -18,24 +18,24 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
 class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    project.createExtension()
+    val extension = project.createExtension()
     project.afterEvaluate { prj ->
       prj.pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
         prj.extensions.configure(KotlinMultiplatformExtension::class.java) {
           it.targets.filterIsInstance<KotlinJsTarget>().forEach { t ->
-            prj.configureExtension(t.name, t.compilations)
+            prj.configureExtension(extension, t.name, t.compilations)
           }
-          prj.configureTasks()
+          // prj.configureTasks(extension)
         }
       }
       prj.pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
         prj.extensions.configure(KotlinJsProjectExtension::class.java) {
           val target = it.js()
-          prj.configureExtension(target.name, target.compilations)
-          prj.configureTasks()
+          prj.configureExtension(extension, target.name, target.compilations)
+          // prj.configureTasks(extension)
         }
       }
-      prj.configureTasks()
+      prj.configureTasks(extension)
     }
   }
 
@@ -50,7 +50,7 @@ class NpmPublishPlugin : Plugin<Project> {
       this@createExtension
     )
 
-    private fun Project.configureExtension(targetName: String, compilations: NamedDomainObjectContainer<out KotlinJsCompilation>) {
+    private fun Project.configureExtension(extension: NpmPublishExtension, targetName: String, compilations: NamedDomainObjectContainer<out KotlinJsCompilation>) {
       val compilation = compilations.first { comp -> comp.name.contains("main", true) }
       val deps = compilation.relatedConfigurationNames.flatMap { conf ->
         val mainName = "${targetName}Main${conf.substringAfter(targetName)}"
@@ -59,7 +59,7 @@ class NpmPublishPlugin : Plugin<Project> {
         (normDeps + mainDeps).filterIsInstance<NpmDependency>()
       }
 
-      npmPublishing {
+      extension.apply {
         publications {
           publication(targetName) {
             this.compilation = compilation
@@ -72,21 +72,24 @@ class NpmPublishPlugin : Plugin<Project> {
       }
     }
 
-    private fun Project.configureTasks() {
-      val nodeJsSetupTask = tasks.findByName("kotlinNodeJsSetup") as NodeJsSetupTask?
+    private fun Project.configureTasks(extension: NpmPublishExtension) {
+      val nodeJsSetupTask = project.rootProject.tasks.findByName("kotlinNodeJsSetup") as NodeJsSetupTask?
 
       val publishTask = tasks.findByName("publish") ?: tasks.create("publish") { group = "publishing" }
       val assembleTask = tasks.findByName("assemble")
 
-      val publications = npmPublishing.publications.mapNotNull { pub ->
+      val publications = extension.publications.mapNotNull { pub ->
         val needsNode = pub.nodeJsDir == null
-        pub.validate(nodeJsSetupTask?.destination)?.let { it to nodeJsSetupTask?.takeIf { needsNode } }
-      }
-      val repositories = npmPublishing.repositories.mapNotNull { repo ->
-        repo.validate()
+        pub.validate(nodeJsSetupTask?.destination)?.let {
+          it to nodeJsSetupTask?.takeIf { needsNode }
+        } ?: null.also { logger.warn("NPM Publication [${pub.name}] is invalid. Skipping...") }
       }
 
-      publications.flatMap { (pub, nodeJsTask) ->
+      val repositories = extension.repositories.mapNotNull { repo ->
+        repo.validate() ?: null.also { logger.warn("NPM Repository [${repo.name}] is invalid. Skipping...") }
+      }
+
+      val pubTasks = publications.flatMap { (pub, nodeJsTask) ->
         pub.compilation?.let {
           val (processResourcesTask, compileKotlinTask) = project.tasks.findByName(it.processResourcesTaskName) as Copy to it.compileKotlinTask
           pub.files {
@@ -117,6 +120,9 @@ class NpmPublishPlugin : Plugin<Project> {
               publishTask?.dependsOn(task)
             }
         }
+      }
+      if(pubTasks.isNotEmpty()) {
+        publishTask.enabled = true
       }
     }
   }
