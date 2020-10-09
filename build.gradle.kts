@@ -25,7 +25,7 @@ apply(plugin = "binary-compatibility-validator")
 configure<ApiValidationExtension> {}
 
 group = "lt.petuska"
-version = "0.0.6"
+version = "0.1.0"
 
 idea {
     module {
@@ -62,7 +62,6 @@ kotlin {
                 description = "Runs functional tests"
                 testClassesDirs = output.classesDirs
                 classpath = project.sourceSets["functionalTest"].runtimeClasspath
-                useJUnitPlatform()
             }
             tasks.named("check") {
                 dependsOn(functionalTest)
@@ -81,8 +80,6 @@ kotlin {
 }
 
 gradlePlugin {
-    // val functionalTestImplementation by configurations
-    // testSourceSets(functionalTestSourceSet)
     plugins {
         create(project.name) {
             id = "lt.petuska.npm.publish"
@@ -110,9 +107,6 @@ tasks {
             jvmTarget = "1.8"
         }
     }
-    test {
-        useJUnitPlatform()
-    }
 }
 
 val gitCommitHash by lazy {
@@ -130,13 +124,15 @@ publishing {
         "true".equals(project.properties[it] as String?, true)
     }
 
-    fun checkNone(vararg props: String) = props.none {
-        project.hasProperty(it)
+    fun checkNoneStarting(vararg props: String) = props.none {
+        project.properties.keys.any { p -> p.startsWith(it) }
     }
     publications {
         repositories {
             fun repository(name: String, config: MavenArtifactRepository.() -> Unit) {
-                if (checkAnyTrue("publish.all", "publish.$name") || checkNone("publish.$name.skip")) {
+                if ((checkAnyTrue("publish.all", "publish.$name") && checkNoneStarting("publish.skip")) &&
+                    checkNoneStarting("publish.skip.$name")
+                ) {
                     maven {
                         this.name = name
                         config()
@@ -193,6 +189,9 @@ afterEvaluate {
                     "Created-From" to gitCommitHash
                 )
             }
+        }
+        withType<Test> {
+            useJUnitPlatform()
         }
         val lib = project
         val publish by getting
