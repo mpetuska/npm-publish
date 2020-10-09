@@ -1,5 +1,5 @@
 plugins {
-  id("lt.petuska.npm.publish") version "0.0.5"
+  id("lt.petuska.npm.publish") version "0.0.6"
   kotlin("multiplatform") version "1.4.10"
 }
 

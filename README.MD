@@ -1,21 +1,38 @@
-# npm-publish
+# NPM-PUBLISH GRADLE PLUGIN
 
-Gradle plugin enabling NPM publishing for Kotlin/JS (including MPP)
+Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with Kotlin/JS/MPP plugin if applied,
+providing auto configurations.
 
 ## Setup
+Here's a bare minimum setup when using together with one of the kotlin plugins
+
 ```kotlin
 plugins {
   id("lt.petuska.npm.publish") version "<VERSION>"
-  kotlin("js") version "1.4.0" // Optional
+  kotlin("multiplatform") version "1.4.0" // Optional, also supports "js"
 }
 
 kotlin {
   js {
     browser() // or nodejs()
   }
-  dependencies {
-    implementation(npm("axios", "*"))
-    api(npm("snabbdom", "*"))
+  sourceSets { // Optional for bare minimum setup
+    val jsMain by getting {
+      dependencies {
+        implementation(npm("axios", "*"))
+        api(peerNpm("snabbdom", "*"))
+      }
+    }
+  }
+}
+
+npmPublishing {
+  repositories {
+    repository("npmjs") {      
+      registry = uri("https://registry.npmjs.org")
+      authToken = "asdhkjsdfjvhnsdrishdl"
+      otp = "gfahsdjglknamsdkpjnmasdl"
+    }
   }
 }
 ```
@@ -78,7 +95,7 @@ npmPublishing {
 }
 ```
 
-There are also few project properties you can use from cmd line (`./gradlew task -Pprop.name=propValue`):
+There are also few project properties you can use from cmd line (`./gradlew task -Pprop.name=propValue`), `gradle.properties` or `local.properties`:
 * `npm.publish.authToken.<repoName>` To pass in authToken
 * `npm.publish.otp.<repoName>` To pass in OTP
 * `npm.publish.dry` To run npm publishing with `--dry-run` (does everything except uploading the files)

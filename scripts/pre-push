@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+######## GRADLE HOOK START ########
+echo "Running Gradle check"
+
+./gradlew --quiet check
+
+echo "Gradle check completed."
+######## GRADLE HOOK END ########

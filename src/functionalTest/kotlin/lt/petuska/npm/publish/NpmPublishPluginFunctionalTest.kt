@@ -4,58 +4,65 @@
 package lt.petuska.npm.publish
 
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.core.spec.style.scopes.WordSpecTerminalScope
 import io.kotest.matchers.string.shouldContainIgnoringCase
 import io.kotest.matchers.string.shouldNotContainIgnoringCase
 import lt.petuska.npm.publish.util.assembleTaskName
-import lt.petuska.npm.publish.util.buildGradleFile
+import lt.petuska.npm.publish.util.defaultRepoName
 import lt.petuska.npm.publish.util.gradleExec
-import lt.petuska.npm.publish.util.npmPublishStub
+import lt.petuska.npm.publish.util.kotlinJs
+import lt.petuska.npm.publish.util.kotlinMpp
+import lt.petuska.npm.publish.util.npmRepository
 import lt.petuska.npm.publish.util.publishTaskName
 import org.gradle.testkit.runner.BuildResult
-import java.io.File
 
-private suspend fun WordSpecTerminalScope.taskCreationTest(
+private fun taskCreationTest(
   kotlinPlugin: String,
   jsTargets: List<String> = listOf(),
   jvmTargets: List<String> = listOf(),
-  repositories: List<String> = listOf("npmjs"),
+  repositories: List<String> = listOf(defaultRepoName),
   expectedMissingTasks: List<String> = listOf()
 ) {
   val jsPlugin = kotlinPlugin.equals("js", true)
   fun execute(): BuildResult {
-    val jsBlock = jsTargets.joinToString(";") { "${if (!jsPlugin) "js(\"$it\")" else "js"} {browser()}" }
-    val jvmBlock = if (jsPlugin) {
-      ""
-    } else {
-      jvmTargets.joinToString(";") { "jvm(\"$it\")" }
-    }
-    val kotlinBlock = if (kotlinPlugin.isEmpty()) "" else """
-        kotlin{
-        $jsBlock
-        $jvmBlock
-        }
-    """.trimIndent()
-    return File("build/functionalTest").gradleExec(
-      buildGradleFile(kotlinPlugin, kotlinBlock) {
-        val repos = repositories.joinToString("\n") {
-          """
-            repository("$it") {
-              registry = uri("https://registry.$it.org")
-              authToken = "asdhkjsdfjvhnsdrishdl"
-              otp = "gfahsdjglknamsdkpjnmasdl"
+    return gradleExec(
+      {
+        if (kotlinPlugin.equals("multiplatform", true)) {
+          kotlinMpp {
+            jsTargets.forEach { target ->
+              "js(\"$target\")" {
+                "browser"()
+              }
+              "sourceSets" {
+                "named(\"${target}Main\")" {
+                  "dependencies" {
+                    "implementation"("devNpm(\"axios\", \"*\")")
+                    "api"("npm(\"snabbdom\", \"*\")")
+                  }
+                }
+              }
             }
-          """.trimIndent()
-        }
-        appendln(
-          """
-          npmPublishing {
-            repositories {
-              $repos
+            jvmTargets.forEach { target ->
+              "jvm"("\"$target\"")
             }
           }
-          """.trimIndent()
-        )
+        } else if (kotlinPlugin.equals("js", true)) {
+          kotlinJs {
+            "js" {
+              "browser"()
+            }
+            "sourceSets" {
+              "named(\"main\")" {
+                "dependencies" {
+                  "implementation"("devNpm(\"axios\", \"*\")")
+                  "api"("npm(\"snabbdom\", \"*\")")
+                }
+              }
+            }
+          }
+        }
+        repositories.forEach {
+          npmRepository(it)
+        }
       },
       "tasks",
       "--all",
@@ -126,104 +133,14 @@ class NpmPublishPluginFunctionalTest : WordSpec(
           jsTargets = listOf("jsOne")
         )
       }
-      "Not create tasks for no kotlin plugin given [default JS target]" {
+      "Not create tasks for no kotlin plugin" {
         taskCreationTest(
           "",
+          repositories = listOf(),
           expectedMissingTasks = listOf(
             assembleTaskName("js"),
             publishTaskName("js")
           )
-        )
-      }
-    }
-
-    "Running assembleNpmPublication" should {
-      "succeed [JS]" {
-        File("build/functionalTest").gradleExec(
-          buildGradleFile(
-            "js",
-            """
-      kotlin {
-        js {browser()}
-        dependencies {
-          implementation(npm("axios", "*"))
-          api(npm("snabbdom", "*"))
-        }
-      }
-            """.trimIndent()
-          ),
-          assembleTaskName("js"),
-          "--stacktrace"
-        )
-      }
-      "succeed [MPP]" {
-        File("build/functionalTest").gradleExec(
-          buildGradleFile(
-            "multiplatform",
-            """
-      kotlin {
-        js {browser()}
-        sourceSets {
-          val jsMain by getting {            
-            dependencies {
-              implementation(npm("axios", "*"))
-              api(npm("snabbdom", "*"))
-            }
-          }
-        }
-      }
-            """.trimIndent()
-          ),
-          assembleTaskName("js"),
-          "--stacktrace"
-        )
-      }
-    }
-    "Running publishNpmPublication [JS]" should {
-      "succeed [JS]" {
-        File("build/functionalTest").gradleExec(
-          buildGradleFile(
-            "js",
-            """
-      kotlin {
-        js {browser()}
-        dependencies {
-          implementation(npm("axios", "*"))
-          api(npm("snabbdom", "*"))
-        }
-      }
-            """.trimIndent()
-          ) {
-            appendln(npmPublishStub)
-          },
-          publishTaskName("js"),
-          "--stacktrace",
-          "-Pnpm.publish.dry=true"
-        )
-      }
-      "succeed [MPP]" {
-        File("build/functionalTest").gradleExec(
-          buildGradleFile(
-            "multiplatform",
-            """
-      kotlin {
-        js("CustomJS") {browser()}
-        sourceSets {
-          val CustomJSMain by getting {            
-            dependencies {
-              implementation(npm("axios", "*"))
-              api(npm("snabbdom", "*"))
-            }
-          }
-        }
-      }
-            """.trimIndent()
-          ) {
-            appendln(npmPublishStub)
-          },
-          publishTaskName("CustomJS"),
-          "--stacktrace",
-          "-Pnpm.publish.dry=true"
         )
       }
     }

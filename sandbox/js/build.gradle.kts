@@ -14,6 +14,9 @@ kotlin {
     implementation(npm("axios", "*"))
     api(devNpm("snabbdom", "*"))
   }
+  sourceSets {
+
+  }
 }
 
 npmPublishing {
