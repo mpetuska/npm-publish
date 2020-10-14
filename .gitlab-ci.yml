@@ -65,7 +65,7 @@ publish:gradlePluginPortal:
       - build
       - .gradle
 
-release:gitLab:
+release:GitLab:
   stage: release
   script: gradle gitLabRelease -Ppublish=true -Poverride=false --stacktrace;
   only:
@@ -79,6 +79,8 @@ release:gitLab:
 
 pages:
   stage: release
+  dependencies:
+    - release:GitLab
   script:
     - gradle dokkaHtml;
     - cp -avr build/dokka/html/ public;
