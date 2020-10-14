@@ -42,6 +42,7 @@ publish:Bintray:
 
 publish:GitLab:
   stage: publish
+  allow_failure: true
   script: gradle publish -Ppublish.GitLab=true -Ppublish=true -Poverride=false --stacktrace
   only:
     - master
