@@ -16,14 +16,6 @@ kotlin {
   js {
     browser() // or nodejs()
   }
-  sourceSets { // Optional for bare minimum setup
-    val jsMain by getting {
-      dependencies {
-        implementation(npm("axios", "*"))
-        api(peerNpm("snabbdom", "*"))
-      }
-    }
-  }
 }
 
 npmPublishing {
@@ -31,7 +23,6 @@ npmPublishing {
     repository("npmjs") {      
       registry = uri("https://registry.npmjs.org")
       authToken = "asdhkjsdfjvhnsdrishdl"
-      otp = "gfahsdjglknamsdkpjnmasdl"
     }
   }
 }
@@ -84,11 +75,21 @@ npmPublishing {
         from("$assemblyDir/../dir")
         // Rest of your CopySpec     
       }
+      pakageJsonFile = file("static/package.template.json") // If set will be used as-is ignoring further configurations while getting renamed to package.json regardless of the actual name.
       packagejson = { // Full package.json override
         main = "./dist/yet-another-override.js"
       }
       packageJson { // Will be patched on top of default generated package.json
         private = false
+        keywords = jsonArray(
+          "kotlin"
+        )
+        publishConfig {
+          tag = "latest"
+        }
+        "customField" to jsonObject {
+          "customValues" to jsonArray(1, 2, 3)
+        }
       }
     }
   }

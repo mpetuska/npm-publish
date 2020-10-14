@@ -7,17 +7,36 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import java.io.File
 
+/**
+ * Extension exposing npm-publish plugin configuration DSLs
+ */
 open class NpmPublishExtension(private val project: Project) {
+  /**
+   * A location of the default README file.
+   * If set, the file will be used as a default readme for all publications that do not have one set explicitly.
+   */
   var readme by project.gradleNullableProperty<File>()
+
+  /**
+   * Default [NpmPublication.scope]
+   */
   var organization by project.gradleNullableProperty<String>()
+
+  /**
+   * Default [NpmRepository.access]
+   *
+   * Defaults to [NpmAccess.PUBLIC]
+   */
   var access by project.gradleProperty(NpmAccess.PUBLIC)
 
-  val repositories: NpmRepositoryContainer = project.container(NpmRepository::class.java) { name ->
+  internal val repoConfigs = mutableListOf<Closure<Unit>>()
+  internal val repositories: NpmRepositoryContainer = project.container(NpmRepository::class.java) { name ->
     NpmRepository(name, project, this)
   }
 
-  fun repositories(config: NpmRepositoryContainer.() -> Unit) {
-    repositories.configure(
+  internal fun repositories(index: Int, config: NpmRepositoryContainer.() -> Unit) {
+    repoConfigs.add(
+      index,
       object : Closure<Unit>(this, this) {
         @Suppress("unused")
         fun doCall() {
@@ -30,22 +49,37 @@ open class NpmPublishExtension(private val project: Project) {
     )
   }
 
-  fun repositories(config: Closure<Unit>) {
-    repositories.configure(config)
+  /**
+   * DSL exposing [NpmRepository] setup
+   */
+  fun repositories(config: NpmRepositoryContainer.() -> Unit) {
+    repositories(repoConfigs.size, config)
   }
 
+  /**
+   * DSL exposing [NpmRepository] setup for groovy
+   */
+  fun repositories(config: Closure<Unit>) {
+    repoConfigs.add(config)
+  }
+
+  /**
+   * DSL exposing [NpmRepository] creation and configuration
+   */
   fun NpmRepositoryContainer.repository(name: String, config: NpmRepository.() -> Unit): NpmRepository {
     val pub = NpmRepository(name, this@NpmPublishExtension.project, this@NpmPublishExtension).apply(config)
     add(pub)
     return pub
   }
 
-  val publications: NpmPublicationContainer = project.container(NpmPublication::class.java) { name ->
+  internal val pubConfigs = mutableListOf<Closure<Unit>>()
+  internal val publications: NpmPublicationContainer = project.container(NpmPublication::class.java) { name ->
     NpmPublication(name, project, this)
   }
 
-  fun publications(config: NpmPublicationContainer.() -> Unit) {
-    publications.configure(
+  internal fun publications(index: Int, config: NpmPublicationContainer.() -> Unit) {
+    pubConfigs.add(
+      index,
       object : Closure<Unit>(this, this) {
         @Suppress("unused")
         fun doCall() {
@@ -58,10 +92,23 @@ open class NpmPublishExtension(private val project: Project) {
     )
   }
 
-  fun publications(config: Closure<Unit>) {
-    publications.configure(config)
+  /**
+   * DSL exposing [NpmPublication] setup
+   */
+  fun publications(config: NpmPublicationContainer.() -> Unit) {
+    publications(pubConfigs.size, config)
   }
 
+  /**
+   * DSL exposing [NpmPublication] setup for groovy
+   */
+  fun publications(config: Closure<Unit>) {
+    pubConfigs.add(config)
+  }
+
+  /**
+   * DSL exposing [NpmPublication] creation and configuration
+   */
   fun NpmPublicationContainer.publication(name: String, config: NpmPublication.() -> Unit): NpmPublication {
     val pub = NpmPublication(name, this@NpmPublishExtension.project, this@NpmPublishExtension).apply(config)
     add(pub)

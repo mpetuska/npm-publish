@@ -66,9 +66,16 @@ publish:gradlePluginPortal:
 
 release:gitLab:
   stage: release
-  script: gradle gitLabRelease -Ppublish=true -Poverride=false --stacktrace
+  script:
+    - gradle gitLabRelease -Ppublish=true -Poverride=false --stacktrace;
+    - gradle dokkaHtml;
+    - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
+    - echo '/npm-publish/index.html /npm-publish/npm-publish/index.html 301' > public/_redirects;
   only:
     - master
+  artifacts:
+    paths:
+      - public
   cache:
     key: "$CI_PIPELINE_ID"
     policy: pull

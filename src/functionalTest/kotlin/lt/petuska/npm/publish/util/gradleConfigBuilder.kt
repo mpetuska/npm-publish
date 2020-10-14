@@ -12,22 +12,14 @@ import java.io.File
 
 private fun KotlinBuilder.buildProject(kotlinPlugin: String? = null, config: KotlinBuilder.() -> Unit = {}) = apply {
   "plugins" {
-    +"""id("$pluginName")"""
+    "id"(pluginName)
     kotlinPlugin?.let {
-      +"kotlin(\"$it\")"
-    }
-  }
-  "buildscript" {
-    // "repositories" {
-    //   +"maven(\"https://plugins.gradle.org/m2/\")"
-    // }
-    "dependencies" {
-      +"classpath(\"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion\")"
+      "kotlin"(it) infix "version"(kotlinVersion) infix "apply" infix true
     }
   }
 
   "version" to pluginVersion
-  "group" to pluginGroup
+  "group" to pluginGroup chain "toUpperCase()".fn
 
   "repositories" {
     "jcenter"()
@@ -62,7 +54,7 @@ fun KotlinBuilder.npmRepository(name: String = defaultRepoName, config: KotlinBu
   "npmPublishing" {
     "repositories" {
       "repository(\"$name\")" {
-        +"registry = uri(\"https://registry.$name.org\")"
+        "registry" to "uri"("https://registry.$name.org")
         "authToken" to "asdhkjsdfjvhnsdrishdl"
         "otp" to "gfahsdjglknamsdkpjnmasdl"
         config()
@@ -91,11 +83,10 @@ fun gradleExec(buildFile: KotlinBuilder.() -> Unit, vararg args: String): BuildR
     }
       """.trimIndent()
     )
-    val project = KotlinBuilder()
-    val buildF = resolve("build.gradle.kts").apply {
-      writeText(project.apply(buildFile).toString())
+    resolve("build.gradle.kts").apply {
+      println(absolutePath)
+      writeText(KotlinBuilder(buildFile).toString())
     }
-    println(buildF.absolutePath)
 
     try {
       GradleRunner.create()

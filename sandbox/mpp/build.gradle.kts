@@ -30,4 +30,21 @@ npmPublishing {
       authToken = System.getenv("PRIVATE_TOKEN")?.trim() ?: ""
     }
   }
+
+  publications {
+    val js by getting {
+      packageJson {
+        name = "tt"
+        keywords = jsonArray(
+          "kotlin"
+        )
+        publishConfig {
+          tag = "latest"
+        }
+        "customField" to jsonObject {
+          "customValues" to jsonArray(1, 2, 3)
+        }
+      }
+    }
+  }
 }

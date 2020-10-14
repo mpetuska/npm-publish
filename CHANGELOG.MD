@@ -1,11 +1,13 @@
 ## Changelog
-Internal refactoring
+Documentation and PackageJson dsl extension
 
 ### Breaking Changes
 N/A
 
 ### New Features
-* Extended and revised README.MD
+* Inline documentation for all public entities
+* Published docs at http://lt.petuska.gitlab.io/npm-publish
+* Fully reworked packageJson DSL to allow for arbitrary configurations
 
 ### Fixes
-N/A
+* Added missing support for IR js sourceSets

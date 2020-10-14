@@ -29,20 +29,20 @@ private fun taskCreationTest(
         if (kotlinPlugin.equals("multiplatform", true)) {
           kotlinMpp {
             jsTargets.forEach { target ->
-              "js(\"$target\")" {
+              "js"(target) {
                 "browser"()
               }
               "sourceSets" {
-                "named(\"${target}Main\")" {
+                "named"("${target}Main") {
                   "dependencies" {
-                    "implementation"("devNpm(\"axios\", \"*\")")
-                    "api"("npm(\"snabbdom\", \"*\")")
+                    "implementation"(arg { "devNpm"("axios", "*") })
+                    "api"(arg { "npm"("snabbdom", "*") })
                   }
                 }
               }
             }
             jvmTargets.forEach { target ->
-              "jvm"("\"$target\"")
+              "jvm"(target)
             }
           }
         } else if (kotlinPlugin.equals("js", true)) {
@@ -51,10 +51,10 @@ private fun taskCreationTest(
               "browser"()
             }
             "sourceSets" {
-              "named(\"main\")" {
+              "named"("main") {
                 "dependencies" {
-                  "implementation"("devNpm(\"axios\", \"*\")")
-                  "api"("npm(\"snabbdom\", \"*\")")
+                  "implementation"(arg { "npm"("axios", "*") })
+                  "api"(arg { "devNpm"("snabbdom", "*") })
                 }
               }
             }

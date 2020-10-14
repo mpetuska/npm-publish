@@ -16,6 +16,9 @@ plugins {
     idea
 }
 
+group = "lt.petuska"
+version = "0.1.1"
+
 buildscript {
     dependencies {
         classpath("org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3")
@@ -23,9 +26,6 @@ buildscript {
 }
 apply(plugin = "binary-compatibility-validator")
 configure<ApiValidationExtension> {}
-
-group = "lt.petuska"
-version = "0.1.0"
 
 idea {
     module {
@@ -96,7 +96,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://gitlab.com/${project.group}/${project.name}/-/wikis/home"
+    website = "http://${project.group}.gitlab.io/${project.name}"
     vcsUrl = "https://gitlab.com/${project.group}/${project.name}"
     tags = listOf("npm", "publishing", "kotlin", "node")
 }

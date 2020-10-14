@@ -17,11 +17,11 @@ class AssembleTaskFTest : WordSpec(
               "js" {
                 "browser"()
               }
-              "sourceSets.apply" {
-                "named(\"main\")" {
+              "sourceSets" {
+                "named"("main") {
                   "dependencies" {
-                    "implementation"("devNpm(\"axios\", \"*\")")
-                    "api"("npm(\"snabbdom\", \"*\")")
+                    "implementation"(arg { "devNpm"("axios", "*") })
+                    "api"(arg { "npm"("snabbdom", "*") })
                   }
                 }
               }
@@ -39,11 +39,11 @@ class AssembleTaskFTest : WordSpec(
               "js" {
                 "browser"()
               }
-              "sourceSets.apply" {
-                "named(\"jsMain\")" {
+              "sourceSets" {
+                "named"("jsMain") {
                   "dependencies" {
-                    "implementation"("devNpm(\"axios\", \"*\")")
-                    "api"("npm(\"snabbdom\", \"*\")")
+                    "implementation"(arg { "devNpm"("axios", "*") })
+                    "api"(arg { "npm"("snabbdom", "*") })
                   }
                 }
               }

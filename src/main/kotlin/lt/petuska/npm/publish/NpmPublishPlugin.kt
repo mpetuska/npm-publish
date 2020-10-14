@@ -2,7 +2,7 @@ package lt.petuska.npm.publish
 
 import lt.petuska.npm.publish.dsl.NpmPublishExtension
 import lt.petuska.npm.publish.dsl.NpmPublishExtension.Companion.EXTENSION_NAME
-import lt.petuska.npm.publish.task.NpmPackagePrepareTask
+import lt.petuska.npm.publish.task.NpmPackageAssembleTask
 import lt.petuska.npm.publish.task.NpmPublishTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
@@ -12,27 +12,28 @@ import org.gradle.util.GUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
+/**
+ * Main entry point for npm-publish plugin
+ */
 class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     val extension = project.createExtension()
     project.afterEvaluate { prj ->
       prj.pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
         prj.extensions.configure(KotlinMultiplatformExtension::class.java) {
-          it.targets.filterIsInstance<KotlinJsTarget>().forEach { t ->
+          it.targets.filterIsInstance<KotlinJsTargetDsl>().forEach { t ->
             prj.configureExtension(extension, t.name, t.compilations)
           }
-          // prj.configureTasks(extension)
         }
       }
       prj.pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
         prj.extensions.configure(KotlinJsProjectExtension::class.java) {
           val target = it.js()
           prj.configureExtension(extension, target.name, target.compilations)
-          // prj.configureTasks(extension)
         }
       }
       prj.configureTasks(extension)
@@ -60,7 +61,7 @@ class NpmPublishPlugin : Plugin<Project> {
       }
 
       extension.apply {
-        publications {
+        publications(0) {
           publication(targetName) {
             this.compilation = compilation
             this.main = compilation.compileKotlinTask.outputFile.name
@@ -78,15 +79,25 @@ class NpmPublishPlugin : Plugin<Project> {
       val publishTask = tasks.findByName("publish") ?: tasks.create("publish") { group = "publishing" }
       val assembleTask = tasks.findByName("assemble")
 
-      val publications = extension.publications.mapNotNull { pub ->
-        val needsNode = pub.nodeJsDir == null
-        pub.validate(nodeJsSetupTask?.destination)?.let {
-          it to nodeJsSetupTask?.takeIf { needsNode }
-        } ?: null.also { logger.warn("NPM Publication [${pub.name}] is invalid. Skipping...") }
+      val publications = with(extension) {
+        pubConfigs.forEach {
+          publications.configure(it)
+        }
+        publications.mapNotNull { pub ->
+          val needsNode = pub.nodeJsDir == null
+          pub.validate(nodeJsSetupTask?.destination)?.let {
+            it to nodeJsSetupTask?.takeIf { needsNode }
+          } ?: null.also { logger.warn("NPM Publication [${pub.name}] is invalid. Skipping...") }
+        }
       }
 
-      val repositories = extension.repositories.mapNotNull { repo ->
-        repo.validate() ?: null.also { logger.warn("NPM Repository [${repo.name}] is invalid. Skipping...") }
+      val repositories = with(extension) {
+        repoConfigs.forEach {
+          repositories.configure(it)
+        }
+        repositories.mapNotNull { repo ->
+          repo.validate() ?: null.also { logger.warn("NPM Repository [${repo.name}] is invalid. Skipping...") }
+        }
       }
 
       val pubTasks = publications.flatMap { (pub, nodeJsTask) ->
@@ -100,16 +111,24 @@ class NpmPublishPlugin : Plugin<Project> {
         val upperName = GUtil.toCamelCase(pub.name)
 
         val assembleTaskName = "assemble${upperName}NpmPublication"
-        val assemblePackageTask = tasks.findByName(assembleTaskName) as NpmPackagePrepareTask?
-          ?: tasks.create(assembleTaskName, NpmPackagePrepareTask::class.java, pub).also {
+        val assemblePackageTask = tasks.findByName(assembleTaskName) as NpmPackageAssembleTask?
+          ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub).also {
+            pub.compilation?.let { comp ->
+              tasks.findByName(comp.processResourcesTaskName)?.let { o ->
+                it.inputs.files(o)
+              }
+              tasks.findByName(comp.compileKotlinTaskName)?.let { o ->
+                it.inputs.files(o)
+              }
+            }
             it.dependsOn(
               *listOfNotNull(
                 pub.compilation?.processResourcesTaskName,
                 pub.compilation?.compileKotlinTaskName,
-                nodeJsTask,
-                assembleTask
+                nodeJsTask
               ).toTypedArray()
             )
+            assembleTask?.dependsOn(it)
           }
         repositories.map { repo ->
           val upperRepoName = GUtil.toCamelCase(repo.name)
