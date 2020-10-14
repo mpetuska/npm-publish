@@ -83,7 +83,8 @@ pages:
     - gradle dokkaHtml;
     - cp -avr build/dokka/html/ public;
     - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
-    - echo '/npm-publish/index.html /npm-publish/npm-publish/index.html 301' > public/_redirects;
+    - echo '/npm-publish /npm-publish/npm-publish/index.html 301' > public/_redirects;
+    - echo '/npm-publish/index.html /npm-publish/npm-publish/index.html 301' >> public/_redirects;
   only:
     - master
   artifacts:
