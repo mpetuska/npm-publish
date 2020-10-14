@@ -144,15 +144,8 @@ publishing {
                     "https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/packages/maven"
                 )
                 credentials(HttpHeaderCredentials::class) {
-                    val jobToken = System.getenv("CI_JOB_TOKEN")
-                    if (jobToken != null) {
-                        // GitLab CI
-                        name = "Job-Token"
-                        value = jobToken
-                    } else {
-                        name = "Private-Token"
-                        value = System.getenv("PRIVATE_TOKEN")
-                    }
+                    name = "Private-Token"
+                    value = System.getenv("PRIVATE_TOKEN")
                 }
                 authentication {
                     create<HttpHeaderAuthentication>("header")
