@@ -79,8 +79,6 @@ release:GitLab:
 
 pages:
   stage: release
-  dependencies:
-    - release:GitLab
   script:
     - gradle dokkaHtml;
     - cp -avr build/dokka/html/ public;
