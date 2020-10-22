@@ -11,10 +11,16 @@ repositories {
 
 kotlin {
   js { browser() }
+  js("exe", IR) {
+    browser()
+    useCommonJs()
+    binaries.executable()
+  }
 
   sourceSets {
     val jsMain by getting {
       dependencies {
+        implementation("io.ktor:ktor-client-core:1.4.1")
         implementation(devNpm("axios", "*"))
         api(npm("snabbdom", "*"))
       }
@@ -34,7 +40,7 @@ npmPublishing {
   publications {
     val js by getting {
       packageJson {
-        name = "tt"
+        author to "Custom Author"
         keywords = jsonArray(
           "kotlin"
         )

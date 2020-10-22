@@ -1,11 +1,11 @@
 plugins {
-  id("lt.petuska.npm.publish") version "0.1.1"
-  kotlin("multiplatform") version "1.4.10"
+  id("lt.petuska.npm.publish") version "1.0.0"
+  kotlin("multiplatform") version "1.4.10" apply false
 }
 
 allprojects {
   group = "lt.petuska"
-  version = "0.1.1"
+  version = "1.0.0"
 
   repositories {
     jcenter()
@@ -13,23 +13,25 @@ allprojects {
   }
 }
 
-kotlin {
-  js { browser() }
-  jvm()
-
-  sourceSets {
-    val jsMain by getting {
-      dependencies {
-        implementation(npm("axios", "*"))
-        api(peerNpm("snabbdom", "*"))
-        api(optionalNpm("react", "*"))
+npmPublishing {
+  organization = group as String
+  publications {
+    publication("custom") {
+      nodeJsDir = file("${System.getProperty("user.home")}/.gradle/nodejs/node-v12.16.1-linux-x64")
+      packageJson {
+        author to "Custom Author"
+        keywords = jsonArray(
+          "kotlin"
+        )
+        publishConfig {
+          tag = "latest"
+        }
+        "customField" to jsonObject {
+          "customValues" to jsonArray(1, 2, 3)
+        }
       }
     }
   }
-}
-
-npmPublishing {
-  organization = group as String
   repositories {
     repository("GitLab") {
       registry = uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")?.trim()}/packages/npm")

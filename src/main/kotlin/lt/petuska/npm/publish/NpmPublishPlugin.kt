@@ -64,7 +64,7 @@ class NpmPublishPlugin : Plugin<Project> {
         publications(0) {
           publication(targetName) {
             this.compilation = compilation
-            this.main = compilation.compileKotlinTask.outputFile.name
+            this.main = compileKotlinTask?.outputFile?.name
             dependencies {
               addAll(deps)
             }
@@ -101,30 +101,30 @@ class NpmPublishPlugin : Plugin<Project> {
       }
 
       val pubTasks = publications.flatMap { (pub, nodeJsTask) ->
-        pub.compilation?.let {
-          val (processResourcesTask, compileKotlinTask) = project.tasks.findByName(it.processResourcesTaskName) as Copy to it.compileKotlinTask
-          pub.files {
-            from(compileKotlinTask.outputFile.parentFile)
-            from(processResourcesTask.destinationDir)
-          }
-        }
+        val (compileKotlinTask, processResourcesTask) = pub.compilation?.let {
+          val processResourcesTask = project.tasks.findByName(it.processResourcesTaskName) as Copy
+          pub.compileKotlinTask?.also { compileKotlinTask ->
+            pub.files {
+              from(compileKotlinTask.outputFile.parentFile)
+              from(processResourcesTask.destinationDir)
+            }
+          } to processResourcesTask
+        } ?: null to null
         val upperName = GUtil.toCamelCase(pub.name)
 
         val assembleTaskName = "assemble${upperName}NpmPublication"
         val assemblePackageTask = tasks.findByName(assembleTaskName) as NpmPackageAssembleTask?
           ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub).also {
-            pub.compilation?.let { comp ->
-              tasks.findByName(comp.processResourcesTaskName)?.let { o ->
-                it.inputs.files(o)
-              }
-              tasks.findByName(comp.compileKotlinTaskName)?.let { o ->
-                it.inputs.files(o)
-              }
+            processResourcesTask?.let { o ->
+              it.inputs.files(o.outputs)
+            }
+            compileKotlinTask?.let { o ->
+              it.inputs.files(o.outputs)
             }
             it.dependsOn(
               *listOfNotNull(
-                pub.compilation?.processResourcesTaskName,
-                pub.compilation?.compileKotlinTaskName,
+                processResourcesTask,
+                compileKotlinTask,
                 nodeJsTask
               ).toTypedArray()
             )
