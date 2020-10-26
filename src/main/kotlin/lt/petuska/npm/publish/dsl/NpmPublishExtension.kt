@@ -1,8 +1,10 @@
 package lt.petuska.npm.publish.dsl
 
 import groovy.lang.Closure
-import lt.petuska.npm.publish.util.gradleNullableProperty
-import lt.petuska.npm.publish.util.gradleProperty
+import lt.petuska.npm.publish.delegate.fallbackDelegate
+import lt.petuska.npm.publish.delegate.or
+import lt.petuska.npm.publish.delegate.propertyDelegate
+import lt.petuska.npm.publish.util.notFalse
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import java.io.File
@@ -10,37 +12,49 @@ import java.io.File
 /**
  * Extension exposing npm-publish plugin configuration DSLs
  */
-open class NpmPublishExtension(private val project: Project) {
+open class NpmPublishExtension(private val project: Project) : NpmPublishExtensionScope {
   /**
    * A location of the default README file.
    * If set, the file will be used as a default readme for all publications that do not have one set explicitly.
    */
-  var readme by project.gradleNullableProperty<File>()
+  var readme: File? by project.propertyDelegate { File(it) }
 
   /**
    * Default [NpmPublication.scope]
    */
-  var organization by project.gradleNullableProperty<String>()
+  var organization: String? by project.propertyDelegate { it }
+
+  /**
+   * NPM package version.
+   * Defaults to [Project.getVersion] or rootProject.version.
+   */
+  var version: String? by project.propertyDelegate { it } or project.fallbackDelegate { (version ?: rootProject.version) as String? }
 
   /**
    * Default [NpmRepository.access]
    *
    * Defaults to [NpmAccess.PUBLIC]
    */
-  var access by project.gradleProperty(NpmAccess.PUBLIC)
+  var access: NpmAccess by project.propertyDelegate(default = NpmAccess.PUBLIC) { NpmAccess.fromString(it) }
 
   /**
    * Sets global default flag
    * @see [NpmPublication.bundleKotlinDependencies]
    */
-  var bundleKotlinDependencies by project.gradleProperty(true)
+  var bundleKotlinDependencies: Boolean by project.propertyDelegate(default = true) { it.notFalse() }
+
+  /**
+   * Specifies if a dry-run should be added to the npm command arguments. Dry run does all the normal run des except actual file uploading.
+   * Defaults to `npm.publish.dry` project property if set or `false` otherwise.
+   */
+  var dry: Boolean by project.propertyDelegate(default = false) { it.notFalse() }
 
   internal val repoConfigs = mutableListOf<Closure<Unit>>()
   internal val repositories: NpmRepositoryContainer = project.container(NpmRepository::class.java) { name ->
     NpmRepository(name, project, this)
   }
 
-  internal fun repositories(index: Int, config: NpmRepositoryContainer.() -> Unit) {
+  private fun repositories(index: Int, config: NpmRepositoryContainer.() -> Unit) {
     repoConfigs.add(
       index,
       object : Closure<Unit>(this, this) {
@@ -113,19 +127,19 @@ open class NpmPublishExtension(private val project: Project) {
   }
 
   /**
-   * DSL exposing [NpmPublication] creation and configuration
+   * DSL exposing [NpmPublication] creation and configuration.
+   * Will look for existing publication with the same name or create a new one before applying the configuration
    */
   fun NpmPublicationContainer.publication(name: String, config: NpmPublication.() -> Unit): NpmPublication {
-    val pub = NpmPublication(name, this@NpmPublishExtension.project, this@NpmPublishExtension).apply(config)
-    add(pub)
+    val pub = findByName(name) ?: NpmPublication(name, this@NpmPublishExtension.project, this@NpmPublishExtension).also {
+      add(it)
+    }
+    pub.apply(config)
     return pub
   }
 
   companion object {
-    const val EXTENSION_NAME = "npmPublishing"
-    const val AUTH_TOKEN_PROP = "npm.publish.authToken"
-    const val OTP_PROP = "npm.publish.otp"
-    const val DRY_RUN_PROP = "npm.publish.dry"
+    internal const val EXTENSION_NAME = "npmPublishing"
   }
 }
 

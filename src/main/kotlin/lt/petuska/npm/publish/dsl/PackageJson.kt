@@ -1,6 +1,7 @@
 package lt.petuska.npm.publish.dsl
 
 import com.google.gson.GsonBuilder
+import com.google.gson.annotations.Expose
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.io.Serializable
@@ -20,6 +21,11 @@ open class JsonObject<T> : MutableMap<String, T?> by mutableMapOf(), Serializabl
    * Creates a Json Array
    */
   fun <V> jsonArray(vararg elements: V) = mutableListOf(*elements)
+
+  /**
+   * Creates a Json Set
+   */
+  fun <V> jsonSet(vararg elements: V) = mutableSetOf(*elements)
 
   /**
    * Assigns a json value as `[this] = [value]`
@@ -235,8 +241,29 @@ class PackageJson(name: String, version: String, scope: String? = null, config: 
 
   /**
    * [bundledDependencies](https://docs.npmjs.com/files/package.json#bundleddependencies)
+   * Top priority if set, disregards all other configurations
    */
-  var bundledDependencies: MutableList<String>? by this
+  var bundledDependencies: MutableSet<String>? by this
+
+  @field:Expose(serialize = false, deserialize = false)
+  internal var bundledDependenciesSpec: BundledDependenciesSpec? = null
+
+  /**
+   * Appends bundled dependencies configuration.
+   * Ignored if [bundledDependencies] property is set
+   * For auto-generated publications, kotlin-test* dependencies are excluded by default
+   *
+   * @param mustBundle a list of dependencies to bundle regardless of the config
+   * @param config include/exclude spec to filter out bundled dependencies
+   */
+  fun bundledDependencies(vararg mustBundle: String, config: BundledDependenciesSpec.() -> Unit) {
+    val target = bundledDependenciesSpec ?: BundledDependenciesSpec()
+    target.apply(config)
+    target.apply {
+      mustBundle.forEach { +it }
+    }
+    bundledDependenciesSpec = target
+  }
 
   /**
    * [engines](https://docs.npmjs.com/files/package.json#engines)
@@ -272,6 +299,49 @@ class PackageJson(name: String, version: String, scope: String? = null, config: 
     this.name = "${scope?.let { "@$it/" } ?: ""}$name"
     this.version = version
     this.apply(config)
+  }
+
+  inner class BundledDependenciesSpec(config: (BundledDependenciesSpec.() -> Unit)? = null) {
+    private val specs: MutableList<(MutableSet<String>) -> Unit> = mutableListOf()
+
+    init {
+      config?.invoke(this)
+    }
+
+    /**
+     * Includes a given dependency
+     */
+    operator fun String.unaryPlus() {
+      specs.add { it.add(this) }
+    }
+
+    /**
+     * Excludes a given dependency
+     */
+    operator fun String.unaryMinus() {
+      specs.add { it.remove(this) }
+    }
+
+    /**
+     * Includes a given dependencies by regex. Should not be used with regex exclusion.
+     */
+    operator fun Regex.unaryPlus() {
+      specs.add { it.removeIf { dep -> !matches(dep) } }
+    }
+
+    /**
+     * Excludes given dependencies by regex. Should not be used with regex inclusion.
+     */
+    operator fun Regex.unaryMinus() {
+      specs.add { it.removeIf { dep -> matches(dep) } }
+    }
+
+    /**
+     * Applies this spec to the given dependencies set.
+     */
+    fun applyTo(set: MutableSet<String>): MutableSet<String> = set.apply {
+      specs.forEach { it(this) }
+    }
   }
 
   /**

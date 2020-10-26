@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "lt.petuska"
-version = "1.0.0"
+version = "1.0.1"
 
 buildscript {
     dependencies {
@@ -98,7 +98,7 @@ gradlePlugin {
 
 pluginBundle {
     website = "http://${project.group}.gitlab.io/${project.name}"
-    vcsUrl = "https://gitlab.com/${project.group}/${project.name}"
+    vcsUrl = "https://gitlab.com/${project.group}/${project.name}.git"
     tags = listOf("npm", "publishing", "kotlin", "node")
 }
 
@@ -145,8 +145,14 @@ publishing {
                     "https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/packages/maven"
                 )
                 credentials(HttpHeaderCredentials::class) {
-                    name = "Private-Token"
-                    value = System.getenv("PRIVATE_TOKEN")
+                    val jobToken = System.getenv("CI_JOB_TOKEN")
+                    if (jobToken != null) {
+                        name = "Job-Token"
+                        value = jobToken
+                    } else {
+                        name = "Private-Token"
+                        value = System.getenv("PRIVATE_TOKEN")
+                    }
                 }
                 authentication {
                     create<HttpHeaderAuthentication>("header")
@@ -170,7 +176,7 @@ publishing {
 afterEvaluate {
     tasks {
         withType<Wrapper> {
-            gradleVersion = "6.6.1"
+            gradleVersion = "6.7"
             distributionType = Wrapper.DistributionType.ALL
         }
         withType<Jar> {
@@ -179,7 +185,7 @@ afterEvaluate {
                     "Built-By" to System.getProperty("user.name"),
                     "Build-Jdk" to System.getProperty("java.version"),
                     "Implementation-Version" to project.version,
-                    "Created-By" to org.gradle.util.GradleVersion.current(),
+                    "Created-By" to "Gradle v${org.gradle.util.GradleVersion.current()}",
                     "Created-From" to gitCommitHash
                 )
             }

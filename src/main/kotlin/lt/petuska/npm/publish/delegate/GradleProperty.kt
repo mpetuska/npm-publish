@@ -1,4 +1,4 @@
-package lt.petuska.npm.publish.util
+package lt.petuska.npm.publish.delegate
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -41,9 +41,3 @@ internal sealed class GradleProperty<V>(
     }
   )
 }
-
-internal inline fun <reified V : Any> Project.gradleNullableProperty(default: V? = null) =
-  GradleProperty.Nullable(this, V::class, default)
-
-internal inline fun <reified V : Any> Project.gradleProperty(default: V) =
-  GradleProperty.NotNullable(this, V::class, default)

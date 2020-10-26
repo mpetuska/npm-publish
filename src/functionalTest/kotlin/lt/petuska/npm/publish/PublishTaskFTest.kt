@@ -13,6 +13,12 @@ class PublishTaskFTest : WordSpec(
       "succeed [JS]" {
         gradleExec(
           {
+            it.resolve("src/main/kotlin/index.kt").apply {
+              parentFile.mkdirs()
+              writeText("fun main(){}")
+            }
+          },
+          {
             kotlinJs {
               "js" {
                 "browser"()
@@ -35,6 +41,12 @@ class PublishTaskFTest : WordSpec(
       }
       "succeed [MPP]" {
         gradleExec(
+          {
+            it.resolve("src/CustomJSMain/kotlin/index.kt").apply {
+              parentFile.mkdirs()
+              writeText("fun main(){}")
+            }
+          },
           {
             kotlinMpp {
               "js"("CustomJS") {

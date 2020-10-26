@@ -25,6 +25,7 @@ public class lt/petuska/npm/publish/dsl/JsonObject : java/io/Serializable, java/
 	public fun isEmpty ()Z
 	public final fun jsonArray ([Ljava/lang/Object;)Ljava/util/List;
 	public final fun jsonObject (Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/JsonObject;
+	public final fun jsonSet ([Ljava/lang/Object;)Ljava/util/Set;
 	public final fun keySet ()Ljava/util/Set;
 	public synthetic fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun put (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
@@ -44,6 +45,7 @@ public final class lt/petuska/npm/publish/dsl/JsonObject$Companion {
 }
 
 public final class lt/petuska/npm/publish/dsl/NpmAccess : java/lang/Enum {
+	public static final field Companion Llt/petuska/npm/publish/dsl/NpmAccess$Companion;
 	public static final field PUBLIC Llt/petuska/npm/publish/dsl/NpmAccess;
 	public static final field RESTRICTED Llt/petuska/npm/publish/dsl/NpmAccess;
 	public fun toString ()Ljava/lang/String;
@@ -51,12 +53,19 @@ public final class lt/petuska/npm/publish/dsl/NpmAccess : java/lang/Enum {
 	public static fun values ()[Llt/petuska/npm/publish/dsl/NpmAccess;
 }
 
+public final class lt/petuska/npm/publish/dsl/NpmAccess$Companion {
+	public final fun fromString (Ljava/lang/String;)Llt/petuska/npm/publish/dsl/NpmAccess;
+}
+
 public final class lt/petuska/npm/publish/dsl/NpmPublication {
+	public static final field Companion Llt/petuska/npm/publish/dsl/NpmPublication$Companion;
+	public static final field PROP_PREFIX Ljava/lang/String;
 	public final fun dependencies (Lkotlin/jvm/functions/Function1;)V
 	public final fun dependency (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public final fun files (Lkotlin/jvm/functions/Function2;)V
 	public final fun getBundleKotlinDependencies ()Z
 	public final fun getDestinationDir ()Ljava/io/File;
+	public final fun getFileSpecs ()Ljava/util/List;
 	public final fun getMain ()Ljava/lang/String;
 	public final fun getModuleName ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
@@ -66,6 +75,7 @@ public final class lt/petuska/npm/publish/dsl/NpmPublication {
 	public final fun getPackageJsonFile ()Ljava/io/File;
 	public final fun getReadme ()Ljava/io/File;
 	public final fun getScope ()Ljava/lang/String;
+	public final fun getTypes ()Ljava/lang/String;
 	public final fun getVersion ()Ljava/lang/String;
 	public final fun npm (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public final fun npmDev (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
@@ -74,6 +84,7 @@ public final class lt/petuska/npm/publish/dsl/NpmPublication {
 	public final fun packageJson (Lkotlin/jvm/functions/Function1;)V
 	public final fun setBundleKotlinDependencies (Z)V
 	public final fun setDestinationDir (Ljava/io/File;)V
+	public final fun setFileSpecs (Ljava/util/List;)V
 	public final fun setMain (Ljava/lang/String;)V
 	public final fun setModuleName (Ljava/lang/String;)V
 	public final fun setNodeJsDir (Ljava/io/File;)V
@@ -81,20 +92,24 @@ public final class lt/petuska/npm/publish/dsl/NpmPublication {
 	public final fun setPackageJsonFile (Ljava/io/File;)V
 	public final fun setReadme (Ljava/io/File;)V
 	public final fun setScope (Ljava/lang/String;)V
+	public final fun setTypes (Ljava/lang/String;)V
 	public final fun setVersion (Ljava/lang/String;)V
 }
 
-public class lt/petuska/npm/publish/dsl/NpmPublishExtension {
-	public static final field AUTH_TOKEN_PROP Ljava/lang/String;
+public final class lt/petuska/npm/publish/dsl/NpmPublication$Companion {
+}
+
+public class lt/petuska/npm/publish/dsl/NpmPublishExtension : lt/petuska/npm/publish/dsl/NpmPublishExtensionScope {
 	public static final field Companion Llt/petuska/npm/publish/dsl/NpmPublishExtension$Companion;
-	public static final field DRY_RUN_PROP Ljava/lang/String;
-	public static final field EXTENSION_NAME Ljava/lang/String;
-	public static final field OTP_PROP Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public final fun getAccess ()Llt/petuska/npm/publish/dsl/NpmAccess;
 	public final fun getBundleKotlinDependencies ()Z
+	public final fun getDry ()Z
 	public final fun getOrganization ()Ljava/lang/String;
+	public fun getPUBLIC ()Llt/petuska/npm/publish/dsl/NpmAccess;
+	public fun getRESTRICTED ()Llt/petuska/npm/publish/dsl/NpmAccess;
 	public final fun getReadme ()Ljava/io/File;
+	public final fun getVersion ()Ljava/lang/String;
 	public final fun publication (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/NpmPublication;
 	public final fun publications (Lgroovy/lang/Closure;)V
 	public final fun publications (Lkotlin/jvm/functions/Function1;)V
@@ -103,23 +118,42 @@ public class lt/petuska/npm/publish/dsl/NpmPublishExtension {
 	public final fun repository (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/NpmRepository;
 	public final fun setAccess (Llt/petuska/npm/publish/dsl/NpmAccess;)V
 	public final fun setBundleKotlinDependencies (Z)V
+	public final fun setDry (Z)V
 	public final fun setOrganization (Ljava/lang/String;)V
 	public final fun setReadme (Ljava/io/File;)V
+	public final fun setVersion (Ljava/lang/String;)V
 }
 
 public final class lt/petuska/npm/publish/dsl/NpmPublishExtension$Companion {
 }
 
+public abstract interface class lt/petuska/npm/publish/dsl/NpmPublishExtensionScope {
+	public abstract fun getPUBLIC ()Llt/petuska/npm/publish/dsl/NpmAccess;
+	public abstract fun getRESTRICTED ()Llt/petuska/npm/publish/dsl/NpmAccess;
+}
+
+public final class lt/petuska/npm/publish/dsl/NpmPublishExtensionScope$DefaultImpls {
+	public static fun getPUBLIC (Llt/petuska/npm/publish/dsl/NpmPublishExtensionScope;)Llt/petuska/npm/publish/dsl/NpmAccess;
+	public static fun getRESTRICTED (Llt/petuska/npm/publish/dsl/NpmPublishExtensionScope;)Llt/petuska/npm/publish/dsl/NpmAccess;
+}
+
 public final class lt/petuska/npm/publish/dsl/NpmRepository {
+	public static final field Companion Llt/petuska/npm/publish/dsl/NpmRepository$Companion;
+	public static final field PROP_PREFIX Ljava/lang/String;
 	public final fun getAccess ()Llt/petuska/npm/publish/dsl/NpmAccess;
 	public final fun getAuthToken ()Ljava/lang/String;
+	public final fun getDry ()Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getOtp ()Ljava/lang/String;
 	public final fun getRegistry ()Ljava/net/URI;
 	public final fun setAccess (Llt/petuska/npm/publish/dsl/NpmAccess;)V
 	public final fun setAuthToken (Ljava/lang/String;)V
+	public final fun setDry (Z)V
 	public final fun setOtp (Ljava/lang/String;)V
 	public final fun setRegistry (Ljava/net/URI;)V
+}
+
+public final class lt/petuska/npm/publish/dsl/NpmRepository$Companion {
 }
 
 public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publish/dsl/JsonObject {
@@ -129,6 +163,7 @@ public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publi
 	public static synthetic fun author$default (Llt/petuska/npm/publish/dsl/PackageJson;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Llt/petuska/npm/publish/dsl/PackageJson$Person;
 	public final fun bugs (Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/PackageJson$Bugs;
 	public static synthetic fun bugs$default (Llt/petuska/npm/publish/dsl/PackageJson;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Llt/petuska/npm/publish/dsl/PackageJson$Bugs;
+	public final fun bundledDependencies ([Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public final fun contributor (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/PackageJson$Person;
 	public static synthetic fun contributor$default (Llt/petuska/npm/publish/dsl/PackageJson;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Llt/petuska/npm/publish/dsl/PackageJson$Person;
 	public final fun dependencies (Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/JsonObject;
@@ -141,7 +176,7 @@ public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publi
 	public final fun getBin ()Llt/petuska/npm/publish/dsl/JsonObject;
 	public final fun getBrowser ()Ljava/lang/String;
 	public final fun getBugs ()Llt/petuska/npm/publish/dsl/PackageJson$Bugs;
-	public final fun getBundledDependencies ()Ljava/util/List;
+	public final fun getBundledDependencies ()Ljava/util/Set;
 	public final fun getConfig ()Llt/petuska/npm/publish/dsl/JsonObject;
 	public final fun getContributors ()Ljava/util/List;
 	public final fun getCpu ()Ljava/util/List;
@@ -178,7 +213,7 @@ public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publi
 	public final fun setBin (Llt/petuska/npm/publish/dsl/JsonObject;)V
 	public final fun setBrowser (Ljava/lang/String;)V
 	public final fun setBugs (Llt/petuska/npm/publish/dsl/PackageJson$Bugs;)V
-	public final fun setBundledDependencies (Ljava/util/List;)V
+	public final fun setBundledDependencies (Ljava/util/Set;)V
 	public final fun setConfig (Llt/petuska/npm/publish/dsl/JsonObject;)V
 	public final fun setContributors (Ljava/util/List;)V
 	public final fun setCpu (Ljava/util/List;)V
@@ -212,6 +247,16 @@ public final class lt/petuska/npm/publish/dsl/PackageJson$Bugs : lt/petuska/npm/
 	public final fun getUrl ()Ljava/lang/String;
 	public final fun setEmail (Ljava/lang/String;)V
 	public final fun setUrl (Ljava/lang/String;)V
+}
+
+public final class lt/petuska/npm/publish/dsl/PackageJson$BundledDependenciesSpec {
+	public fun <init> (Llt/petuska/npm/publish/dsl/PackageJson;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Llt/petuska/npm/publish/dsl/PackageJson;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun applyTo (Ljava/util/Set;)Ljava/util/Set;
+	public final fun unaryMinus (Ljava/lang/String;)V
+	public final fun unaryMinus (Lkotlin/text/Regex;)V
+	public final fun unaryPlus (Ljava/lang/String;)V
+	public final fun unaryPlus (Lkotlin/text/Regex;)V
 }
 
 public final class lt/petuska/npm/publish/dsl/PackageJson$Directories : lt/petuska/npm/publish/dsl/JsonObject {
@@ -277,6 +322,18 @@ public abstract class lt/petuska/npm/publish/task/NpmExecTask : org/gradle/api/D
 	public final fun getNpm ()Ljava/io/File;
 }
 
+public class lt/petuska/npm/publish/task/NpmPackTask : lt/petuska/npm/publish/task/NpmExecTask {
+	public fun <init> (Llt/petuska/npm/publish/dsl/NpmPublication;)V
+	public final fun getDestinationDir ()Ljava/io/File;
+	public final fun getDry ()Z
+	public fun getNodeJsDir ()Ljava/io/File;
+	public final fun getPackageDir ()Ljava/io/File;
+	public final fun setDestinationDir (Ljava/io/File;)V
+	public final fun setDry (Z)V
+	public fun setNodeJsDir (Ljava/io/File;)V
+	public final fun setPackageDir (Ljava/io/File;)V
+}
+
 public class lt/petuska/npm/publish/task/NpmPackageAssembleTask : org/gradle/api/DefaultTask {
 	public fun <init> ()V
 	public fun <init> (Llt/petuska/npm/publish/dsl/NpmPublication;)V
@@ -302,5 +359,9 @@ public class lt/petuska/npm/publish/task/NpmPublishTask : lt/petuska/npm/publish
 	public final fun setOtp (Ljava/lang/String;)V
 	public final fun setPackageDir (Ljava/io/File;)V
 	public final fun setRegistry (Ljava/net/URI;)V
+}
+
+public final class lt/petuska/npm/publish/util/GeneralKt {
+	public static final fun notFalse (Ljava/lang/String;)Z
 }
 

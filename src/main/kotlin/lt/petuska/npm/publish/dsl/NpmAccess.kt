@@ -10,4 +10,8 @@ enum class NpmAccess {
   override fun toString(): String {
     return name.toLowerCase()
   }
+
+  companion object {
+    fun fromString(name: String): NpmAccess? = values().find { it.name.equals(name, true) }
+  }
 }

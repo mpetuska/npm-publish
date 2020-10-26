@@ -63,7 +63,8 @@ fun KotlinBuilder.npmRepository(name: String = defaultRepoName, config: KotlinBu
   }
 }
 
-fun gradleExec(buildFile: KotlinBuilder.() -> Unit, vararg args: String): BuildResult = File("build/functionalTest").let {
+fun gradleExec(buildFile: KotlinBuilder.() -> Unit, vararg args: String): BuildResult = gradleExec({}, buildFile, *args)
+fun gradleExec(preExec: (dir: File) -> Unit = {}, buildFile: KotlinBuilder.() -> Unit, vararg args: String): BuildResult = File("build/functionalTest").let {
   it.mkdirs()
   TemporaryFolder(it)
 }.run {
@@ -71,6 +72,7 @@ fun gradleExec(buildFile: KotlinBuilder.() -> Unit, vararg args: String): BuildR
   root.run {
     deleteRecursively()
     mkdirs()
+    preExec(this)
     resolve("settings.gradle.kts").writeText(
       """
     rootProject.name = "test-project"

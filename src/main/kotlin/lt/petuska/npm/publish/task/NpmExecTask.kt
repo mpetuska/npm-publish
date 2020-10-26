@@ -1,6 +1,6 @@
 package lt.petuska.npm.publish.task
 
-import lt.petuska.npm.publish.util.gradleNullableProperty
+import lt.petuska.npm.publish.delegate.gradleNullableProperty
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputDirectory
