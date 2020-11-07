@@ -218,7 +218,7 @@ public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publi
 	public final fun getFiles ()Ljava/util/List;
 	public final fun getHomepage ()Ljava/lang/String;
 	public final fun getKeywords ()Ljava/util/List;
-	public final fun getLicense ()Ljava/lang/String;
+	public final fun getLicence ()Ljava/lang/String;
 	public final fun getMain ()Ljava/lang/String;
 	public final fun getMan ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
@@ -255,7 +255,7 @@ public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publi
 	public final fun setFiles (Ljava/util/List;)V
 	public final fun setHomepage (Ljava/lang/String;)V
 	public final fun setKeywords (Ljava/util/List;)V
-	public final fun setLicense (Ljava/lang/String;)V
+	public final fun setLicence (Ljava/lang/String;)V
 	public final fun setMain (Ljava/lang/String;)V
 	public final fun setMan (Ljava/util/List;)V
 	public final fun setName (Ljava/lang/String;)V

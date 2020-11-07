@@ -116,9 +116,9 @@ class PackageJson(name: String, version: String, scope: String? = null, config: 
   fun bugs(config: Bugs.() -> Unit = {}) = (bugs ?: Bugs()).apply(config).also { bugs = it }
 
   /**
-   * [license](https://docs.npmjs.com/files/package.json#license)
+   * [licence](https://docs.npmjs.com/files/package.json#license)
    */
-  var license: String? by this
+  var licence: String? by this
 
   /**
    * [author](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)

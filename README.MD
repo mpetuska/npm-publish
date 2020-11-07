@@ -159,7 +159,7 @@ The plugin generates the following gradle tasks for various configuration elemen
 * NpmPackTask: generated for each publication and named as `pack<UpperCammelCasePublicationName>NpmPublication`
 * NpmPublishTask: generated for each publication + repository combination and named as `publish<UpperCammelCasePublicationName>NpmPublicationTo<UpperCammelCaseRepositoryName>`
 
-All created tasks are also added as dependencies to grouping tasks to allow for group-invocation:
+All created tasks are added as dependencies to grouping tasks to allow for group-invocation:
 * NpmPackageAssembleTask: `assemble` task in `build` group
 * NpmPackTask: `pack` task in `build` group
 * NpmPublishTask: `publish` task in `publishing` group
@@ -176,5 +176,7 @@ This ensures that any given dependency does not appear in multiple dependency sc
 
 ## Known Issues
 * [#6435](https://github.com/npm/npm/issues/6435): npm and yarn tries to download bundled dependencies.
-  Can be overcome for npm (sadly not yarn) with `shrinkwrapBundledDependencies` option. Note that it works fine for both 
-  package managers when installing from a tarball.
+  Can be overcome for npm (sadly not yarn) with `shrinkwrapBundledDependencies` option.
+  Note that it works fine for both package managers when installing from a tarball. 
+  Bug [#2143](https://github.com/npm/cli/issues/2143) on the new npm repo, so please vote for that to get it fixed.
+  Bug [#8436](https://github.com/yarnpkg/yarn/issues/8436) on the yarn repo, so please vote for that to get it fixed.
