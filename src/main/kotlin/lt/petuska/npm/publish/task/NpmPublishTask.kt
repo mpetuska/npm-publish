@@ -65,10 +65,8 @@ open class NpmPublishTask @Inject constructor(
   @TaskAction
   private fun doAction() {
     val repo = "${registry!!.authority.trim()}${registry!!.path.trim()}/"
-    project.exec {
-      val cmd = listOfNotNull(
-        node,
-        npm,
+    npmExec(
+      listOf(
         "publish",
         packageDir,
         "--access", "$access",
@@ -76,8 +74,7 @@ open class NpmPublishTask @Inject constructor(
         "--//$repo:_authToken=$authToken",
         if (otp != null) "--otp $otp" else null,
         if (dry) "--dry-run" else null
-      ).toTypedArray()
-      it.commandLine(*cmd)
-    }
+      )
+    )
   }
 }

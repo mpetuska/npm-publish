@@ -38,6 +38,12 @@ class NpmPublication internal constructor(
   var bundleKotlinDependencies: Boolean by project.propertyDelegate(propGroup) { it.notFalse() } or extension.fallbackDelegate(NpmPublishExtension::bundleKotlinDependencies)
 
   /**
+   * Flag to add bundled dependencies to npm-shrinkwrap.json.
+   * Defaults to true.
+   */
+  var shrinkwrapBundledDependencies: Boolean by project.propertyDelegate(propGroup) { it.notFalse() } or extension.fallbackDelegate(NpmPublishExtension::shrinkwrapBundledDependencies)
+
+  /**
    * Optional npm scope. If set, package name will be constructed as `@{scope}/{moduleName}`.
    * Defaults to [NpmPublishExtension.organization].
    */

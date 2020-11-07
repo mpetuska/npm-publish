@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "lt.petuska"
-version = "1.0.1"
+version = "1.0.2"
 
 buildscript {
     dependencies {

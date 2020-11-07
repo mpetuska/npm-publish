@@ -44,6 +44,12 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   var bundleKotlinDependencies: Boolean by project.propertyDelegate(default = true) { it.notFalse() }
 
   /**
+   * Sets global default flag
+   * @see [NpmPublication.shrinkwrapBundledDependencies]
+   */
+  var shrinkwrapBundledDependencies: Boolean by project.propertyDelegate(default = true) { it.notFalse() }
+
+  /**
    * Specifies if a dry-run should be added to the npm command arguments. Dry run does all the normal run des except actual file uploading.
    * Defaults to `npm.publish.dry` project property if set or `false` otherwise.
    */

@@ -36,7 +36,6 @@ public class lt/petuska/npm/publish/dsl/JsonObject : java/io/Serializable, java/
 	public final fun to (Ljava/lang/String;Ljava/lang/Object;)V
 	public fun toString ()Ljava/lang/String;
 	public final fun values ()Ljava/util/Collection;
-	public final fun writeTo (Ljava/io/File;)Llt/petuska/npm/publish/dsl/JsonObject;
 }
 
 public final class lt/petuska/npm/publish/dsl/JsonObject$Companion {
@@ -75,6 +74,7 @@ public final class lt/petuska/npm/publish/dsl/NpmPublication {
 	public final fun getPackageJsonFile ()Ljava/io/File;
 	public final fun getReadme ()Ljava/io/File;
 	public final fun getScope ()Ljava/lang/String;
+	public final fun getShrinkwrapBundledDependencies ()Z
 	public final fun getTypes ()Ljava/lang/String;
 	public final fun getVersion ()Ljava/lang/String;
 	public final fun npm (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
@@ -92,6 +92,7 @@ public final class lt/petuska/npm/publish/dsl/NpmPublication {
 	public final fun setPackageJsonFile (Ljava/io/File;)V
 	public final fun setReadme (Ljava/io/File;)V
 	public final fun setScope (Ljava/lang/String;)V
+	public final fun setShrinkwrapBundledDependencies (Z)V
 	public final fun setTypes (Ljava/lang/String;)V
 	public final fun setVersion (Ljava/lang/String;)V
 }
@@ -109,6 +110,7 @@ public class lt/petuska/npm/publish/dsl/NpmPublishExtension : lt/petuska/npm/pub
 	public fun getPUBLIC ()Llt/petuska/npm/publish/dsl/NpmAccess;
 	public fun getRESTRICTED ()Llt/petuska/npm/publish/dsl/NpmAccess;
 	public final fun getReadme ()Ljava/io/File;
+	public final fun getShrinkwrapBundledDependencies ()Z
 	public final fun getVersion ()Ljava/lang/String;
 	public final fun publication (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/NpmPublication;
 	public final fun publications (Lgroovy/lang/Closure;)V
@@ -121,6 +123,7 @@ public class lt/petuska/npm/publish/dsl/NpmPublishExtension : lt/petuska/npm/pub
 	public final fun setDry (Z)V
 	public final fun setOrganization (Ljava/lang/String;)V
 	public final fun setReadme (Ljava/io/File;)V
+	public final fun setShrinkwrapBundledDependencies (Z)V
 	public final fun setVersion (Ljava/lang/String;)V
 }
 
@@ -154,6 +157,33 @@ public final class lt/petuska/npm/publish/dsl/NpmRepository {
 }
 
 public final class lt/petuska/npm/publish/dsl/NpmRepository$Companion {
+}
+
+public final class lt/petuska/npm/publish/dsl/NpmShrinkwrapJson : lt/petuska/npm/publish/dsl/JsonObject {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun dependencies (Lkotlin/jvm/functions/Function1;)Llt/petuska/npm/publish/dsl/JsonObject;
+	public static synthetic fun dependencies$default (Llt/petuska/npm/publish/dsl/NpmShrinkwrapJson;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Llt/petuska/npm/publish/dsl/JsonObject;
+	public final fun dependency (Llt/petuska/npm/publish/dsl/JsonObject;Ljava/lang/String;Ljava/lang/String;Z)Llt/petuska/npm/publish/dsl/NpmShrinkwrapJson$ShrinkwrapDependency;
+	public final fun getDependencies ()Llt/petuska/npm/publish/dsl/JsonObject;
+	public final fun getLockfileVersion ()Ljava/lang/Integer;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getRequires ()Ljava/lang/Boolean;
+	public final fun getVersion ()Ljava/lang/String;
+	public final fun setDependencies (Llt/petuska/npm/publish/dsl/JsonObject;)V
+	public final fun setLockfileVersion (Ljava/lang/Integer;)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setRequires (Ljava/lang/Boolean;)V
+	public final fun setVersion (Ljava/lang/String;)V
+}
+
+public final class lt/petuska/npm/publish/dsl/NpmShrinkwrapJson$ShrinkwrapDependency : lt/petuska/npm/publish/dsl/JsonObject {
+	public fun <init> (Llt/petuska/npm/publish/dsl/NpmShrinkwrapJson;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Llt/petuska/npm/publish/dsl/NpmShrinkwrapJson;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBundled ()Ljava/lang/Boolean;
+	public final fun getVersion ()Ljava/lang/String;
+	public final fun setBundled (Ljava/lang/Boolean;)V
+	public final fun setVersion (Ljava/lang/String;)V
 }
 
 public final class lt/petuska/npm/publish/dsl/PackageJson : lt/petuska/npm/publish/dsl/JsonObject {
@@ -312,6 +342,7 @@ public final class lt/petuska/npm/publish/dsl/PackageJson$Repository : lt/petusk
 public final class lt/petuska/npm/publish/dsl/PackageJsonKt {
 	public static final fun getValue (Llt/petuska/npm/publish/dsl/JsonObject;Llt/petuska/npm/publish/dsl/JsonObject;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public static final fun setValue (Llt/petuska/npm/publish/dsl/JsonObject;Llt/petuska/npm/publish/dsl/JsonObject;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+	public static final fun writeTo (Llt/petuska/npm/publish/dsl/JsonObject;Ljava/io/File;)Llt/petuska/npm/publish/dsl/JsonObject;
 }
 
 public abstract class lt/petuska/npm/publish/task/NpmExecTask : org/gradle/api/DefaultTask {
@@ -320,6 +351,10 @@ public abstract class lt/petuska/npm/publish/task/NpmExecTask : org/gradle/api/D
 	public final fun getNode ()Ljava/io/File;
 	public fun getNodeJsDir ()Ljava/io/File;
 	public final fun getNpm ()Ljava/io/File;
+	public final fun nodeExec (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Lorg/gradle/process/ExecResult;
+	public static synthetic fun nodeExec$default (Llt/petuska/npm/publish/task/NpmExecTask;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/process/ExecResult;
+	public final fun npmExec (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Lorg/gradle/process/ExecResult;
+	public static synthetic fun npmExec$default (Llt/petuska/npm/publish/task/NpmExecTask;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/process/ExecResult;
 }
 
 public class lt/petuska/npm/publish/task/NpmPackTask : lt/petuska/npm/publish/task/NpmExecTask {
@@ -363,5 +398,6 @@ public class lt/petuska/npm/publish/task/NpmPublishTask : lt/petuska/npm/publish
 
 public final class lt/petuska/npm/publish/util/GeneralKt {
 	public static final fun notFalse (Ljava/lang/String;)Z
+	public static final fun npmFullName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 }
 

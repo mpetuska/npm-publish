@@ -2,6 +2,7 @@ package lt.petuska.npm.publish.dsl
 
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.Expose
+import lt.petuska.npm.publish.util.npmFullName
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.io.Serializable
@@ -39,18 +40,8 @@ open class JsonObject<T> : MutableMap<String, T?> by mutableMapOf(), Serializabl
    */
   override fun toString(): String = gson.toJson(this)
 
-  /**
-   * Writes the current state of the object into a file as json string
-   */
-  fun writeTo(packageJsonFile: File) = this.also {
-    packageJsonFile.ensureParentDirsCreated()
-    packageJsonFile.writer().use {
-      gson.toJson(this, it)
-    }
-  }
-
   companion object {
-    private val gson = GsonBuilder()
+    internal val gson = GsonBuilder()
       .setPrettyPrinting()
       .create()
 
@@ -63,6 +54,16 @@ open class JsonObject<T> : MutableMap<String, T?> by mutableMapOf(), Serializabl
      * Creates a Json Array
      */
     operator fun <V> invoke(vararg elements: V) = mutableListOf(*elements)
+  }
+}
+
+/**
+ * Writes the current state of the object into a file as json string
+ */
+fun <T : JsonObject<*>> T.writeTo(packageJsonFile: File) = this.also {
+  packageJsonFile.ensureParentDirsCreated()
+  packageJsonFile.writer().use {
+    JsonObject.gson.toJson(this, it)
   }
 }
 
@@ -296,7 +297,7 @@ class PackageJson(name: String, version: String, scope: String? = null, config: 
   fun publishConfig(config: PublishConfig.() -> Unit = {}) = (publishConfig ?: PublishConfig()).apply(config).also { publishConfig = it }
 
   init {
-    this.name = "${scope?.let { "@$it/" } ?: ""}$name"
+    this.name = npmFullName(name, scope)
     this.version = version
     this.apply(config)
   }
