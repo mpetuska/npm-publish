@@ -1,6 +1,6 @@
 plugins {
-  id("lt.petuska.npm.publish")
   kotlin("multiplatform")
+  id("lt.petuska.npm.publish")
   `maven-publish`
 }
 
@@ -42,7 +42,7 @@ npmPublishing {
     val jsIR by getting {
       moduleName = "mpp-IR"
       packageJson {
-        bundledDependencies = mutableSetOf("kotlin-test")
+        // bundledDependencies = mutableSetOf("kotlin-test")
       }
     }
     val js by getting {
