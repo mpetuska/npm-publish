@@ -11,8 +11,10 @@ import lt.petuska.npm.publish.dsl.writeTo
 import lt.petuska.npm.publish.npmPublishing
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.CopySpec
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.util.GUtil
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
@@ -85,13 +87,17 @@ open class NpmPackageAssembleTask @Inject constructor(
 
   private fun Kotlin2JsCompile.copyKotlinDependencies(): Map<String, String>? = try {
     val gson = Gson()
-    val rawPJS = gson.fromJson(destinationDir.resolve("../package.json").readText(), GsonObject::class.java)
+    val pjsFile = this@copyKotlinDependencies.destinationDir.resolve("../package.json").takeIf { it.exists() }
+      ?: project.tasks
+        .named("${publication.compilation?.compileKotlinTaskName?.removePrefix("compileKotlin")?.let{GUtil.toLowerCamelCase(it)}}ProductionExecutableCompileSync", Copy::class.java).orNull
+        ?.destinationDir?.resolve("../package.json")?.takeIf { it.exists() }
+    val rawPJS = gson.fromJson(pjsFile!!.readText(), GsonObject::class.java)
     val kotlinDeps = rawPJS["dependencies"].asJsonObject.entrySet()
       ?.map { it.key to it.value.asString }
       ?.filter { it.second.run { startsWith("file:") && contains("packages_imported") } }
       ?.map { (key, value) -> key to File(value.removePrefix("file:")) }
 
-    val targetNodeModulesDir = destinationDir.resolve("node_modules").apply {
+    val targetNodeModulesDir = this@NpmPackageAssembleTask.destinationDir.resolve("node_modules").apply {
       mkdirs()
     }
 
@@ -149,11 +155,11 @@ open class NpmPackageAssembleTask @Inject constructor(
 
   private fun NpmPublication.resolveDependencies() = npmDependencies.groupBy { dep -> dep.scope }
     .let { deps ->
-      val dev = deps[NpmDependency.Scope.NORMAL]
-      val peer = deps[NpmDependency.Scope.NORMAL]
-      val optional = deps[NpmDependency.Scope.NORMAL]
+      val dev = deps[NpmDependency.Scope.DEV]
+      val peer = deps[NpmDependency.Scope.PEER]
+      val optional = deps[NpmDependency.Scope.OPTIONAL]
       fun NpmDependency.id() = "$scope:$name:$version"
-      fun List<NpmDependency>?.includes(other: NpmDependency) = this?.any { it.id() == other.id() } ?: true
+      fun List<NpmDependency>?.includes(other: NpmDependency) = this?.any { it.id() == other.id() } ?: false
 
       deps.entries.map { (scope, deps) ->
         scope to deps.filter { dep ->

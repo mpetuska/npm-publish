@@ -97,7 +97,7 @@ class NpmPublication internal constructor(
   internal val compileKotlinTask: Kotlin2JsCompile?
     get() = compilation?.let {
       if (it is KotlinJsIrCompilation) {
-        val exeTaskName = "compileProductionExecutable${it.compileKotlinTaskName.removePrefix("compile")}"
+        val exeTaskName = "compileProductionExecutableKotlin${it.compileKotlinTaskName.removePrefix("compileKotlin")}"
         project.tasks.findByName(exeTaskName) as KotlinJsIrLink?
       } else {
         it.compileKotlinTask
