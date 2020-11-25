@@ -11,6 +11,9 @@ This setup would produce the following tasks:
 * `assembleJsNpmPublication`
 * `packJsNpmPublication`
 * `publishJsNpmPublicationToNpmjs`
+* `assembleIrNpmPublication`
+* `packIrNpmPublication`
+* `publishIrNpmPublicationToNpmjs`
 
 ```kotlin
 plugins {
@@ -20,6 +23,11 @@ plugins {
 
 kotlin {
   js {
+    binaries.library()
+    browser() // or nodejs()
+  }
+  js("ir", IR) {
+    binaries.library()
     browser() // or nodejs()
   }
 }

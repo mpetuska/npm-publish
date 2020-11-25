@@ -1,14 +1,13 @@
 ## Changelog
-NPM Dependency resolution bugfixes
+Gradle upgraded to 6.7.1
+Kotlin upgraded to 1.4.20
+Improvements to K/JS IR mode.
 
 ### Breaking Changes
-N/A
+* JS target with IR mode and `binaries.executable()` will no longer produce a publication.
 
 ### New Features
-* New JS/IR model support for 1.4.20
+* Support for `binaries.library()` when using IR mode.
 
 ### Fixes
-* Fixed a bug that prevented normal npm dependencies from resolving when declared
-  in sourceSet dependencies or top-level `publication.dependencies` block
-* Fixed an issue with kotlin-gradle-plugin dependency declaration that always upgraded
-  consumer's kotlin version to the one used by the plugin.
+N/A

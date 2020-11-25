@@ -14,11 +14,18 @@ kotlin {
   js("jsIR", IR) {
     browser()
     useCommonJs()
-    binaries.executable()
+    binaries.library()
   }
 
   sourceSets {
     val jsMain by getting {
+      dependencies {
+        implementation("io.ktor:ktor-client-core:1.4.1")
+        implementation(devNpm("axios", "*"))
+        api(npm("snabbdom", "*"))
+      }
+    }
+    val jsIRMain by getting {
       dependencies {
         implementation("io.ktor:ktor-client-core:1.4.1")
         implementation(devNpm("axios", "*"))

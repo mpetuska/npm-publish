@@ -9,7 +9,9 @@ repositories {
 }
 
 kotlin {
-  js { browser() }
+  js {
+    browser()
+  }
   dependencies {
     implementation(npm("axios", "*"))
     api(devNpm("snabbdom", "*"))

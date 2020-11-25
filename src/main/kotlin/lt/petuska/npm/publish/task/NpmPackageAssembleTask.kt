@@ -11,12 +11,9 @@ import lt.petuska.npm.publish.dsl.writeTo
 import lt.petuska.npm.publish.npmPublishing
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.CopySpec
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.GUtil
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
 import javax.inject.Inject
 import com.google.gson.JsonObject as GsonObject
@@ -64,7 +61,7 @@ open class NpmPackageAssembleTask @Inject constructor(
         cp.into(this@NpmPackageAssembleTask.destinationDir)
         cp.resolveFiles()
 
-        val kotlinDependencies = compileKotlinTask?.copyKotlinDependencies()
+        val kotlinDependencies = kotlinDestinationDir?.copyKotlinDependencies()
         packageJsonFile?.let { packageJsonFile ->
           cp.from("$packageJsonFile")
           cp.rename(packageJsonFile.name, "package.json")
@@ -85,12 +82,9 @@ open class NpmPackageAssembleTask @Inject constructor(
     }
   }
 
-  private fun Kotlin2JsCompile.copyKotlinDependencies(): Map<String, String>? = try {
+  private fun File.copyKotlinDependencies(): Map<String, String>? = try {
     val gson = Gson()
-    val pjsFile = this@copyKotlinDependencies.destinationDir.resolve("../package.json").takeIf { it.exists() }
-      ?: project.tasks
-        .named("${publication.compilation?.compileKotlinTaskName?.removePrefix("compileKotlin")?.let{GUtil.toLowerCamelCase(it)}}ProductionExecutableCompileSync", Copy::class.java).orNull
-        ?.destinationDir?.resolve("../package.json")?.takeIf { it.exists() }
+    val pjsFile = this@copyKotlinDependencies.resolve("../package.json").takeIf { it.exists() }
     val rawPJS = gson.fromJson(pjsFile!!.readText(), GsonObject::class.java)
     val kotlinDeps = rawPJS["dependencies"].asJsonObject.entrySet()
       ?.map { it.key to it.value.asString }
@@ -174,10 +168,9 @@ open class NpmPackageAssembleTask @Inject constructor(
     }
 
   private fun NpmPublication.resolveTypes() = compileKotlinTask?.outputFile?.let {
-    val kDir = it.parentFile
-    kDir.resolve("${it.nameWithoutExtension}.d.ts").let { dtsFile ->
+    kotlinDestinationDir?.resolve("${it.nameWithoutExtension}.d.ts")?.let { dtsFile ->
       if (dtsFile.exists()) {
-        "${dtsFile.relativeTo(kDir)}"
+        "${dtsFile.relativeTo(dtsFile.parentFile)}"
       } else null
     }
   }

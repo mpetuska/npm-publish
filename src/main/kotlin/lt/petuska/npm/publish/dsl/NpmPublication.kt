@@ -6,10 +6,12 @@ import lt.petuska.npm.publish.delegate.or
 import lt.petuska.npm.publish.delegate.propertyDelegate
 import lt.petuska.npm.publish.util.notFalse
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.CopySpec
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.gradle.api.tasks.Copy
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.Library
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
@@ -92,15 +94,36 @@ class NpmPublication internal constructor(
   var destinationDir: File by project.propertyDelegate(propGroup) { File(it) } or
     project.fallbackDelegate { File("${this.buildDir}/publications/npm/${this@NpmPublication.name}") }
 
-  internal var compilation by project.gradleNullableProperty<KotlinJsCompilation>()
+  internal var binary by project.gradleNullableProperty<JsBinary>()
+
+  internal val kotlinDestinationDir: File?
+    get() = kotlinMainTask?.let {
+      when (it) {
+        is Kotlin2JsCompile -> it.outputFile.parentFile
+        is Copy -> it.destinationDir
+        else -> null
+      }
+    }
+
+  internal val kotlinMainTask: Task? // Kotlin2JsCompile | Copy
+    get() = binary?.let {
+      when (it) {
+        is JsIrBinary -> when (it) {
+          is Library -> it.linkSyncTask.orNull
+          else -> null
+        }
+        else -> it.compilation.compileKotlinTask
+      }
+    }
 
   internal val compileKotlinTask: Kotlin2JsCompile?
-    get() = compilation?.let {
-      if (it is KotlinJsIrCompilation) {
-        val exeTaskName = "compileProductionExecutableKotlin${it.compileKotlinTaskName.removePrefix("compileKotlin")}"
-        project.tasks.findByName(exeTaskName) as KotlinJsIrLink?
-      } else {
-        it.compileKotlinTask
+    get() = binary?.let {
+      when (it) {
+        is JsIrBinary -> when (it) {
+          is Library -> it.linkTask.orNull
+          else -> null
+        }
+        else -> it.compilation.compileKotlinTask
       }
     }
 
