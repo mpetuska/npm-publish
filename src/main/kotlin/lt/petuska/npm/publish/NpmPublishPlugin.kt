@@ -5,14 +5,13 @@ import lt.petuska.npm.publish.dsl.NpmPublishExtension.Companion.EXTENSION_NAME
 import lt.petuska.npm.publish.task.NpmPackTask
 import lt.petuska.npm.publish.task.NpmPackageAssembleTask
 import lt.petuska.npm.publish.task.NpmPublishTask
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.util.GUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
@@ -27,14 +26,14 @@ class NpmPublishPlugin : Plugin<Project> {
       prj.pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
         prj.extensions.configure(KotlinMultiplatformExtension::class.java) {
           it.targets.filterIsInstance<KotlinJsTargetDsl>().forEach { target ->
-            prj.configureExtension(extension, target.name, target.compilations)
+            prj.configureExtension(extension, target)
           }
         }
       }
       prj.pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
         prj.extensions.configure(KotlinJsProjectExtension::class.java) {
           val target = it.js()
-          prj.configureExtension(extension, target.name, target.compilations)
+          prj.configureExtension(extension, target)
         }
       }
       prj.configureTasks(extension)
@@ -52,26 +51,27 @@ class NpmPublishPlugin : Plugin<Project> {
       this@createExtension
     )
 
-    private fun Project.configureExtension(extension: NpmPublishExtension, targetName: String, compilations: NamedDomainObjectContainer<out KotlinJsCompilation>) {
-      val compilation = compilations.first { comp -> comp.name.contains("main", true) }
-      val deps = compilation.relatedConfigurationNames.flatMap { conf ->
-        val mainName = "${targetName}Main${conf.substringAfter(targetName)}"
-        val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
-        val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
-        (normDeps + mainDeps).filterIsInstance<NpmDependency>()
-      }
+    private fun Project.configureExtension(extension: NpmPublishExtension, target: KotlinJsTargetDsl) {
+      val compileTask = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }?.let { binary ->
+        val deps = binary.compilation.relatedConfigurationNames.flatMap { conf ->
+          val mainName = "${target.name}Main${conf.substringAfter(target.name)}"
+          val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
+          val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
+          (normDeps + mainDeps).filterIsInstance<NpmDependency>()
+        }
 
-      extension.apply {
-        publications(0) {
-          publication(targetName) {
-            this.compilation = compilation
-            this.main = compileKotlinTask?.outputFile?.name
-            dependencies {
-              addAll(deps)
-            }
-            packageJson {
-              bundledDependencies {
-                -"kotlin-test.*".toRegex()
+        extension.apply {
+          publications(0) {
+            publication(target.name) {
+              this.binary = binary
+              this.main = compileKotlinTask?.outputFile?.name
+              dependencies {
+                addAll(deps)
+              }
+              packageJson {
+                bundledDependencies {
+                  -"kotlin-test.*".toRegex()
+                }
               }
             }
           }
@@ -114,15 +114,16 @@ class NpmPublishPlugin : Plugin<Project> {
       }
 
       val pubTasks = publications.flatMap { (pub, nodeJsTask) ->
-        val (compileKotlinTask, processResourcesTask) = pub.compilation?.let {
+        val processResourcesTask = pub.binary?.compilation?.let {
           val processResourcesTask = project.tasks.findByName(it.processResourcesTaskName) as Copy
-          pub.compileKotlinTask?.also { compileKotlinTask ->
+          pub.kotlinDestinationDir?.let { kotlinDestinationDir ->
             pub.files {
-              from(compileKotlinTask.outputFile.parentFile)
+              from(kotlinDestinationDir)
               from(processResourcesTask.destinationDir)
             }
-          } to processResourcesTask
-        } ?: null to null
+          }
+          processResourcesTask
+        }
         val upperName = GUtil.toCamelCase(pub.name)
 
         val assembleTaskName = "assemble${upperName}NpmPublication"
@@ -133,7 +134,7 @@ class NpmPublishPlugin : Plugin<Project> {
             task.dependsOn(
               *listOfNotNull(
                 processResourcesTask,
-                compileKotlinTask,
+                pub.kotlinMainTask,
                 nodeJsTask
               ).toTypedArray()
             )

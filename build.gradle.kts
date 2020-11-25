@@ -11,13 +11,10 @@ plugins {
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.12.0"
-    id("org.jetbrains.dokka") version "1.4.0"
+    id("org.jetbrains.dokka") version "1.4.10.2"
     id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
     idea
 }
-
-group = "lt.petuska"
-version = "1.0.3"
 
 buildscript {
     dependencies {
@@ -26,6 +23,17 @@ buildscript {
 }
 apply(plugin = "binary-compatibility-validator")
 configure<ApiValidationExtension> {}
+
+group = "lt.petuska"
+version = "1.0.4"
+
+object Version {
+    private const val _kotlin = "1.4.20"
+    val kotlin: String get() = _kotlin.split(".").let { (major, minor, patch) ->
+        "[$major.$minor, $major.${minor + 1}[!!$major.$minor.$patch"
+    }
+    const val kotest = "4.1.0"
+}
 
 idea {
     module {
@@ -46,13 +54,6 @@ repositories {
     gradlePluginPortal()
 }
 
-object Version {
-    private const val _kotlin = "1.4.20"
-    val kotlin: String get() = _kotlin.split(".").let { (major, minor, patch) ->
-        "[$major.$minor, $major.${minor + 1}[!!$major.$minor.$patch"
-    }
-    const val kotest = "4.1.0"
-}
 kotlin {
     dependencies {
         api(kotlin("gradle-plugin", Version.kotlin))
