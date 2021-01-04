@@ -1,5 +1,6 @@
 # Ignore Gradle project-specific cache directory
 .gradle/
+.theia
 
 # Ignore Gradle build output directory
 build
