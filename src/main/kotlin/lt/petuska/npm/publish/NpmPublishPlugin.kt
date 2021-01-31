@@ -52,7 +52,7 @@ class NpmPublishPlugin : Plugin<Project> {
     )
 
     private fun Project.configureExtension(extension: NpmPublishExtension, target: KotlinJsTargetDsl) {
-      val compileTask = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }?.let { binary ->
+      target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }?.let { binary ->
         val deps = binary.compilation.relatedConfigurationNames.flatMap { conf ->
           val mainName = "${target.name}Main${conf.substringAfter(target.name)}"
           val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
@@ -132,11 +132,9 @@ class NpmPublishPlugin : Plugin<Project> {
           ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub).also { task ->
             task.onlyIf { pub.compileKotlinTask?.outputFile?.exists() ?: true }
             task.dependsOn(
-              *listOfNotNull(
-                processResourcesTask,
-                pub.kotlinMainTask,
-                nodeJsTask
-              ).toTypedArray()
+              processResourcesTask,
+              pub.kotlinMainTask,
+              nodeJsTask
             )
             assembleTask?.dependsOn(task)
           }

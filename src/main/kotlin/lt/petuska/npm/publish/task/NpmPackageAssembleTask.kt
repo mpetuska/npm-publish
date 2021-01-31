@@ -41,6 +41,11 @@ open class NpmPackageAssembleTask @Inject constructor(
   @get:Internal
   val destinationDir by this.publication.fallbackDelegate(NpmPublication::destinationDir)
 
+  /**
+   * Gson instance to be reused across multiple functions of the task.
+   */
+  private val gson = Gson()
+
   init {
     group = "build"
     description = "Assembles ${this.publication.name} NPM publication."
@@ -83,7 +88,6 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun File.copyKotlinDependencies(): Map<String, String>? = try {
-    val gson = Gson()
     val pjsFile = this@copyKotlinDependencies.resolve("../package.json").takeIf { it.exists() }
     val rawPJS = gson.fromJson(pjsFile!!.readText(), GsonObject::class.java)
     val kotlinDeps = rawPJS["dependencies"].asJsonObject.entrySet()
@@ -108,11 +112,19 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun resolvePackageJson(kotlinDependencies: Map<String, String>?) = with(publication) {
-    var npmVersion = version!!
-    if (npmVersion.endsWith("-SNAPSHOT")) {
-      npmVersion = npmVersion.replace("-SNAPSHOT", "-${System.currentTimeMillis()}")
-    }
-    val packageJson = PackageJson(moduleName, npmVersion, scope) {
+    val initialConfig = publication.templatePackageJsonFile?.let {
+      gson.fromJson<Map<String, Any>>(it.readText(), HashMap::class.java)
+    } ?: emptyMap()
+
+    val packageJson = PackageJson(initialConfig) {
+      name = moduleName
+
+      var npmVersion = this@with.version ?: version!!
+      if (npmVersion.endsWith("-SNAPSHOT")) {
+        npmVersion = npmVersion.replace("-SNAPSHOT", "-${System.currentTimeMillis()}")
+      }
+      version = npmVersion
+
       if (packageJson != null) {
         packageJson!!.invoke(this@PackageJson)
       } else {
