@@ -10,6 +10,7 @@ import lt.petuska.npm.publish.dsl.PackageJson
 import lt.petuska.npm.publish.dsl.writeTo
 import lt.petuska.npm.publish.npmPublishing
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.CopySpec
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -117,9 +118,9 @@ open class NpmPackageAssembleTask @Inject constructor(
     } ?: emptyMap()
 
     val packageJson = PackageJson(initialConfig) {
-      name = moduleName
+      name = name ?: moduleName
 
-      var npmVersion = this@with.version ?: version!!
+      var npmVersion = version ?: this@with.version ?: throw GradleException("npm package version is not specified")
       if (npmVersion.endsWith("-SNAPSHOT")) {
         npmVersion = npmVersion.replace("-SNAPSHOT", "-${System.currentTimeMillis()}")
       }
@@ -128,8 +129,8 @@ open class NpmPackageAssembleTask @Inject constructor(
       if (packageJson != null) {
         packageJson!!.invoke(this@PackageJson)
       } else {
-        main = this@with.main
-        types = resolveTypes()
+        main = main ?: this@with.main
+        types = types ?: resolveTypes()
 
         val groupedDependencies = resolveDependencies()
         groupedDependencies.forEach { (scope, deps) ->

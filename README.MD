@@ -100,6 +100,7 @@ npmPublishing {
         // Rest of your CopySpec     
       }
       pakageJsonFile = file("static/package.template.json") // If set will be used as-is ignoring further configurations while getting renamed to package.json regardless of the actual name.
+      templatePakageJsonFile = file("templates/package.template.json") // Will be used as a template for default settings, `packageJson` DSL can override its settings.
       packagejson = { // Full package.json override
         main = "./dist/yet-another-override.js"
         types = "./dist/yet-another-override.d.ts"

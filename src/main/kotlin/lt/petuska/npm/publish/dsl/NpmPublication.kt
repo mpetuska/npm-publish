@@ -190,8 +190,7 @@ class NpmPublication internal constructor(
 
   internal fun validate(alternativeNodeJsDir: File?): NpmPublication? {
     nodeJsDir = nodeJsDir ?: alternativeNodeJsDir
-    // version override xor
-    return takeIf { version != null && nodeJsDir != null }
+    return takeIf { nodeJsDir != null }
   }
 
   companion object {
