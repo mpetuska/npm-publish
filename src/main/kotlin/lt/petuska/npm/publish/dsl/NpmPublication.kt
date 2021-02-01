@@ -137,6 +137,11 @@ class NpmPublication internal constructor(
   var packageJsonFile by project.gradleNullableProperty<File>()
 
   /**
+   * Similar to [packageJsonFile] except allows the options to be overridden by the [packageJson] DSL.
+   */
+  var packageJsonTemplateFile by project.gradleNullableProperty<File>()
+
+  /**
    * If [packageJsonFile] is not set and this property is set, ignore any further package.json generation configs produced by DSLs
    */
   var packageJson by project.gradleNullableProperty<(PackageJson.() -> Unit)>()
@@ -185,7 +190,7 @@ class NpmPublication internal constructor(
 
   internal fun validate(alternativeNodeJsDir: File?): NpmPublication? {
     nodeJsDir = nodeJsDir ?: alternativeNodeJsDir
-    return takeIf { version != null && nodeJsDir != null }
+    return takeIf { (version != null || packageJsonTemplateFile != null) && nodeJsDir != null }
   }
 
   companion object {

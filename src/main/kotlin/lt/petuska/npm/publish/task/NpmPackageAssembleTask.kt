@@ -10,6 +10,7 @@ import lt.petuska.npm.publish.dsl.PackageJson
 import lt.petuska.npm.publish.dsl.writeTo
 import lt.petuska.npm.publish.npmPublishing
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.CopySpec
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -40,6 +41,11 @@ open class NpmPackageAssembleTask @Inject constructor(
    */
   @get:Internal
   val destinationDir by this.publication.fallbackDelegate(NpmPublication::destinationDir)
+
+  /**
+   * Gson instance to be reused across multiple functions of the task.
+   */
+  private val gson = Gson()
 
   init {
     group = "build"
@@ -83,7 +89,6 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun File.copyKotlinDependencies(): Map<String, String>? = try {
-    val gson = Gson()
     val pjsFile = this@copyKotlinDependencies.resolve("../package.json").takeIf { it.exists() }
     val rawPJS = gson.fromJson(pjsFile!!.readText(), GsonObject::class.java)
     val kotlinDeps = rawPJS["dependencies"].asJsonObject.entrySet()
@@ -108,29 +113,38 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun resolvePackageJson(kotlinDependencies: Map<String, String>?) = with(publication) {
-    var npmVersion = version!!
-    if (npmVersion.endsWith("-SNAPSHOT")) {
-      npmVersion = npmVersion.replace("-SNAPSHOT", "-${System.currentTimeMillis()}")
-    }
-    val packageJson = PackageJson(moduleName, npmVersion, scope) {
+    val initialConfig = publication.packageJsonTemplateFile?.let {
+      gson.fromJson<Map<String, Any>>(it.readText(), HashMap::class.java)
+    } ?: emptyMap()
+
+    val packageJson = PackageJson(initialConfig) {
+      name = name ?: moduleName
+
+      var npmVersion = version ?: this@with.version ?: throw GradleException("npm package version is not specified")
+      if (npmVersion.endsWith("-SNAPSHOT")) {
+        npmVersion = npmVersion.replace("-SNAPSHOT", "-${System.currentTimeMillis()}")
+      }
+      version = npmVersion
+
       if (packageJson != null) {
         packageJson!!.invoke(this@PackageJson)
       } else {
-        main = this@with.main
-        types = resolveTypes()
+        main = main ?: this@with.main
+        types = types ?: resolveTypes()
 
         val groupedDependencies = resolveDependencies()
         groupedDependencies.forEach { (scope, deps) ->
-          val dMap = JsonObject<String> {
+          val initialDeps: JsonObject<String> = when (scope) {
+            NpmDependency.Scope.NORMAL -> dependencies ?: JsonObject<String>().also { dependencies = it }
+            NpmDependency.Scope.DEV -> devDependencies ?: JsonObject<String>().also { devDependencies = it }
+            NpmDependency.Scope.OPTIONAL -> optionalDependencies ?: JsonObject<String>().also { optionalDependencies = it }
+            NpmDependency.Scope.PEER -> peerDependencies ?: JsonObject<String>().also { peerDependencies = it }
+          }
+
+          with(initialDeps) {
             deps.forEach { dep ->
               dep.name to dep.version
             }
-          }
-          when (scope) {
-            NpmDependency.Scope.NORMAL -> this.dependencies = dMap
-            NpmDependency.Scope.DEV -> this.devDependencies = dMap
-            NpmDependency.Scope.OPTIONAL -> this.optionalDependencies = dMap
-            NpmDependency.Scope.PEER -> this.peerDependencies = dMap
           }
         }
 
