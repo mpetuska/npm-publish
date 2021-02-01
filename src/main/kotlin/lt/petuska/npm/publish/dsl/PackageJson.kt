@@ -451,6 +451,11 @@ class PackageJson(initialConfig: Map<String, Any?> = emptyMap(), config: Package
       val jsonConfig = json.asJsonObject
 
       return PackageJson {
+        // Put unknown values to the PackageJson
+        for ((a, b) in jsonConfig.entrySet()) {
+          a to b
+        }
+
         name = jsonConfig.get("name")?.asString
         version = jsonConfig.get("version")?.asString
         description = jsonConfig.get("description")?.asString
