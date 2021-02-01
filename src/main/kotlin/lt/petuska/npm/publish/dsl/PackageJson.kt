@@ -446,7 +446,6 @@ class PackageJson(initialConfig: Map<String, Any?> = emptyMap(), config: Package
   }
 
   companion object Deserializer : GsonDeserializer<PackageJson> {
-    @Suppress("UNCHECKED_CAST")
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): PackageJson {
       val jsonConfig = json.asJsonObject
 
