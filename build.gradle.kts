@@ -10,9 +10,11 @@ plugins {
   idea
 }
 
-group = "lt.petuska"
-version = "0.0.0"
 description = "Gradle plugin for npm package publishing"
+group = "lt.petuska"
+if (version == "unspecified") {
+  version = "0.0.0"
+}
 
 idea {
   module {

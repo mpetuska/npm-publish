@@ -25,7 +25,7 @@ jobs:
           java-version: 11
 
       - name: Set Version
-        run: echo version="${VERSION//v}" >> gradle.properties
+        run: echo "version=${VERSION//v}" >> gradle.properties
         env:
           VERSION: ${{ github.event.release.tag_name }}
 
@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew publish -Ppublish.GitHub=true -Ppublish=true -Poverride=false
         env:
           GH_USERNAME: ${{ github.actor }}
-          GH_TOKEN: ${{ github.token }}
+          GH_PASSWORD: ${{ github.token }}
 
       - name: Publish to Bintray
         run: ./gradlew publish -Ppublish.Bintray=true -Ppublish=true -Poverride=false
