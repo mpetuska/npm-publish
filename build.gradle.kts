@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "lt.petuska"
-version = "1.1.0"
+version = "0.0.0"
 description = "Gradle plugin for npm package publishing"
 
 idea {
@@ -84,7 +84,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-  website = "http://${project.group}.gitlab.io/${project.name}"
+  website = "https://github.com/mpetuska/${project.name}"
   vcsUrl = "https://github.com/mpetuska/${project.name}.git"
   tags = listOf("npm", "publishing", "kotlin", "node")
 }
@@ -121,7 +121,7 @@ publishing {
 
         scm {
           connection by "scm:git:git@github.com:mpetuska/${project.name}.git"
-          url by "https://github.com/mpetuska/npm-publish"
+          url by "https://github.com/mpetuska/${project.name}"
           tag by Git.headCommitHash
         }
       }
