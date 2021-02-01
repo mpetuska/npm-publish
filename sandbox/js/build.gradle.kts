@@ -26,6 +26,7 @@ npmPublishing {
 
   publications {
     val js by getting {
+      packageJsonTemplateFile = projectDir.resolve("../template.package.json")
       packageJson {
         author { name = "Martynas Petuška" }
       }

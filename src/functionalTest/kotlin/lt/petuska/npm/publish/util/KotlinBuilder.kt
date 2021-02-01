@@ -85,11 +85,12 @@ class KotlinBuilder(block: KotlinBuilder.() -> Unit = {}) {
     return blocks.joinToString("")
   }
 
-  val Any.arg get() = when (this) {
-    is Arg<*> -> this
-    is String -> Arg.RawString(this)
-    else -> Arg.Block(this)
-  }
+  val Any.arg
+    get() = when (this) {
+      is Arg<*> -> this
+      is String -> Arg.RawString(this)
+      else -> Arg.Block(this)
+    }
   val String.raw get() = Arg.RawString(this)
   val String.fn get() = Arg.Block(this)
   val String.kb get() = KBuilderBlock.Raw(this)

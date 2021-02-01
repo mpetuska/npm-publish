@@ -5,6 +5,7 @@ fun sayHello(name: Name = "Mr. PP Trump"): Name = "Hello from $name".also { prin
 
 @JsExport
 fun sayFormalHello(person: Person): Name = "Hello from ${person.name} ${person.sureName}".also { println(it) }
+
 @JsExport
 fun sayFormalBuggedHello(person: BuggedPerson): Name {
   val safeStr = "Safe hello from ${person.getSafeName()}"
@@ -31,7 +32,7 @@ interface ExtendedPerson : Person {
 
 @JsExport
 interface BuggedPerson {
-  fun getSafeName():String
+  fun getSafeName(): String
   val name: String
   val sureName: String
 }

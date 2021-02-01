@@ -1,23 +1,17 @@
 package lt.petuska.npm.publish.task
 
-import com.google.gson.Gson
-import lt.petuska.npm.publish.delegate.fallbackDelegate
-import lt.petuska.npm.publish.delegate.gradleProperty
+import com.google.gson.*
+import lt.petuska.npm.publish.*
+import lt.petuska.npm.publish.delegate.*
+import lt.petuska.npm.publish.dsl.*
 import lt.petuska.npm.publish.dsl.JsonObject
-import lt.petuska.npm.publish.dsl.NpmPublication
-import lt.petuska.npm.publish.dsl.NpmShrinkwrapJson
 import lt.petuska.npm.publish.dsl.PackageJson
-import lt.petuska.npm.publish.dsl.writeTo
-import lt.petuska.npm.publish.npmPublishing
-import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
-import org.gradle.api.file.CopySpec
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import java.io.File
-import javax.inject.Inject
-import com.google.gson.JsonObject as GsonObject
+import org.gradle.api.*
+import org.gradle.api.file.*
+import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import java.io.*
+import javax.inject.*
 
 /**
  * A task to assemble all required files for a given [NpmPublication].
@@ -90,11 +84,10 @@ open class NpmPackageAssembleTask @Inject constructor(
 
   private fun File.copyKotlinDependencies(): Map<String, String>? = try {
     val pjsFile = this@copyKotlinDependencies.resolve("../package.json").takeIf { it.exists() }
-    val rawPJS = gson.fromJson(pjsFile!!.readText(), GsonObject::class.java)
-    val kotlinDeps = rawPJS["dependencies"].asJsonObject.entrySet()
-      ?.map { it.key to it.value.asString }
-      ?.filter { it.second.run { startsWith("file:") && contains("packages_imported") } }
-      ?.map { (key, value) -> key to File(value.removePrefix("file:")) }
+    val rawPJS = gson.fromJson(pjsFile!!.readText(), PackageJson::class.java)
+    val kotlinDeps = rawPJS.dependencies
+      ?.filter { it.value?.run { startsWith("file:") && contains("packages_imported") } ?: false }
+      ?.map { (key, value) -> key to File(value!!.removePrefix("file:")) }
 
     val targetNodeModulesDir = this@NpmPackageAssembleTask.destinationDir.resolve("node_modules").apply {
       mkdirs()
@@ -113,32 +106,24 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun resolvePackageJson(kotlinDependencies: Map<String, String>?) = with(publication) {
-    val initialConfig = publication.packageJsonTemplateFile?.let {
-      gson.fromJson<Map<String, Any>>(it.readText(), HashMap::class.java)
-    } ?: emptyMap()
-
-    val packageJson = PackageJson(initialConfig) {
-      name = name ?: moduleName
-
-      var npmVersion = version ?: this@with.version ?: throw GradleException("npm package version is not specified")
-      if (npmVersion.endsWith("-SNAPSHOT")) {
-        npmVersion = npmVersion.replace("-SNAPSHOT", "-${System.currentTimeMillis()}")
-      }
-      version = npmVersion
-
+    var npmVersion = this@with.version
+    if (npmVersion?.endsWith("-SNAPSHOT") == true) {
+      npmVersion = npmVersion.replace("SNAPSHOT", "${System.currentTimeMillis()}")
+    }
+    val packageJson = PackageJson(moduleName, npmVersion, scope) {
       if (packageJson != null) {
         packageJson!!.invoke(this@PackageJson)
       } else {
-        main = main ?: this@with.main
-        types = types ?: resolveTypes()
+        main = this@with.main
+        types = resolveTypes()
 
         val groupedDependencies = resolveDependencies()
         groupedDependencies.forEach { (scope, deps) ->
           val initialDeps: JsonObject<String> = when (scope) {
-            NpmDependency.Scope.NORMAL -> dependencies ?: JsonObject<String>().also { dependencies = it }
-            NpmDependency.Scope.DEV -> devDependencies ?: JsonObject<String>().also { devDependencies = it }
-            NpmDependency.Scope.OPTIONAL -> optionalDependencies ?: JsonObject<String>().also { optionalDependencies = it }
-            NpmDependency.Scope.PEER -> peerDependencies ?: JsonObject<String>().also { peerDependencies = it }
+            NpmDependency.Scope.NORMAL -> JsonObject<String>().also { dependencies = it }
+            NpmDependency.Scope.DEV -> JsonObject<String>().also { devDependencies = it }
+            NpmDependency.Scope.OPTIONAL -> JsonObject<String>().also { optionalDependencies = it }
+            NpmDependency.Scope.PEER -> JsonObject<String>().also { peerDependencies = it }
           }
 
           with(initialDeps) {
@@ -148,11 +133,17 @@ open class NpmPackageAssembleTask @Inject constructor(
           }
         }
 
+        bundledDependencies = resolveBundledDependencies(this, kotlinDependencies)
+
+        // Apply overrides from provided template
+        publication.packageJsonTemplateFile?.let {
+          val template = gson.fromJson(it.readText(), PackageJson::class.java)
+          putAll(template)
+        }
+
         packageJsonSpecs.forEach {
           it()
         }
-
-        bundledDependencies = resolveBundledDependencies(this, kotlinDependencies)
       }
     }.writeTo(File(destinationDir, "package.json"))
 
