@@ -1,6 +1,6 @@
 package lt.petuska.npm.publish.task
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import lt.petuska.npm.publish.delegate.fallbackDelegate
 import lt.petuska.npm.publish.delegate.gradleProperty
 import lt.petuska.npm.publish.dsl.JsonObject
@@ -45,7 +45,8 @@ open class NpmPackageAssembleTask @Inject constructor(
   /**
    * Gson instance to be reused across multiple functions of the task.
    */
-  private val gson = Gson()
+  private val gson = GsonBuilder()
+    .registerTypeAdapter(PackageJson::class.java, PackageJson).create()
 
   init {
     group = "build"
@@ -113,11 +114,11 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun resolvePackageJson(kotlinDependencies: Map<String, String>?) = with(publication) {
-    val initialConfig = publication.packageJsonTemplateFile?.let {
-      gson.fromJson<Map<String, Any>>(it.readText(), HashMap::class.java)
-    } ?: emptyMap()
+    val template = publication.packageJsonTemplateFile?.let {
+      gson.fromJson<PackageJson>(it.readText(), PackageJson::class.java)
+    } ?: PackageJson()
 
-    val packageJson = PackageJson(initialConfig) {
+    val packageJson = template.apply {
       name = name ?: moduleName
 
       var npmVersion = version ?: this@with.version ?: throw GradleException("npm package version is not specified")
@@ -127,7 +128,7 @@ open class NpmPackageAssembleTask @Inject constructor(
       version = npmVersion
 
       if (packageJson != null) {
-        packageJson!!.invoke(this@PackageJson)
+        packageJson!!.invoke(this)
       } else {
         main = main ?: this@with.main
         types = types ?: resolveTypes()

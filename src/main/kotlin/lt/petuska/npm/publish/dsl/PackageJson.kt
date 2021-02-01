@@ -1,12 +1,17 @@
 package lt.petuska.npm.publish.dsl
 
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonElement
 import com.google.gson.annotations.Expose
 import lt.petuska.npm.publish.util.npmFullName
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.io.Serializable
+import java.lang.reflect.Type
 import kotlin.reflect.KProperty
+import com.google.gson.JsonDeserializer as GsonDeserializer
+import com.google.gson.JsonObject as GsonObject
 
 /**
  * Utility class for building Json Trees
@@ -78,11 +83,7 @@ operator fun <R> JsonObject<Any>.setValue(thisRef: JsonObject<Any>, property: KP
 /**
  * A class representing [package.json](https://docs.npmjs.com/files/package.json) schema. Custom fields can be added as regular map entries.
  */
-class PackageJson(initialConfig: Map<String, Any?>, config: PackageJson.() -> Unit = {}) : JsonObject<Any>(initialConfig) {
-  init {
-    this.apply(config)
-  }
-
+class PackageJson(initialConfig: Map<String, Any?> = emptyMap(), config: PackageJson.() -> Unit = {}) : JsonObject<Any>(initialConfig) {
   constructor(name: String, version: String, scope: String? = null, config: PackageJson.() -> Unit = {}) : this(
     mapOf(
       Pair("name", npmFullName(name, scope)),
@@ -307,6 +308,10 @@ class PackageJson(initialConfig: Map<String, Any?>, config: PackageJson.() -> Un
    */
   fun publishConfig(config: PublishConfig.() -> Unit = {}) = (publishConfig ?: PublishConfig()).apply(config).also { publishConfig = it }
 
+  init {
+    this.apply(config)
+  }
+
   inner class BundledDependenciesSpec(config: (BundledDependenciesSpec.() -> Unit)? = null) {
     private val specs: MutableList<(MutableSet<String>) -> Unit> = mutableListOf()
 
@@ -438,5 +443,94 @@ class PackageJson(initialConfig: Map<String, Any?>, config: PackageJson.() -> Un
     init {
       config()
     }
+  }
+
+  companion object Deserializer : GsonDeserializer<PackageJson> {
+    @Suppress("UNCHECKED_CAST")
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): PackageJson {
+      val jsonConfig = json.asJsonObject
+
+      return PackageJson {
+        name = jsonConfig.get("name")?.asString
+        version = jsonConfig.get("version")?.asString
+        description = jsonConfig.get("description")?.asString
+        keywords = jsonConfig.getAsJsonArray("keywords")?.mapTo(ArrayList()) { it.asString }
+        homepage = jsonConfig.get("homepage")?.asString
+
+        bugs = jsonConfig.getAsJsonObject("bugs")?.let { jsonObj ->
+          Bugs {
+            url = jsonObj.get("url")?.asString
+            email = jsonObj.get("email")?.asString
+          }
+        }
+
+        licence = jsonConfig.get("license")?.asString
+
+        author = jsonConfig.getAsJsonObject("author")?.let { jsonObj ->
+          Person {
+            name = jsonObj.get("name")?.asString
+            email = jsonObj.get("email")?.asString
+            url = jsonObj.get("url")?.asString
+          }
+        }
+
+        contributors = jsonConfig.getAsJsonArray("contributors")?.mapTo(ArrayList()) { element ->
+          val jsonObj = element.asJsonObject
+          Person {
+            name = jsonObj.get("name")?.asString
+            email = jsonObj.get("email")?.asString
+            url = jsonObj.get("url")?.asString
+          }
+        }
+
+        files = jsonConfig.getAsJsonArray("files")?.mapTo(ArrayList()) { it.asString }
+        main = jsonConfig.get("main")?.asString
+        types = jsonConfig.get("types")?.asString
+        browser = jsonConfig.get("browser")?.asString
+        bin = jsonConfig.getAsJsonObject("bin")?.let(::unwrapJsonObject)
+        man = jsonConfig.getAsJsonArray("man")?.mapTo(ArrayList()) { it.asString }
+        directories = jsonConfig.getAsJsonObject("directories")?.let { jsonObj ->
+          Directories {
+            lib = jsonObj.get("lib")?.asString
+            bin = jsonObj.get("bin")?.asString
+            man = jsonObj.get("man")?.asString
+            doc = jsonObj.get("doc")?.asString
+            example = jsonObj.get("example")?.asString
+            test = jsonObj.get("test")?.asString
+          }
+        }
+        repository = jsonConfig.getAsJsonObject("repository")?.let { jsonObj ->
+          Repository {
+            type = jsonObj.get("type")?.asString
+            url = jsonObj.get("url")?.asString
+            directory = jsonObj.get("directory")?.asString
+          }
+        }
+        scripts = jsonConfig.getAsJsonObject("scripts")?.let(::unwrapJsonObject)
+        config = jsonConfig.getAsJsonObject("config")?.let { jsonObj ->
+          JsonObject(jsonObj.entrySet().associate { Pair(it.key, it.value) })
+        }
+        dependencies = jsonConfig.getAsJsonObject("dependencies")?.let(::unwrapJsonObject)
+        devDependencies = jsonConfig.getAsJsonObject("devDependencies")?.let(::unwrapJsonObject)
+        peerDependencies = jsonConfig.getAsJsonObject("peerDependencies")?.let(::unwrapJsonObject)
+        optionalDependencies = jsonConfig.getAsJsonObject("optionalDependencies")?.let(::unwrapJsonObject)
+        bundledDependencies = jsonConfig.getAsJsonArray("bundledDependencies")?.mapTo(LinkedHashSet()) { it.asString }
+        engines = jsonConfig.getAsJsonObject("engines")?.let(::unwrapJsonObject)
+        os = jsonConfig.getAsJsonArray("os")?.mapTo(ArrayList()) { it.asString }
+        cpu = jsonConfig.getAsJsonArray("cpu")?.mapTo(ArrayList()) { it.asString }
+        private = jsonConfig.get("private")?.asBoolean
+
+        publishConfig = jsonConfig.getAsJsonObject("publishConfig")?.let { jsonObj ->
+          PublishConfig {
+            registry = jsonObj.get("registry")?.asString
+            access = jsonObj.get("access")?.asString
+            tag = jsonObj.get("tag")?.asString
+          }
+        }
+      }
+    }
+
+    private fun unwrapJsonObject(obj: GsonObject): JsonObject<String> =
+      JsonObject(obj.entrySet().associate { Pair(it.key, it.value?.asString) })
   }
 }
