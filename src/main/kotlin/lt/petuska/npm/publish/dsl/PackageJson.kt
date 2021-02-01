@@ -11,9 +11,7 @@ import kotlin.reflect.KProperty
 /**
  * Utility class for building Json Trees
  */
-open class JsonObject<T> internal constructor(initialConfig: Map<String, T?>) : MutableMap<String, T?> by initialConfig.toMutableMap(), Serializable {
-  constructor() : this(emptyMap())
-
+open class JsonObject<T>(initialConfig: Map<String, T?> = emptyMap()) : MutableMap<String, T?> by initialConfig.toMutableMap(), Serializable {
   /**
    * Creates a Json Object
    */
@@ -80,16 +78,18 @@ operator fun <R> JsonObject<Any>.setValue(thisRef: JsonObject<Any>, property: KP
 /**
  * A class representing [package.json](https://docs.npmjs.com/files/package.json) schema. Custom fields can be added as regular map entries.
  */
-class PackageJson : JsonObject<Any> {
-  constructor(name: String, version: String, scope: String? = null, config: PackageJson.() -> Unit = {}) : super() {
-    this.name = npmFullName(name, scope)
-    this.version = version
+class PackageJson(initialConfig: Map<String, Any?>, config: PackageJson.() -> Unit = {}) : JsonObject<Any>(initialConfig) {
+  init {
     this.apply(config)
   }
 
-  constructor(initialConfig: Map<String, Any>, config: PackageJson.() -> Unit = {}) : super(initialConfig) {
-    this.apply(config)
-  }
+  constructor(name: String, version: String, scope: String? = null, config: PackageJson.() -> Unit = {}) : this(
+    mapOf(
+      Pair("name", npmFullName(name, scope)),
+      Pair("version", version),
+      Pair("scope", scope)
+    ), config
+  )
 
   /**
    * [name](https://docs.npmjs.com/files/package.json#name)

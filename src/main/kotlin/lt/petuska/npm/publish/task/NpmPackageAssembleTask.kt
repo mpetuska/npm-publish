@@ -113,7 +113,7 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun resolvePackageJson(kotlinDependencies: Map<String, String>?) = with(publication) {
-    val initialConfig = publication.templatePackageJsonFile?.let {
+    val initialConfig = publication.packageJsonTemplateFile?.let {
       gson.fromJson<Map<String, Any>>(it.readText(), HashMap::class.java)
     } ?: emptyMap()
 

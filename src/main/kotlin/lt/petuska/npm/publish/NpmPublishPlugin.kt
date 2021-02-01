@@ -132,9 +132,11 @@ class NpmPublishPlugin : Plugin<Project> {
           ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub).also { task ->
             task.onlyIf { pub.compileKotlinTask?.outputFile?.exists() ?: true }
             task.dependsOn(
-              processResourcesTask,
-              pub.kotlinMainTask,
-              nodeJsTask
+              *listOfNotNull(
+                processResourcesTask,
+                pub.kotlinMainTask,
+                nodeJsTask
+              ).toTypedArray()
             )
             assembleTask?.dependsOn(task)
           }
