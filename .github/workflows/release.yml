@@ -24,13 +24,13 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build with Gradle
-        run: ./gradlew check assemble
-
       - name: Set Version
         run: echo version="${VERSION//v}" >> gradle.properties
         env:
           VERSION: ${{ github.event.release.tag_name }}
+
+      - name: Build with Gradle
+        run: ./gradlew check assemble
 
       - name: Publish to Gradle Plugin Portal
         run: ./gradlew publishPlugins -Pgradle.publish.key="${{ secrets.GRADLE_PUBLISH_KEY }}" -Pgradle.publish.secret="${{ secrets.GRADLE_PUBLISH_SECRET }}"
