@@ -1,11 +1,11 @@
-name: Gradle Package
+name: Release
 
 on:
   release:
     types: [created]
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,30 +23,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-
-      - name: Set Version
-        run: echo "version=${VERSION//v}" >> gradle.properties
-        env:
-          VERSION: ${{ github.event.release.tag_name }}
-
-      - name: Build with Gradle
-        run: ./gradlew check assemble
-
-      - name: Publish to Gradle Plugin Portal
-        run: ./gradlew publishPlugins -Pgradle.publish.key="${{ secrets.GRADLE_PUBLISH_KEY }}" -Pgradle.publish.secret="${{ secrets.GRADLE_PUBLISH_SECRET }}"
-
-      - name: Publish to GitHub Packages
-        run: ./gradlew publish -Ppublish.GitHub=true -Ppublish=true -Poverride=false
-        env:
-          GH_USERNAME: ${{ github.actor }}
-          GH_PASSWORD: ${{ github.token }}
-
-      - name: Publish to Bintray
-        run: ./gradlew publish -Ppublish.Bintray=true -Ppublish=true -Poverride=false
-        env:
-          BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
-          BINTRAY_PASSWORD: ${{ secrets.BINTRAY_PASSWORD }}
-
+      - name: Check with gradle
+        run: ./gradlew check
+      - name: Cache Gradle
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v2
+        with:
+         path: |
+           ~/.gradle/caches
+           ~/.gradle/wrapper
+         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+         restore-keys: |
+           ${{ runner.os }}-gradle-
 #      - name: Publish Pages
 #        run: |
 #          ./gradlew dokkaHtml;
@@ -55,8 +43,13 @@ jobs:
 #          echo '/npm-publish /npm-publish/npm-publish/index.html 301' > public/_redirects;
 #          echo '/npm-publish/index.html /npm-publish/npm-publish/index.html 301' >> public/_redirects;
 
-      - name: Cache Gradle
-        if: steps.cache.outputs.cache-hit != 'true'
+
+  release-GradlePluginPortal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore Gradle cache
+        id: cache
         uses: actions/cache@v2
         with:
           path: |
@@ -65,3 +58,69 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Set Version
+        run: echo "version=${VERSION//v}" >> gradle.properties
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+      - name: Publish to Gradle Plugin Portal
+        run: ./gradlew publishPlugins -Pgradle.publish.key="${{ secrets.GRADLE_PUBLISH_KEY }}" -Pgradle.publish.secret="${{ secrets.GRADLE_PUBLISH_SECRET }}"
+
+  release-Bintray:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore Gradle cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Set Version
+        run: echo "version=${VERSION//v}" >> gradle.properties
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+      - name: Publish to Bintray
+        run: ./gradlew publish -Ppublish.Bintray=true -Ppublish=true -Poverride=false
+        env:
+          BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
+          BINTRAY_PASSWORD: ${{ secrets.BINTRAY_PASSWORD }}
+
+  release-GitHub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore Gradle cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Set Version
+        run: echo "version=${VERSION//v}" >> gradle.properties
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+      - name: Publish to GitHub Packages
+        run: ./gradlew publish -Ppublish.GitHub=true -Ppublish=true -Poverride=false
+        env:
+          GH_USERNAME: ${{ github.actor }}
+          GH_PASSWORD: ${{ github.token }}

@@ -148,7 +148,7 @@ publishing {
       }
       repository("Bintray") {
         url = uri(
-          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USER")}/${project.group}/${project.name}/" +
+          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USERNAME")}/${project.group}/${project.name}/" +
             ";publish=${if ("true".equals(project.properties["publish"] as? String?, true)) 1 else 0}" +
             ";override=${if ("true".equals(project.properties["override"] as? String?, true)) 1 else 0}"
         )
