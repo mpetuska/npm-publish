@@ -1,6 +1,4 @@
 import {test} from "@lt.petuska/mpp-IR";
-// @ts-ignore
-import ktor from 'kotlinx-coroutines-core';
 
 console.log("Hi");
 test.sandbox.sayHello("Martynas");
@@ -24,8 +22,4 @@ const buggedPerson: test.sandbox.BuggedPerson = {
     sureName: "Not Work"
 }
 test.sandbox.sayFormalBuggedHello(buggedPerson)
-
-console.log("Bellow is expected to fail");
-
-console.log(ktor)
 

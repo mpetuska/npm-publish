@@ -65,9 +65,9 @@ npmPublishing {
         "customField" to jsonObject {
           "customValues" to jsonArray(1, 2, 3)
         }
-        bundledDependencies("kotlin-test") {
-
-        }
+        // bundledDependencies("kotlin-test") {
+        //
+        // }
       }
     }
   }

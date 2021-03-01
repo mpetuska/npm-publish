@@ -12,12 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lt.petuska/js": "^1.0.2-sw",
-    "@lt.petuska/mpp-IR": "^1.0.2",
-    "@lt.petuska/mpp-Legacy": "^1.0.2"
+    "@lt.petuska/mpp-IR": "/home/mpetuska/IdeaProjects/Personal/npm-publish/sandbox/mpp/build/publications/npm/jsIR"
   },
   "devDependencies": {
-    "typescript": "^4.0.5",
-    "ts-node": "^9.1.1"
+    "ts-node": "^9.1.1",
+    "typescript": "^3.0.5"
   }
 }

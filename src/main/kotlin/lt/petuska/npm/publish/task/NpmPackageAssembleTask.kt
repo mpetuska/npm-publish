@@ -9,6 +9,7 @@ import lt.petuska.npm.publish.dsl.PackageJson
 import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import java.io.*
 import javax.inject.*
@@ -117,7 +118,7 @@ open class NpmPackageAssembleTask @Inject constructor(
         main = this@with.main
         types = resolveTypes()
 
-        val groupedDependencies = resolveDependencies()
+        val groupedDependencies = resolveDependencies(kotlinDependencies)
         groupedDependencies.forEach { (scope, deps) ->
           val initialDeps: JsonObject<String> = when (scope) {
             NpmDependency.Scope.NORMAL -> JsonObject<String>().also { dependencies = it }
@@ -133,6 +134,9 @@ open class NpmPackageAssembleTask @Inject constructor(
           }
         }
 
+        packageJsonSpecs.forEach {
+          it()
+        }
         bundledDependencies = resolveBundledDependencies(this, kotlinDependencies)
 
         // Apply overrides from provided template
@@ -148,11 +152,13 @@ open class NpmPackageAssembleTask @Inject constructor(
     }.writeTo(File(destinationDir, "package.json"))
 
     if (publication.shrinkwrapBundledDependencies) {
-      packageJson.generateNpmShrinkwrapJson().writeTo(File(destinationDir, "npm-shrinkwrap.json"))
+      packageJson.generateNpmShrinkwrapJson()?.writeTo(File(destinationDir, "npm-shrinkwrap.json"))
     }
   }
 
-  private fun NpmPublication.resolveDependencies() = npmDependencies.groupBy { dep -> dep.scope }
+  private fun NpmPublication.resolveDependencies(kotlinDependencies: Map<String, String>?) = npmDependencies.filter {
+    binary !is JsIrBinary || kotlinDependencies?.keys?.let { keys -> it.name !in keys } ?: true
+  }.groupBy { dep -> dep.scope }
     .let { deps ->
       val dev = deps[NpmDependency.Scope.DEV]
       val peer = deps[NpmDependency.Scope.PEER]
@@ -190,10 +196,12 @@ open class NpmPackageAssembleTask @Inject constructor(
         }
         bundledDependenciesSpec?.applyTo(bd)
       }
-      ).takeIf { it.isNotEmpty() }?.also { bd ->
+      ).filter {
+      binary !is JsIrBinary || kotlinDependencies?.keys?.let { keys -> it !in keys } ?: true
+    }.toMutableSet().takeIf { it.isNotEmpty() }?.also { bd ->
       dependencies {
         kotlinDependencies?.forEach { (n, v) ->
-          if (bd.contains(n)) {
+          if (n in bd) {
             n to v
           }
         }
@@ -202,12 +210,12 @@ open class NpmPackageAssembleTask @Inject constructor(
   }
 
   private fun PackageJson.generateNpmShrinkwrapJson() = NpmShrinkwrapJson(name!!, version!!) {
-    bundledDependencies?.forEach { bundledDependency ->
+    bundledDependencies?.takeIf { it.isNotEmpty() }?.forEach { bundledDependency ->
       this@generateNpmShrinkwrapJson.dependencies?.entries?.find { it.key == bundledDependency }?.let { (npmName, npmVersion) ->
         dependencies {
           dependency(npmName, npmVersion!!, true)
         }
       }
     }
-  }
+  }.takeIf { !it.dependencies.isNullOrEmpty() }
 }

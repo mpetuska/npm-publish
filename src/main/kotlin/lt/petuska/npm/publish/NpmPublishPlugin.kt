@@ -154,7 +154,7 @@ class NpmPublishPlugin : Plugin<Project> {
             ?: tasks.create(publishTaskName, NpmPublishTask::class.java, pub, repo).also { task ->
               task.onlyIf { assemblePackageTask.didWork }
               task.dependsOn(assemblePackageTask)
-              publishTask?.dependsOn(task)
+              publishTask.dependsOn(task)
             }
         }
       }

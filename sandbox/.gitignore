@@ -1,2 +1,8 @@
 gradle/
 gradlew*
+.yarn/
+!.yarn/releases/
+!.yarn/plugins/
+!.yarn/sdks/
+.pnp.js
+node_modules/

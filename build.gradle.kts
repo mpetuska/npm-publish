@@ -146,17 +146,6 @@ publishing {
           password = System.getenv("GH_PASSWORD")
         }
       }
-      repository("Bintray") {
-        url = uri(
-          "https://api.bintray.com/maven/${System.getenv("BINTRAY_USERNAME")}/${project.group}/${project.name}/" +
-            ";publish=${if ("true".equals(project.properties["publish"] as? String?, true)) 1 else 0}" +
-            ";override=${if ("true".equals(project.properties["override"] as? String?, true)) 1 else 0}"
-        )
-        credentials {
-          username = System.getenv("BINTRAY_USERNAME")
-          password = System.getenv("BINTRAY_PASSWORD")
-        }
-      }
     }
   }
 }
