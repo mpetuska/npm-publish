@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lt.petuska/mpp-IR": "/home/mpetuska/IdeaProjects/Personal/npm-publish/sandbox/mpp/build/publications/npm/jsIR"
+    "@lt.petuska/mpp-IR": "0.0.0"
   },
   "devDependencies": {
     "ts-node": "^9.1.1",
