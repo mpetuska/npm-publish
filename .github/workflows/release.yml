@@ -25,16 +25,6 @@ jobs:
           java-version: 11
       - name: Check with gradle
         run: ./gradlew check
-      - name: Cache Gradle
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache@v2
-        with:
-         path: |
-           ~/.gradle/caches
-           ~/.gradle/wrapper
-         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-         restore-keys: |
-           ${{ runner.os }}-gradle-
 #      - name: Publish Pages
 #        run: |
 #          ./gradlew dokkaHtml;
