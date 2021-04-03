@@ -9,7 +9,7 @@
 Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with
 Kotlin/JS/MPP plugin if applied, providing auto configurations.
 
-> The plugin was last tested with Kotlin 1.4.31
+> The plugin was last tested with Kotlin 1.4.32
 
 ## Setup
 
@@ -26,15 +26,17 @@ tasks:
 ```kotlin
 plugins {
   id("lt.petuska.npm.publish") version "<VERSION>"
-  kotlin("multiplatform") version "1.4.0" // Optional, also supports "js"
+  kotlin("multiplatform") version "1.4.32" // Optional, also supports "js"
 }
 
 kotlin {
-  js {
+  // Legacy mode
+  js(Legacy) {
     binaries.library()
     browser() // or nodejs()
   }
-  js("ir", IR) {
+  // OR IR mode
+  js(IR) {
     binaries.library()
     browser() // or nodejs()
   }

@@ -1,12 +1,12 @@
 package lt.petuska.npm.publish.dsl
 
-import com.google.gson.*
-import com.google.gson.annotations.*
-import lt.petuska.npm.publish.util.*
-import org.jetbrains.kotlin.gradle.internal.*
-import java.io.*
-import java.lang.reflect.*
-import kotlin.reflect.*
+import com.google.gson.GsonBuilder
+import com.google.gson.annotations.Expose
+import lt.petuska.npm.publish.util.npmFullName
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import java.io.File
+import java.io.Serializable
+import kotlin.reflect.KProperty
 
 typealias Record<T> = MutableMap<String, T?>
 
@@ -215,7 +215,8 @@ class PackageJson() : JsonObject<Any>() {
   /**
    * [dependencies](https://docs.npmjs.com/files/package.json#dependencies)
    */
-  fun dependencies(config: JsonObject<String>.() -> Unit = {}) = JsonObject(dependencies, config).also { dependencies = it }
+  fun dependencies(config: JsonObject<String>.() -> Unit = {}) =
+    JsonObject(dependencies, config).also { dependencies = it }
 
   /**
    * [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies)
@@ -225,7 +226,8 @@ class PackageJson() : JsonObject<Any>() {
   /**
    * [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies)
    */
-  fun devDependencies(config: JsonObject<String>.() -> Unit = {}) = JsonObject(devDependencies, config).also { devDependencies = it }
+  fun devDependencies(config: JsonObject<String>.() -> Unit = {}) =
+    JsonObject(devDependencies, config).also { devDependencies = it }
 
   /**
    * [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies)
@@ -235,7 +237,8 @@ class PackageJson() : JsonObject<Any>() {
   /**
    * [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies)
    */
-  fun peerDependencies(config: JsonObject<String>.() -> Unit = {}) = JsonObject(peerDependencies, config).also { peerDependencies = it }
+  fun peerDependencies(config: JsonObject<String>.() -> Unit = {}) =
+    JsonObject(peerDependencies, config).also { peerDependencies = it }
 
   /**
    * [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies)
@@ -245,7 +248,8 @@ class PackageJson() : JsonObject<Any>() {
   /**
    * [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies)
    */
-  fun optionalDependencies(config: JsonObject<String>.() -> Unit = {}) = JsonObject(optionalDependencies, config).also { optionalDependencies = it }
+  fun optionalDependencies(config: JsonObject<String>.() -> Unit = {}) =
+    JsonObject(optionalDependencies, config).also { optionalDependencies = it }
 
   /**
    * [bundledDependencies](https://docs.npmjs.com/files/package.json#bundleddependencies)
@@ -301,7 +305,8 @@ class PackageJson() : JsonObject<Any>() {
   /**
    * [publishConfig](https://docs.npmjs.com/files/package.json#publishconfig)
    */
-  fun publishConfig(config: PublishConfig.() -> Unit = {}) = PublishConfig(publishConfig, config).also { publishConfig = it }
+  fun publishConfig(config: PublishConfig.() -> Unit = {}) =
+    PublishConfig(publishConfig, config).also { publishConfig = it }
 
   inner class BundledDependenciesSpec(config: (BundledDependenciesSpec.() -> Unit)? = null) {
     private val specs: MutableList<(MutableSet<String>) -> Unit> = mutableListOf()

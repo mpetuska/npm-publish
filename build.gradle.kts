@@ -4,17 +4,14 @@ plugins {
   kotlin("jvm") version "1.3.72"
   `java-gradle-plugin`
   `maven-publish`
-  id("com.gradle.plugin-publish") version "0.12.0"
-  id("org.jetbrains.dokka") version "1.4.10.2"
-  id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+  id("com.gradle.plugin-publish")
+  id("org.jetbrains.dokka")
+  id("com.github.jakemarsden.git-hooks")
+  id("org.jmailen.kotlinter")
   idea
 }
 
 description = "Gradle plugin for npm package publishing"
-group = "lt.petuska"
-if (version == "unspecified") {
-  version = "0.0.0"
-}
 
 idea {
   module {
@@ -23,22 +20,25 @@ idea {
   }
 }
 
+gitHooks {
+  setHooks(mapOf("pre-commit" to "formatKotlin", "pre-push" to "check"))
+}
+
+kotlinter {
+  indentSize = 2
+  experimentalRules = false
+}
+
 repositories {
-  jcenter()
-  mavenCentral()
   mavenLocal()
-  maven("https://dl.bintray.com/mpetuska/lt.petuska")
-  maven("https://dl.bintray.com/kotlin/kotlin-eap")
-  maven("https://dl.bintray.com/kotlin/kotlin-dev")
-  maven("https://kotlin.bintray.com/kotlinx")
-  maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
+  mavenCentral()
   gradlePluginPortal()
 }
 
 kotlin {
   dependencies {
-    api(kotlin("gradle-plugin", Version.kotlin))
-    testImplementation("io.kotest:kotest-runner-junit5:${Version.kotest}")
+    api("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
+    testImplementation("io.kotest:kotest-runner-junit5:_")
   }
   target.compilations {
     val main by getting
@@ -152,10 +152,6 @@ publishing {
 
 afterEvaluate {
   tasks {
-    withType<Wrapper> {
-      gradleVersion = "6.7"
-      distributionType = Wrapper.DistributionType.ALL
-    }
     withType<Jar> {
       manifest {
         attributes += sortedMapOf(

@@ -1,18 +1,22 @@
 package lt.petuska.npm.publish.task
 
-import com.google.gson.*
-import lt.petuska.npm.publish.*
-import lt.petuska.npm.publish.delegate.*
-import lt.petuska.npm.publish.dsl.*
+import com.google.gson.Gson
+import lt.petuska.npm.publish.delegate.fallbackDelegate
+import lt.petuska.npm.publish.delegate.gradleProperty
 import lt.petuska.npm.publish.dsl.JsonObject
+import lt.petuska.npm.publish.dsl.NpmPublication
+import lt.petuska.npm.publish.dsl.NpmShrinkwrapJson
 import lt.petuska.npm.publish.dsl.PackageJson
-import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.tasks.*
+import lt.petuska.npm.publish.dsl.writeTo
+import lt.petuska.npm.publish.npmPublishing
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.CopySpec
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
-import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import java.io.*
-import javax.inject.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import java.io.File
+import javax.inject.Inject
 
 /**
  * A task to assemble all required files for a given [NpmPublication].
@@ -83,7 +87,21 @@ open class NpmPackageAssembleTask @Inject constructor(
     }
   }
 
-  private fun File.copyKotlinDependencies(): Map<String, String>? = try {
+  private fun File.resolveNpmDependencies(): Map<String, String> = try {
+    val rawPJS = gson.fromJson(resolve("package.json").readText(), PackageJson::class.java)
+    rawPJS.dependencies?.mapNotNull { (key, value) ->
+      if (value != null && !value.startsWith("file:")) {
+        key to value
+      } else null
+    }?.toMap()
+  } catch (e: Exception) {
+    project.logger.warn("Error resolving transitive npm dependencies from compilation dependencies.", e)
+    null
+  } ?: mapOf()
+
+  private data class KotlinDependency(val name: String, val version: String, val npmDependencies: Map<String, String>)
+
+  private fun File.copyKotlinDependencies(): Map<String, KotlinDependency>? = try {
     val pjsFile = this@copyKotlinDependencies.resolve("../package.json").takeIf { it.exists() }
     val rawPJS = gson.fromJson(pjsFile!!.readText(), PackageJson::class.java)
     val kotlinDeps = rawPJS.dependencies
@@ -100,13 +118,13 @@ open class NpmPackageAssembleTask @Inject constructor(
         cp.from(dir)
       }
     }
-    kotlinDeps?.map { (n, v) -> n to v.name }?.toMap()
+    kotlinDeps?.map { (n, v) -> n to KotlinDependency(n, v.name, v.resolveNpmDependencies()) }?.toMap()
   } catch (e: Exception) {
     project.logger.warn("Error preparing node_modules from compilation dependencies.", e)
     null
   }
 
-  private fun resolvePackageJson(kotlinDependencies: Map<String, String>?) = with(publication) {
+  private fun resolvePackageJson(kotlinDependencies: Map<String, KotlinDependency>?) = with(publication) {
     var npmVersion = this@with.version
     if (npmVersion?.endsWith("-SNAPSHOT") == true) {
       npmVersion = npmVersion.replace("SNAPSHOT", "${System.currentTimeMillis()}")
@@ -118,6 +136,21 @@ open class NpmPackageAssembleTask @Inject constructor(
         main = this@with.main
         types = resolveTypes()
 
+        if (binary is JsIrBinary) {
+          kotlinDependencies?.flatMap {
+            it.value.npmDependencies.map { (name, version) ->
+              NpmDependency(
+                project,
+                name,
+                version
+              )
+            }
+          }?.let {
+            val deps = npmDependencies.toSet() + it
+            npmDependencies.clear()
+            npmDependencies.addAll(deps.distinctBy(NpmDependency::key))
+          }
+        }
         val groupedDependencies = resolveDependencies(kotlinDependencies)
         groupedDependencies.forEach { (scope, deps) ->
           val initialDeps: JsonObject<String> = when (scope) {
@@ -156,27 +189,28 @@ open class NpmPackageAssembleTask @Inject constructor(
     }
   }
 
-  private fun NpmPublication.resolveDependencies(kotlinDependencies: Map<String, String>?) = npmDependencies.filter {
-    binary !is JsIrBinary || kotlinDependencies?.keys?.let { keys -> it.name !in keys } ?: true
-  }.groupBy { dep -> dep.scope }
-    .let { deps ->
-      val dev = deps[NpmDependency.Scope.DEV]
-      val peer = deps[NpmDependency.Scope.PEER]
-      val optional = deps[NpmDependency.Scope.OPTIONAL]
-      fun NpmDependency.id() = "$scope:$name:$version"
-      fun List<NpmDependency>?.includes(other: NpmDependency) = this?.any { it.id() == other.id() } ?: false
+  private fun NpmPublication.resolveDependencies(kotlinDependencies: Map<String, KotlinDependency>?) =
+    npmDependencies.filter {
+      binary !is JsIrBinary || kotlinDependencies?.keys?.let { keys -> it.name !in keys } ?: true
+    }.groupBy { dep -> dep.scope }
+      .let { deps ->
+        val dev = deps[NpmDependency.Scope.DEV]
+        val peer = deps[NpmDependency.Scope.PEER]
+        val optional = deps[NpmDependency.Scope.OPTIONAL]
+        fun NpmDependency.id() = "$scope:$name:$version"
+        fun List<NpmDependency>?.includes(other: NpmDependency) = this?.any { it.id() == other.id() } ?: false
 
-      deps.entries.map { (scope, deps) ->
-        scope to deps.filter { dep ->
-          when (scope) {
-            NpmDependency.Scope.NORMAL -> !optional.includes(dep) && !peer.includes(dep) && !dev.includes(dep)
-            NpmDependency.Scope.DEV -> !optional.includes(dep) && !peer.includes(dep)
-            NpmDependency.Scope.PEER -> !optional.includes(dep)
-            NpmDependency.Scope.OPTIONAL -> true
+        deps.entries.map { (scope, deps) ->
+          scope to deps.filter { dep ->
+            when (scope) {
+              NpmDependency.Scope.NORMAL -> !optional.includes(dep) && !peer.includes(dep) && !dev.includes(dep)
+              NpmDependency.Scope.DEV -> !optional.includes(dep) && !peer.includes(dep)
+              NpmDependency.Scope.PEER -> !optional.includes(dep)
+              NpmDependency.Scope.OPTIONAL -> true
+            }
           }
         }
       }
-    }
 
   private fun NpmPublication.resolveTypes() = compileKotlinTask?.outputFile?.let {
     kotlinDestinationDir?.resolve("${it.nameWithoutExtension}.d.ts")?.let { dtsFile ->
@@ -186,7 +220,10 @@ open class NpmPackageAssembleTask @Inject constructor(
     }
   }
 
-  private fun NpmPublication.resolveBundledDependencies(packageJson: PackageJson, kotlinDependencies: Map<String, String>?): MutableSet<String>? = with(packageJson) {
+  private fun NpmPublication.resolveBundledDependencies(
+    packageJson: PackageJson,
+    kotlinDependencies: Map<String, KotlinDependency>?
+  ): MutableSet<String>? = with(packageJson) {
     (
       bundledDependencies ?: mutableSetOf<String>().also { bd ->
         if (bundleKotlinDependencies) {
@@ -202,7 +239,7 @@ open class NpmPackageAssembleTask @Inject constructor(
       dependencies {
         kotlinDependencies?.forEach { (n, v) ->
           if (n in bd) {
-            n to v
+            n to v.version
           }
         }
       }
@@ -211,11 +248,12 @@ open class NpmPackageAssembleTask @Inject constructor(
 
   private fun PackageJson.generateNpmShrinkwrapJson() = NpmShrinkwrapJson(name!!, version!!) {
     bundledDependencies?.takeIf { it.isNotEmpty() }?.forEach { bundledDependency ->
-      this@generateNpmShrinkwrapJson.dependencies?.entries?.find { it.key == bundledDependency }?.let { (npmName, npmVersion) ->
-        dependencies {
-          dependency(npmName, npmVersion!!, true)
+      this@generateNpmShrinkwrapJson.dependencies?.entries?.find { it.key == bundledDependency }
+        ?.let { (npmName, npmVersion) ->
+          dependencies {
+            dependency(npmName, npmVersion!!, true)
+          }
         }
-      }
     }
   }.takeIf { !it.dependencies.isNullOrEmpty() }
 }
