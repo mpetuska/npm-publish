@@ -7,7 +7,7 @@ plugins {
   id("com.gradle.plugin-publish")
   id("org.jetbrains.dokka")
   id("com.github.jakemarsden.git-hooks")
-  id("org.jmailen.kotlinter")
+  id("org.jlleitschuh.gradle.ktlint")
   idea
 }
 
@@ -21,12 +21,13 @@ idea {
 }
 
 gitHooks {
-  setHooks(mapOf("pre-commit" to "formatKotlin", "pre-push" to "check"))
-}
-
-kotlinter {
-  indentSize = 2
-  experimentalRules = false
+  setHooks(
+    mapOf(
+      "post-checkout" to "ktlintApplyToIdea",
+      "pre-commit" to "ktlintFormat",
+      "pre-push" to "check"
+    )
+  )
 }
 
 repositories {
