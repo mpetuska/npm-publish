@@ -4,11 +4,6 @@ plugins {
   `maven-publish`
 }
 
-repositories {
-  jcenter()
-  mavenCentral()
-}
-
 kotlin {
   js { browser() }
   js("jsIR", IR) {

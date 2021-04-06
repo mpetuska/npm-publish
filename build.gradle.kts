@@ -41,32 +41,6 @@ kotlin {
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     testImplementation("io.kotest:kotest-runner-junit5:_")
   }
-  target.compilations {
-    val main by getting
-    create("functionalTest") {
-      dependencies {
-      }
-      associateWith(main)
-      val functionalTest by tasks.register<Test>("functionalTest") {
-        group = JavaBasePlugin.VERIFICATION_GROUP
-        description = "Runs functional tests"
-        testClassesDirs = output.classesDirs
-        classpath = project.sourceSets["functionalTest"].runtimeClasspath
-      }
-      tasks.named("check") {
-        dependsOn(functionalTest)
-      }
-    }
-  }
-  configurations.getByName("functionalTestImplementation") {
-    extendsFrom(configurations.getByName("implementation"))
-    extendsFrom(configurations.getByName("testImplementation"))
-  }
-
-  configurations.getByName("functionalTestRuntimeOnly") {
-    extendsFrom(configurations.getByName("runtimeOnly"))
-    extendsFrom(configurations.getByName("testRuntimeOnly"))
-  }
 }
 
 val pluginId = "lt.petuska.npm.publish"

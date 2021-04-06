@@ -36,7 +36,7 @@ internal fun <R, V> R.fallbackDelegate(projection: R.() -> V) = FallbackDelegate
 internal fun <R, V> R.fallbackDelegate(default: V, projection: R.() -> V) = FallbackDelegate(this, default, projection)
 
 internal fun <V> Project.propertyDelegate(prefix: String? = null, converter: (String) -> V?) = propertyDelegate(prefix, null, converter)
-internal fun <V> Project.propertyDelegate(prefix: String? = null, default: V, converter: (String) -> V?) = PropertyDelegate(properties, prefix, converter, default)
+internal fun <V> Project.propertyDelegate(prefix: String? = null, default: V, converter: (String) -> V?) = PropertyDelegate(project, prefix, converter, default)
 
 internal inline fun <reified V : Any> Project.gradleNullableProperty(default: V? = null) =
   GradleProperty.Nullable(this, V::class, default)

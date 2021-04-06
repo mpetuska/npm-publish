@@ -3,11 +3,6 @@ plugins {
   id("lt.petuska.npm.publish")
 }
 
-repositories {
-  jcenter()
-  mavenCentral()
-}
-
 kotlin {
   js {
     browser()

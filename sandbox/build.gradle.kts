@@ -8,8 +8,9 @@ allprojects {
   version = "0.0.0"
 
   repositories {
-    jcenter()
+    mavenLocal()
     mavenCentral()
+    jcenter()
   }
 }
 
