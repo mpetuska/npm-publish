@@ -4,4 +4,8 @@ plugins {
 }
 
 rootProject.name = "npm-publish"
-includeBuild("sandbox")
+includeBuild("sandbox") {
+  dependencySubstitution {
+    substitute(module("dev.petuska:npm-publish")).with(project(":"))
+  }
+}
