@@ -1,6 +1,6 @@
 plugins {
   kotlin("js")
-  id("lt.petuska.npm.publish")
+  id("dev.petuska.npm.publish")
 }
 
 kotlin {

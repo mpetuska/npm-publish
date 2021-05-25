@@ -1,15 +1,15 @@
 [![Gitpod ready-to-code](https://img.shields.io/badge/gitpod-ready_to_code-blue?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/mpetuska/npm-publish)
 [![Slack chat](https://img.shields.io/badge/kotlinlang-green?logo=slack&style=flat-square)](https://kotlinlang.slack.com/team/UL1A5BA2X)
 [![Dokka docks](https://img.shields.io/badge/docs-dokka-orange?style=flat-square)](http://mpetuska.github.io/npm-publish)
-[![Version bintray](https://img.shields.io/bintray/v/mpetuska/lt.petuska/npm-publish?style=flat-square&logo=jfrog-bintray)](https://bintray.com/mpetuska/lt.petuska/npm-publish/_latestVersion)
-[![Version gradle-plugin-portal](https://img.shields.io/maven-metadata/v?label=gradle%20plugin%20portal&logo=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Flt.petuska%2Fnpm-publish%2Fmaven-metadata.xml&style=flat-square)](https://plugins.gradle.org/plugin/lt.petuska.npm.publish)
+[![Version bintray](https://img.shields.io/bintray/v/mpetuska/dev.petuska/npm-publish?style=flat-square&logo=jfrog-bintray)](https://bintray.com/mpetuska/dev.petuska/npm-publish/_latestVersion)
+[![Version gradle-plugin-portal](https://img.shields.io/maven-metadata/v?label=gradle%20plugin%20portal&logo=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fdev.petuska%2Fnpm-publish%2Fmaven-metadata.xml&style=flat-square)](https://plugins.gradle.org/plugin/dev.petuska.npm.publish)
 
 # NPM-PUBLISH GRADLE PLUGIN
 
 Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with
 Kotlin/JS/MPP plugin if applied, providing auto configurations.
 
-> The plugin was last tested with Kotlin 1.4.32
+> The plugin was last tested with Kotlin 1.5.10 & Gradle 7.0.2
 
 ## Setup
 
@@ -25,7 +25,7 @@ tasks:
 
 ```kotlin
 plugins {
-  id("lt.petuska.npm.publish") version "<VERSION>"
+  id("dev.petuska.npm.publish") version "<VERSION>"
   kotlin("multiplatform") version "1.4.32" // Optional, also supports "js"
 }
 
@@ -94,7 +94,7 @@ npmPublishing {
     }
     repository("bintray") {
       access = RESTRICTED
-      registry = ("https://dl.bintray.com/mpetuska/lt.petuska.npm") // Registry to publish to
+      registry = ("https://dl.bintray.com/mpetuska/dev.petuska.npm") // Registry to publish to
       authToken = "sngamascdgb" // NPM registry authentication token
       otp = "miopuhimpdfsazxfb" // (Optional) NPM registry authentication OTP
       dry = true // (Optional) Overrides extension default

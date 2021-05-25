@@ -1,16 +1,15 @@
 plugins {
-  kotlin("multiplatform") version "1.4.21" apply false
-  id("lt.petuska.npm.publish") version "0.0.0"
+  kotlin("multiplatform") version "1.5.10" apply false
+  id("dev.petuska.npm.publish") version "0.0.0"
 }
 
 allprojects {
-  group = "lt.petuska"
+  group = "dev.petuska"
   version = "0.0.0"
 
   repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
   }
 }
 
