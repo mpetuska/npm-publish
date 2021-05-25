@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version "1.3.72"
+  kotlin("jvm") version "1.4.30"
   `java-gradle-plugin`
   `maven-publish`
   id("com.gradle.plugin-publish")
@@ -17,6 +17,13 @@ idea {
   module {
     isDownloadJavadoc = true
     isDownloadSources = true
+  }
+}
+
+gradleEnterprise {
+  buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
   }
 }
 
@@ -38,12 +45,13 @@ repositories {
 
 kotlin {
   dependencies {
-    api("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
+    implementation("com.google.code.gson:gson:_")
     testImplementation("io.kotest:kotest-runner-junit5:_")
   }
 }
 
-val pluginId = "lt.petuska.npm.publish"
+val pluginId = "dev.petuska.npm.publish"
 gradlePlugin {
   plugins {
     create(project.name) {
@@ -55,7 +63,7 @@ gradlePlugin {
               Integrates with kotlin JS/MPP plugins (if applied) to automatically
               setup publishing to NPM repositories for all JS targets.
         """.trimIndent()
-      implementationClass = "lt.petuska.npm.publish.NpmPublishPlugin"
+      implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
     }
   }
 }
@@ -66,6 +74,10 @@ pluginBundle {
   tags = listOf("npm", "publishing", "kotlin", "node")
 }
 
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
 tasks {
   withType<KotlinCompile> {
     kotlinOptions {

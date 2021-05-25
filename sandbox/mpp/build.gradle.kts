@@ -1,32 +1,40 @@
 plugins {
   kotlin("multiplatform")
-  id("lt.petuska.npm.publish")
+  id("dev.petuska.npm.publish")
   `maven-publish`
 }
 
 kotlin {
-  js { browser() }
-  js("jsIR", IR) {
+  js("browser", IR) {
     browser()
     useCommonJs()
     binaries.library()
   }
+  js("node", IR) {
+    useCommonJs()
+    nodejs()
+    binaries.library()
+  }
 
   sourceSets {
-    val jsMain by getting {
+    all {
+      kotlin.srcDirs("src/main/kotlin")
+      resources.srcDirs("src/main/resources")
       dependencies {
         implementation("io.ktor:ktor-client-core:1.4.1")
         implementation(devNpm("axios", "*"))
         api(npm("snabbdom", "*"))
       }
     }
-    val jsIRMain by getting {
-      dependencies {
-        implementation("io.ktor:ktor-client-core:1.4.1")
-        implementation(devNpm("axios", "*"))
-        api(npm("snabbdom", "*"))
-      }
-    }
+    // val bothMain by getting
+    // named("browserMain") {
+    //   kotlin.srcDirs(bothMain.kotlin.srcDirs)
+    //   resources.srcDirs(bothMain.resources.srcDirs)
+    // }
+    // named("nodeMain") {
+    //   kotlin.srcDirs(bothMain.kotlin.srcDirs)
+    //   resources.srcDirs(bothMain.resources.srcDirs)
+    // }
   }
 }
 
@@ -41,14 +49,14 @@ npmPublishing {
   }
 
   publications {
-    val jsIR by getting {
-      moduleName = "mpp-IR"
+    val browser by getting {
+      moduleName = "mpp-browser"
       packageJson {
         // bundledDependencies = mutableSetOf("kotlin-test")
       }
     }
-    val js by getting {
-      moduleName = "mpp-Legacy"
+    val node by getting {
+      moduleName = "mpp-node"
       packageJson {
         author to "Custom Author"
         keywords = jsonArray(
