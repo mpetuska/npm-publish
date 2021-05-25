@@ -27,14 +27,14 @@ class NpmPublishPluginTest : WordSpec(
       project.pluginManager.apply(kotlinPlugin)
 
       (
-          try {
-            project.npmPublishing()
-          } catch (e: Exception) {
-            println(e)
-            e.printStackTrace()
-            null
-          } != null
-          ) shouldBe registers
+        try {
+          project.npmPublishing()
+        } catch (e: Exception) {
+          println(e)
+          e.printStackTrace()
+          null
+        } != null
+        ) shouldBe registers
     }
 
     "Applying the Plugin" should {
