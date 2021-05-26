@@ -8,10 +8,16 @@ plugins {
   id("org.jetbrains.dokka")
   id("com.github.jakemarsden.git-hooks")
   id("org.jlleitschuh.gradle.ktlint")
+  id("io.github.gradle-nexus.publish-plugin")
+  signing
   idea
 }
 
-description = "Gradle plugin for npm package publishing"
+description = """
+              A maven-publish alternative for NPM package publishing.
+              Integrates with kotlin JS/MPP plugins (if applied) to automatically
+              setup publishing to NPM repositories for all JS targets.
+""".trimIndent()
 
 idea {
   module {
@@ -57,12 +63,7 @@ gradlePlugin {
     create(project.name) {
       id = pluginId
       displayName = "NPM package publishing to NPM repositories"
-      description =
-        """
-              A maven-publish alternative for NPM package publishing.
-              Integrates with kotlin JS/MPP plugins (if applied) to automatically
-              setup publishing to NPM repositories for all JS targets.
-        """.trimIndent()
+      description = rootProject.description
       implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
     }
   }
@@ -75,25 +76,39 @@ pluginBundle {
 }
 
 java {
+  withSourcesJar()
+  withJavadocJar()
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
 }
+
+nexusPublishing {
+  repositories {
+    sonatype {
+      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+    }
+  }
+}
+
+signing {
+  val signingKey: String? by project
+  val signingPassword: String? by project
+  if (signingKey != null) {
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications)
+  }
+}
+
 tasks {
   withType<KotlinCompile> {
     kotlinOptions {
-      jvmTarget = "1.8"
+      jvmTarget = "${JavaVersion.VERSION_11}"
     }
   }
 }
 
 publishing {
-  fun checkAnyTrue(vararg props: String) = props.any {
-    "true".equals(project.properties[it] as String?, true)
-  }
-
-  fun checkNoneStarting(vararg props: String) = props.none {
-    project.properties.keys.any { p -> p.startsWith(it) }
-  }
   publications {
     withType<MavenPublication> {
       pom {
@@ -108,6 +123,14 @@ publishing {
           }
         }
 
+        developers {
+          developer {
+            id to "mpetuska"
+            name to "Martynas Petuška"
+            email to "martynas@petuska.dev"
+          }
+        }
+
         scm {
           connection by "scm:git:git@github.com:mpetuska/${project.name}.git"
           url by "https://github.com/mpetuska/${project.name}"
@@ -116,18 +139,8 @@ publishing {
       }
     }
     repositories {
-      fun repository(name: String, config: MavenArtifactRepository.() -> Unit) {
-        if ((checkAnyTrue("publish.all", "publish.$name") && checkNoneStarting("publish.skip")) &&
-          checkNoneStarting("publish.skip.$name")
-        ) {
-          maven {
-            this.name = name
-            config()
-          }
-        }
-      }
-      repository("GitHub") {
-        url = uri("https://maven.pkg.github.com/mpetuska/${project.name}")
+      maven("https://maven.pkg.github.com/mpetuska/${project.name}") {
+        name = "GitHub"
         credentials {
           username = System.getenv("GH_USERNAME")
           password = System.getenv("GH_PASSWORD")

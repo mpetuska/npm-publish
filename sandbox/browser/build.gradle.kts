@@ -6,6 +6,8 @@ plugins {
 kotlin {
   js {
     browser()
+    useCommonJs()
+    binaries.library()
   }
   dependencies {
     implementation(npm("axios", "*"))
@@ -13,6 +15,9 @@ kotlin {
     implementation("io.ktor:ktor-client-core:1.4.1")
   }
   sourceSets {
+    all {
+      languageSettings.useExperimentalAnnotation("kotlin.js.ExperimentalJsExport")
+    }
   }
 }
 
@@ -20,7 +25,7 @@ npmPublishing {
   organization = group as String
 
   publications {
-    val js by getting {
+    named("js") {
       packageJsonTemplateFile = projectDir.resolve("../template.package.json")
       packageJson {
         author { name = "Martynas Petuška" }

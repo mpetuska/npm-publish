@@ -1,5 +1,7 @@
 package test.sandbox
 
+import kotlin.js.JsExport
+
 @JsExport
 fun sayHello(name: Name = "Mr. PP Trump"): Name = "Hello from $name".also { println(it) }
 
@@ -14,4 +16,8 @@ typealias Name = String
 external interface Person {
   val name: String
   val sureName: String
+}
+
+fun main() {
+  println("Hey")
 }

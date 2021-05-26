@@ -5,12 +5,12 @@ plugins {
 }
 
 kotlin {
-  js("browser", IR) {
+  js("browser") {
     browser()
     useCommonJs()
     binaries.library()
   }
-  js("node", IR) {
+  js("node") {
     useCommonJs()
     nodejs()
     binaries.library()
@@ -18,23 +18,13 @@ kotlin {
 
   sourceSets {
     all {
-      kotlin.srcDirs("src/main/kotlin")
-      resources.srcDirs("src/main/resources")
       dependencies {
         implementation("io.ktor:ktor-client-core:1.4.1")
         implementation(devNpm("axios", "*"))
         api(npm("snabbdom", "*"))
       }
+      languageSettings.useExperimentalAnnotation("kotlin.js.ExperimentalJsExport")
     }
-    // val bothMain by getting
-    // named("browserMain") {
-    //   kotlin.srcDirs(bothMain.kotlin.srcDirs)
-    //   resources.srcDirs(bothMain.resources.srcDirs)
-    // }
-    // named("nodeMain") {
-    //   kotlin.srcDirs(bothMain.kotlin.srcDirs)
-    //   resources.srcDirs(bothMain.resources.srcDirs)
-    // }
   }
 }
 
@@ -49,13 +39,13 @@ npmPublishing {
   }
 
   publications {
-    val browser by getting {
+    named("browser") {
       moduleName = "mpp-browser"
       packageJson {
         // bundledDependencies = mutableSetOf("kotlin-test")
       }
     }
-    val node by getting {
+    named("node") {
       moduleName = "mpp-node"
       packageJson {
         author to "Custom Author"
