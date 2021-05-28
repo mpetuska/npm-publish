@@ -3,7 +3,11 @@ package dev.petuska.npm.publish.task
 import com.google.gson.Gson
 import dev.petuska.npm.publish.delegate.fallbackDelegate
 import dev.petuska.npm.publish.delegate.gradleProperty
-import dev.petuska.npm.publish.dsl.*
+import dev.petuska.npm.publish.dsl.JsonObject
+import dev.petuska.npm.publish.dsl.NpmPublication
+import dev.petuska.npm.publish.dsl.NpmShrinkwrapJson
+import dev.petuska.npm.publish.dsl.PackageJson
+import dev.petuska.npm.publish.dsl.writeTo
 import dev.petuska.npm.publish.npmPublishing
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.CopySpec
