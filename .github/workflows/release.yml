@@ -57,7 +57,7 @@ jobs:
         run: |
           VERSION=${VERSION:=${{ github.event.inputs.version }}}
           VERSION=${VERSION/v}
-          ./gradlew dokkaHtml;
+          ./gradlew dokkaHtml -Pversion=${VERSION//v};
           cp -avr build/dokka/html/ public;
           find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
           echo '/npm-publish /npm-publish/npm-publish/index.html 301' > public/_redirects;
