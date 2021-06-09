@@ -75,6 +75,8 @@ open class NpmPublishTask @Inject constructor(
         if (otp != null) "--otp $otp" else null,
         if (dry) "--dry-run" else null
       )
-    )
+    ) {
+      workingDir = packageDir
+    }
   }
 }
