@@ -32,7 +32,6 @@ plugins {
 kotlin {
   // Legacy mode
   js(Legacy) {
-    binaries.library()
     browser() // or nodejs()
   }
   // OR IR mode
