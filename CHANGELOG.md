@@ -10,3 +10,4 @@
 * Fixed a bug that always expected version to be a string
 * Removed some duplicated code in sandbox
 * New sandbox module to check that plugin can work with both, nodejs() and browser() flavours at the same time
+* New `ts-consumer` module in the sandbox to showcase how to include packed K/JS modules into plain TS module
