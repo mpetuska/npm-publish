@@ -1,0 +1,22 @@
+{
+  "name": "@dev.petuska/ts-consumer",
+  "main": "src/insex.ts",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rm -rf node_modules/@dev.petuska",
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@dev.petuska/both": "file:../both/build/publications/npm/dev.petuska-both-0.0.0.tgz",
+    "@dev.petuska/browser": "file:../browser/build/publications/npm/dev.petuska-browser-0.0.0.tgz",
+    "@dev.petuska/mpp-browser": "file:../mpp/build/publications/npm/dev.petuska-mpp-browser-0.0.0.tgz",
+    "@dev.petuska/mpp-node": "file:../mpp/build/publications/npm/dev.petuska-mpp-node-0.0.0.tgz",
+    "@dev.petuska/node": "file:../node/build/publications/npm/dev.petuska-node-0.0.0.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.0",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}

@@ -1,5 +1,5 @@
 plugins {
-  kotlin("multiplatform") version "1.5.10" apply false
+  kotlin("multiplatform") apply false
   id("dev.petuska.npm.publish") version "0.0.0"
 }
 
@@ -17,7 +17,8 @@ npmPublishing {
   organization = group as String
   publications {
     publication("custom") {
-      nodeJsDir = file("${System.getProperty("user.home")}/.gradle/nodejs/node-v12.16.1-linux-x64")
+      nodeJsDir = file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()?.find { it.name.startsWith("node") }
+      packageJsonTemplateFile = rootDir.resolve("template.package.json")
       packageJson {
         author to "Custom Author"
         keywords = jsonArray(

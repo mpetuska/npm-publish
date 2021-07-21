@@ -6,6 +6,7 @@ plugins {
 kotlin {
   js {
     nodejs()
+    browser()
     useCommonJs()
     binaries.library()
   }

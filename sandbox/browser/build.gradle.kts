@@ -12,7 +12,7 @@ kotlin {
   dependencies {
     implementation(npm("axios", "*"))
     api(devNpm("snabbdom", "*"))
-    implementation("io.ktor:ktor-client-core:1.4.1")
+    implementation("io.ktor:ktor-client-core:_")
   }
   sourceSets {
     all {

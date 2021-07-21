@@ -9,7 +9,7 @@
 Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with
 Kotlin/JS/MPP plugin if applied, providing auto configurations.
 
-> The plugin was last tested with `JDK 11`, `Kotlin 1.5.10` & `Gradle 7.0.2`
+> The plugin was last tested with `JDK 11`, `Kotlin 1.5.21` & `Gradle 7.1.1`
 
 ## Setup
 
@@ -26,7 +26,7 @@ tasks:
 ```kotlin
 plugins {
   id("dev.petuska.npm.publish") version "<VERSION>"
-  kotlin("multiplatform") version "1.4.32" // Optional, also supports "js"
+  kotlin("multiplatform") version "1.5.21" // Optional, also supports "js"
 }
 
 kotlin {
@@ -228,7 +228,7 @@ This ensures that any given dependency does not appear in multiple dependency sc
 
 ## Known Issues
 
-* [#6435](https://github.com/npm/npm/issues/6435): npm and yarn tries to download bundled dependencies. Can be overcome
+* [#6435](https://github.com/npm/npm/issues/6435): (Only applies to legacy backend) npm and yarn tries to download bundled dependencies. Can be overcome
   for npm (sadly not yarn) with `shrinkwrapBundledDependencies` option. Note that it works fine for both package
   managers when installing from a tarball. Bug [#2143](https://github.com/npm/cli/issues/2143) on the new npm repo, so
   please vote for that to get it fixed. Bug [#8436](https://github.com/yarnpkg/yarn/issues/8436) on the yarn repo, so

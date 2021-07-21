@@ -28,7 +28,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
    * NPM package version.
    * Defaults to [Project.getVersion] or rootProject.version.
    */
-  var version: String? by project.propertyDelegate { it } or project.fallbackDelegate { version as String? }
+  var version: String? by project.propertyDelegate { it } or project.fallbackDelegate { version.toString() }
 
   /**
    * Default [NpmRepository.access]
