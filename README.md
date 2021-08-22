@@ -168,9 +168,9 @@ properties (`./gradlew task -Pprop.name=propValue`), `gradle.properties` or `loc
 also be set via environment variables by replacing `.`, ` ` & `-` with `_` and capitalising all names. Properties are
 resolved in the following priority:
 
-1. DSL
-2. Gradle Properties
-3. Environment Variables
+1. Gradle Properties
+2. Environment Variables
+3. DSL
 
 ##### Extension
 
