@@ -9,7 +9,7 @@
 Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with
 Kotlin/JS/MPP plugin if applied, providing auto configurations.
 
-> The plugin was last tested with `JDK 11`, `Kotlin 1.5.21` & `Gradle 7.1.1`
+> The plugin was last tested with `JDK 11`, `Kotlin 1.5.21` & `Gradle 7.2.0`
 
 ## Setup
 
@@ -43,7 +43,7 @@ kotlin {
 
 npmPublishing {
   repositories {
-    repository("npmjs") {      
+    repository("npmjs") {
       registry = uri("https://registry.npmjs.org")
       authToken = "asdhkjsdfjvhnsdrishdl"
     }
@@ -164,39 +164,44 @@ npmPublishing {
 #### Properties
 
 Most of the DSL configuration options can also be set/overridden via gradle
-properties (`./gradlew task -Pprop.name=propValue`), `gradle.properties` or `local.properties`. Bellow is the full list
-of supported properties:
+properties (`./gradlew task -Pprop.name=propValue`), `gradle.properties` or `local.properties`. These properties can
+also be set via environment variables by replacing `.`, ` ` & `-` with `_` and capitalising all names. Properties are
+resolved in the following priority:
 
-Extension:
+1. DSL
+2. Gradle Properties
+3. Environment Variables
 
-* `npm.publish.readme`
-* `npm.publish.organization`
-* `npm.publish.access`
-* `npm.publish.bundleKotlinDependencies`
-* `npm.publish.shrinkwrapBundledDependencies`
-* `npm.publish.dry`
-* `npm.publish.version`
+##### Extension
 
-Publication:
+* `npm.publish.readme (NPM_PUBLISH_README)`
+* `npm.publish.organization (NPM_PUBLISH_ORGANIZATION)`
+* `npm.publish.access (NPM_PUBLISH_ACCESS)`
+* `npm.publish.bundleKotlinDependencies (NPM_PUBLISH_BUNDLEKOTLINDEPENDENCIES)`
+* `npm.publish.shrinkwrapBundledDependencies (NPM_PUBLISH_SHRINKWRAPBUNDLEDDEPENDENCIES)`
+* `npm.publish.dry (NPM_PUBLISH_DRY)`
+* `npm.publish.version (NPM_PUBLISH_VERSION)`
 
-* `npm.publish.publication.<name>.bundleKotlinDependencies`
-* `npm.publish.publication.<name>.shrinkwrapBundledDependencies`
-* `npm.publish.publication.<name>.scope`
-* `npm.publish.publication.<name>.moduleName`
-* `npm.publish.publication.<name>.version`
-* `npm.publish.publication.<name>.main`
-* `npm.publish.publication.<name>.types`
-* `npm.publish.publication.<name>.readme`
-* `npm.publish.publication.<name>.nodeJsDir`
-* `npm.publish.publication.<name>.destinationDir`
+##### Publication
 
-Repository:
+* `npm.publish.publication.<name>.bundleKotlinDependencies (NPM_PUBLISH_PUBLICATION_<NAME>_BUNDLEKOTLINDEPENDENCIES)`
+* `npm.publish.publication.<name>.shrinkwrapBundledDependencies (NPM_PUBLISH_PUBLICATION_<NAME>_SHRINKWRAPBUNDLEDDEPENDENCIES)`
+* `npm.publish.publication.<name>.scope (NPM_PUBLISH_PUBLICATION_<NAME>_SCOPE)`
+* `npm.publish.publication.<name>.moduleName (NPM_PUBLISH_PUBLICATION_<NAME>_MODULENAME)`
+* `npm.publish.publication.<name>.version (NPM_PUBLISH_PUBLICATION_<NAME>_VERSION)`
+* `npm.publish.publication.<name>.main (NPM_PUBLISH_PUBLICATION_<NAME>_MAIN)`
+* `npm.publish.publication.<name>.types (NPM_PUBLISH_PUBLICATION_<NAME>_TYPES)`
+* `npm.publish.publication.<name>.readme (NPM_PUBLISH_PUBLICATION_<NAME>_README)`
+* `npm.publish.publication.<name>.nodeJsDir (NPM_PUBLISH_PUBLICATION_<NAME>_NODEJSDIR)`
+* `npm.publish.publication.<name>.destinationDir (NPM_PUBLISH_PUBLICATION_<NAME>_DESTINATIONDIR)`
 
-* `npm.publish.repository.<name>.dry`
-* `npm.publish.repository.<name>.access`
-* `npm.publish.repository.<name>.registry`
-* `npm.publish.repository.<name>.otp`
-* `npm.publish.repository.<name>.authToken`
+##### Repository
+
+* `npm.publish.repository.<name>.dry (NPM_PUBLISH_REPOSITORY_<NAME>_DRY)`
+* `npm.publish.repository.<name>.access (NPM_PUBLISH_REPOSITORY_<NAME>_ACCESS)`
+* `npm.publish.repository.<name>.registry (NPM_PUBLISH_REPOSITORY_<NAME>_REGISTRY)`
+* `npm.publish.repository.<name>.otp (NPM_PUBLISH_REPOSITORY_<NAME>_OTP)`
+* `npm.publish.repository.<name>.authToken (NPM_PUBLISH_REPOSITORY_<NAME>_AUTHTOKEN)`
 
 ## Tasks
 
@@ -207,9 +212,7 @@ The plugin generates the following gradle tasks for various configuration elemen
 * NpmPackTask: generated for each publication and named as `pack<UpperCammelCasePublicationName>NpmPublication`
 * NpmPublishTask: generated for each publication + repository combination and named
   as `publish<UpperCammelCasePublicationName>NpmPublicationTo<UpperCammelCaseRepositoryName>`
-
-All created tasks are added as dependencies to grouping tasks to allow for group-invocation:
-
+  All created tasks are added as dependencies to grouping tasks to allow for group-invocation:
 * NpmPackageAssembleTask: `assemble` task in `build` group
 * NpmPackTask: `pack` task in `build` group
 * NpmPublishTask: `publish` task in `publishing` group
@@ -222,14 +225,12 @@ priority order by their name (descending priority):
 1. Optional
 2. Peer
 3. Dev
-4. Normal
-
-This ensures that any given dependency does not appear in multiple dependency scopes.
+4. Normal This ensures that any given dependency does not appear in multiple dependency scopes.
 
 ## Known Issues
 
-* [#6435](https://github.com/npm/npm/issues/6435): (Only applies to legacy backend) npm and yarn tries to download bundled dependencies. Can be overcome
-  for npm (sadly not yarn) with `shrinkwrapBundledDependencies` option. Note that it works fine for both package
-  managers when installing from a tarball. Bug [#2143](https://github.com/npm/cli/issues/2143) on the new npm repo, so
-  please vote for that to get it fixed. Bug [#8436](https://github.com/yarnpkg/yarn/issues/8436) on the yarn repo, so
-  please vote for that to get it fixed.
+* [#6435](https://github.com/npm/npm/issues/6435): (Only applies to legacy backend) npm and yarn tries to download
+  bundled dependencies. Can be overcome for npm (sadly not yarn) with `shrinkwrapBundledDependencies` option. Note that
+  it works fine for both package managers when installing from a tarball.
+  Bug [#2143](https://github.com/npm/cli/issues/2143) on the new npm repo, so please vote for that to get it fixed.
+  Bug [#8436](https://github.com/yarnpkg/yarn/issues/8436) on the yarn repo, so please vote for that to get it fixed.

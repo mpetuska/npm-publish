@@ -14,15 +14,30 @@ internal class PropertyDelegate<V>(
   private var value: V? = null
 
   override fun getValue(thisRef: Any, property: KProperty<*>): V {
-    value = value ?: project.propertyOrNull<V>("$PROP_BASE${prefix?.removeSuffix(".")?.removePrefix(".")?.let { ".$it" } ?: ""}.${property.name}")
-      ?.toString()?.let(converter)
+    value = value ?: property.findValue()?.let(converter)
     return value ?: default
   }
 
   override fun setValue(thisRef: Any, property: KProperty<*>, value: V) {
-    this.value = project.propertyOrNull<V>("$PROP_BASE${prefix?.removeSuffix(".")?.removePrefix(".")?.let { ".$it" } ?: ""}.${property.name}")
-      ?.toString()?.let(converter) ?: value
+    this.value = property.findValue()?.let(converter) ?: value
   }
+
+  private fun KProperty<*>.findValue(): String? = findProperty() ?: findEnv()
+
+  private fun KProperty<*>.findProperty(): String? {
+    return project.propertyOrNull<V>(buildPropertyKey())?.toString()
+  }
+
+  private fun KProperty<*>.findEnv(): String? {
+    return System.getenv(buildPropertyKey().toUpperCase().replace("[.\\- ]".toRegex(), "_"))?.toString()
+  }
+
+  private fun KProperty<*>.buildPropertyKey() =
+    "$PROP_BASE${
+    prefix?.removeSuffix(".")
+      ?.removePrefix(".")
+      ?.let { ".$it" } ?: ""
+    }.$name"
 
   companion object {
     private const val PROP_BASE = "npm.publish"

@@ -1,7 +1,8 @@
+import de.fayard.refreshVersions.core.versionFor
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version "1.4.30"
+  kotlin("jvm") version "1.4.31"
   `java-gradle-plugin`
   `maven-publish`
   id("com.gradle.plugin-publish")
@@ -24,6 +25,11 @@ idea {
     isDownloadJavadoc = true
     isDownloadSources = true
   }
+}
+
+ktlint {
+  version by versionFor("version.ktlint")
+  additionalEditorconfigFile.set(rootDir.resolve(".editorconfig"))
 }
 
 gradleEnterprise {
@@ -157,7 +163,7 @@ afterEvaluate {
           "Built-By" to System.getProperty("user.name"),
           "Build-Jdk" to System.getProperty("java.version"),
           "Implementation-Version" to project.version,
-          "Created-By" to "Gradle v${org.gradle.util.GradleVersion.current()}",
+          "Created-By" to "Gradle v${GradleVersion.current()}",
           "Created-From" to Git.headCommitHash
         )
       }

@@ -99,7 +99,7 @@ class NpmPublication internal constructor(
   internal val kotlinDestinationDir: File?
     get() = kotlinMainTask?.let {
       when (it) {
-        is Kotlin2JsCompile -> it.outputFile.parentFile
+        is Kotlin2JsCompile -> it.outputFileProperty.orNull?.parentFile
         is Copy -> it.destinationDir
         else -> null
       }

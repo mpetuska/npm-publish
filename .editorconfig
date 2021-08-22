@@ -3,4 +3,4 @@ root = true
 [*]
 indent_size = 2
 continuation_indent_size = 4
-ij_kotlin_name_count_to_use_star_import = unset
+ij_kotlin_name_count_to_use_star_import = 9000

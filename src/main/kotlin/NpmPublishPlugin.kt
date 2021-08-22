@@ -8,7 +8,7 @@ import dev.petuska.npm.publish.task.NpmPublishTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
-import org.gradle.util.GUtil
+import org.gradle.util.internal.GUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -64,7 +64,7 @@ class NpmPublishPlugin : Plugin<Project> {
           publications(0) {
             publication(target.name) {
               this.binary = binary
-              this.main = compileKotlinTask?.outputFile?.name
+              this.main = compileKotlinTask?.outputFileProperty?.orNull?.name
               dependencies {
                 addAll(deps)
               }
@@ -130,7 +130,7 @@ class NpmPublishPlugin : Plugin<Project> {
         val packTaskName = "pack${upperName}NpmPublication"
         val assemblePackageTask = tasks.findByName(assembleTaskName) as NpmPackageAssembleTask?
           ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub).also { task ->
-            task.onlyIf { pub.compileKotlinTask?.outputFile?.exists() ?: true }
+            task.onlyIf { pub.compileKotlinTask?.outputFileProperty?.orNull?.exists() ?: true }
             task.dependsOn(
               *listOfNotNull(
                 processResourcesTask,

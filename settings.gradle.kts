@@ -1,6 +1,6 @@
 plugins {
-  id("de.fayard.refreshVersions") version "0.10.1"
-  id("com.gradle.enterprise") version "3.6.3"
+  id("de.fayard.refreshVersions") version "0.11.0"
+  id("com.gradle.enterprise") version "3.6.4"
 }
 
 rootProject.name = "npm-publish"

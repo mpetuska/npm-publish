@@ -136,7 +136,7 @@ open class NpmPackageAssembleTask @Inject constructor(
         packageJson!!.invoke(this@PackageJson)
       } else {
         main = this@with.main
-        types = resolveTypes()
+        types = this@with.types ?: resolveTypes()
 
         if (binary is JsIrBinary) {
           kotlinDependencies?.flatMap {
@@ -214,7 +214,7 @@ open class NpmPackageAssembleTask @Inject constructor(
         }
       }
 
-  private fun NpmPublication.resolveTypes() = compileKotlinTask?.outputFile?.let {
+  private fun NpmPublication.resolveTypes() = compileKotlinTask?.outputFileProperty?.orNull?.let {
     kotlinDestinationDir?.resolve("${it.nameWithoutExtension}.d.ts")?.let { dtsFile ->
       if (dtsFile.exists()) {
         "${dtsFile.relativeTo(dtsFile.parentFile)}"
