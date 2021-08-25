@@ -30,12 +30,16 @@ npmPublishing {
       packageJsonTemplateFile = projectDir.resolve("../template.package.json")
       packageJson {
         author { name = "Martynas Petuška" }
+        repository {
+          type = "git"
+          url = "https://github.com/mpetuska/npm-publish.git"
+        }
       }
     }
   }
   repositories {
     repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/@$group")
+      registry = uri("https://npm.pkg.github.com/")
     }
   }
 }

@@ -28,6 +28,10 @@ npmPublishing {
         "customField" to jsonObject {
           "customValues" to jsonArray(1, 2, 3)
         }
+        repository {
+          type = "git"
+          url = "https://github.com/mpetuska/npm-publish.git"
+        }
       }
     }
   }
@@ -37,7 +41,7 @@ npmPublishing {
       authToken = System.getenv("PRIVATE_TOKEN")?.trim() ?: ""
     }
     repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/@$group")
+      registry = uri("https://npm.pkg.github.com/")
     }
   }
 }

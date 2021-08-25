@@ -32,7 +32,7 @@ npmPublishing {
   organization = group as String
   repositories {
     repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/@$group")
+      registry = uri("https://npm.pkg.github.com/")
     }
   }
 
@@ -41,6 +41,10 @@ npmPublishing {
       moduleName = "mpp-browser"
       packageJson {
         // bundledDependencies = mutableSetOf("kotlin-test")
+        repository {
+          type = "git"
+          url = "https://github.com/mpetuska/npm-publish.git"
+        }
       }
     }
     named("node") {
@@ -55,6 +59,10 @@ npmPublishing {
         }
         "customField" to jsonObject {
           "customValues" to jsonArray(1, 2, 3)
+        }
+        repository {
+          type = "git"
+          url = "https://github.com/mpetuska/npm-publish.git"
         }
         // bundledDependencies("kotlin-test") {
         //
