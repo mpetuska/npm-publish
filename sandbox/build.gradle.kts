@@ -4,9 +4,6 @@ plugins {
 }
 
 allprojects {
-  group = "dev.petuska"
-  version = "0.0.0"
-
   repositories {
     mavenLocal()
     mavenCentral()

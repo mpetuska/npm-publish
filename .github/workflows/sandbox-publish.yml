@@ -5,6 +5,10 @@ on:
       version:
         required: true
         description: Package version to publish under
+      sandbox-module:
+        required: false
+        default: both
+        description: Sandbox module to publish
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -13,17 +17,30 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v2
-      # Setup .npmrc file to publish to GitHub Packages
-      - uses: actions/setup-node@v2
+
+      - name: Restore Gradle cache
+        id: cache
+        uses: actions/cache@v2
         with:
-          node-version: '12.x'
-          registry-url: 'https://npm.pkg.github.com'
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@octocat'
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/yarn
+            ~/.gradle/nodejs
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
       - name: Publish
         working-directory: sandbox
-        run: ./gradlew :both:publishJsNpmPublicationToGitHub -Pnpm.publish.repository.GitHub.authToken="${{ github.token }}"
+        run: |
+          VERSION=${VERSION:=${{ github.event.inputs.version }}}
+          ./gradlew :${{ github.event.inputs.sandbox-module }}:publishJsNpmPublicationToGitHub \
+              -Pnpm.publish.repository.GitHub.authToken="${{ github.token }}" \
+              -Pversion=${VERSION/v} \
+              -Pgroup=${{ github.repository_owner }}
