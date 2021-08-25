@@ -14,7 +14,8 @@ npmPublishing {
   organization = group as String
   publications {
     publication("custom") {
-      nodeJsDir = file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()?.find { it.name.startsWith("node") }
+      nodeJsDir =
+        file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()?.find { it.name.startsWith("node") }
       packageJsonTemplateFile = rootDir.resolve("template.package.json")
       packageJson {
         author to "Custom Author"
@@ -34,6 +35,9 @@ npmPublishing {
     repository("GitLab") {
       registry = uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")?.trim()}/packages/npm")
       authToken = System.getenv("PRIVATE_TOKEN")?.trim() ?: ""
+    }
+    repository("GitHub") {
+      registry = uri("https://npm.pkg.github.com/@$group")
     }
   }
 }

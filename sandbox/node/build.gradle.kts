@@ -16,7 +16,7 @@ kotlin {
   }
   sourceSets {
     all {
-      languageSettings.useExperimentalAnnotation("kotlin.js.ExperimentalJsExport")
+      languageSettings.optIn("kotlin.js.ExperimentalJsExport")
     }
   }
 }
@@ -33,9 +33,8 @@ npmPublishing {
     }
   }
   repositories {
-    repository("GitLab") {
-      registry = uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")?.trim()}/packages/npm")
-      authToken = System.getenv("PRIVATE_TOKEN")?.trim() ?: ""
+    repository("GitHub") {
+      registry = uri("https://npm.pkg.github.com/@$group")
     }
   }
 }

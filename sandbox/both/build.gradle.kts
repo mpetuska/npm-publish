@@ -17,7 +17,7 @@ kotlin {
   }
   sourceSets {
     all {
-      languageSettings.useExperimentalAnnotation("kotlin.js.ExperimentalJsExport")
+      languageSettings.optIn("kotlin.js.ExperimentalJsExport")
     }
   }
 }
@@ -35,7 +35,7 @@ npmPublishing {
   }
   repositories {
     repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com")
+      registry = uri("https://npm.pkg.github.com/@$group")
     }
   }
 }
