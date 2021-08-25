@@ -1,3 +1,14 @@
+# v2.1.1
+## Versions
+* Kotlin: 1.5.21
+* Gradle: 7.2.0
+* JDK: 11
+
+## Changes
+* Kotlin version bumped to `1.5.30`
+* Sample GH action introduced to showcase CI publishing
+
+
 # v2.1.0
 ## Versions
 * Kotlin: 1.5.21
@@ -8,6 +19,7 @@
 * Fixed [#24](https://github.com/mpetuska/npm-publish/issues/24): `types` configuration property was ignored
 * Added support for setting configuration properties via environment variables too
 * Kotlin version bumped to `1.5.21`
+
 
 # v2.0.4
 ## Versions

@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm") version "1.4.31"
-  `java-gradle-plugin`
-  `maven-publish`
   id("com.gradle.plugin-publish")
   id("org.jetbrains.dokka")
   id("com.github.jakemarsden.git-hooks")
   id("org.jlleitschuh.gradle.ktlint")
   id("io.github.gradle-nexus.publish-plugin")
+  `java-gradle-plugin`
+  `maven-publish`
   signing
   idea
 }
@@ -65,7 +65,7 @@ kotlin {
 val pluginId = "dev.petuska.npm.publish"
 gradlePlugin {
   plugins {
-    create(project.name) {
+    create(name) {
       id = pluginId
       displayName = "NPM package publishing to NPM repositories"
       description = rootProject.description

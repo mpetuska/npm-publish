@@ -1,6 +1,6 @@
 plugins {
   kotlin("multiplatform") apply false
-  id("dev.petuska.npm.publish") version "0.0.0"
+  id("dev.petuska.npm.publish")
 }
 
 allprojects {

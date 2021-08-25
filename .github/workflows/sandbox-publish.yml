@@ -1,0 +1,29 @@
+name: Publish Sandbox to GitHub Packages
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: Package version to publish under
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
+          registry-url: 'https://npm.pkg.github.com'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@octocat'
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Publish
+        working-directory: sandbox
+        run: ./gradlew :both:publishJsNpmPublicationToGitHub -Pnpm.publish.repository.GitHub.authToken="${{ github.token }}"
