@@ -42,5 +42,5 @@ jobs:
           VERSION=${VERSION:=${{ github.event.inputs.version }}}
           ./gradlew :${{ github.event.inputs.sandbox-module }}:publishJsNpmPublicationToGitHub \
               -Pnpm.publish.repository.GitHub.authToken="${{ github.token }}" \
-              -Pversion=${VERSION/v} \
-              -Pgroup=${{ github.repository_owner }}
+              -Pnpm.publish.version=${VERSION/v} \
+              -Pnpm.publish.organization=${{ github.repository_owner }}
