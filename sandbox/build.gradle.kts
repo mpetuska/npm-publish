@@ -1,5 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+
 plugins {
-  kotlin("multiplatform") apply false
+  kotlin("multiplatform")
   id("dev.petuska.npm.publish")
 }
 
@@ -10,9 +12,40 @@ allprojects {
   }
 }
 
+kotlin {
+  js {
+    browser()
+    binaries.library()
+  }
+
+  sourceSets {
+    all {
+      languageSettings.optIn("kotlin.js.ExperimentalJsExport")
+    }
+    named("jsMain") {
+      dependencies {
+        api(project(":both"))
+      }
+    }
+  }
+}
+
+tasks {
+  named("compileProductionLibraryKotlinJs", KotlinJsCompile::class.java) {
+    kotlinOptions {
+//      sourceMap = true
+//      sourceMapEmbedSources = "always"
+      freeCompilerArgs += listOf("-Xir-per-module")
+    }
+  }
+}
+
 npmPublishing {
-  organization = group as String
+  organization = "$group"
   publications {
+    named("js") {
+      moduleName = "sandbox"
+    }
     publication("custom") {
       nodeJsDir =
         file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()?.find { it.name.startsWith("node") }

@@ -1,18 +1,29 @@
 {
-  "name": "@dev.petuska/ts-consumer",
-  "main": "src/insex.ts",
+  "name": "@mpetuska/ts-consumer",
+  "main": "src/index.ts",
   "version": "0.0.0",
   "license": "Apache-2.0",
   "scripts": {
-    "clean": "rm -rf node_modules/@dev.petuska",
-    "start": "ts-node src/index.ts"
+    "clean": "rm -rf node_modules/@mpetuska",
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "build:start": "yarn build && node build/index.js",
+    "reinstall:sandbox": "yarn remove @mpetuska/sandbox; yarn add ../build/publications/npm/js",
+    "reinstall:both": "yarn remove @mpetuska/both; yarn add ../both/build/publications/npm/js",
+    "reinstall:browser": "yarn remove @mpetuska/browser; yarn add ../browser/build/publications/npm/js",
+    "reinstall:node": "yarn remove @mpetuska/node; yarn add ../node/build/publications/npm/js",
+    "reinstall:mpp-node": "yarn remove @mpetuska/mpp-node; yarn add ../mpp/build/publications/npm/node",
+    "reinstall:mpp-browser": "yarn remove @mpetuska/mpp-browser; yarn add ../mpp/build/publications/npm/browser",
+    "reinstall": "yarn reinstall:sandbox && yarn reinstall:both && yarn reinstall:browser && yarn reinstall:node  && yarn reinstall:mpp-node && yarn reinstall:mpp-browser",
+    "rebuild": "(cd .. && ./gradlew pack) && yarn reinstall"
   },
   "dependencies": {
-    "@dev.petuska/both": "file:../both/build/publications/npm/dev.petuska-both-0.0.0.tgz",
-    "@dev.petuska/browser": "file:../browser/build/publications/npm/dev.petuska-browser-0.0.0.tgz",
-    "@dev.petuska/mpp-browser": "file:../mpp/build/publications/npm/dev.petuska-mpp-browser-0.0.0.tgz",
-    "@dev.petuska/mpp-node": "file:../mpp/build/publications/npm/dev.petuska-mpp-node-0.0.0.tgz",
-    "@dev.petuska/node": "file:../node/build/publications/npm/dev.petuska-node-0.0.0.tgz"
+    "@mpetuska/both": "../both/build/publications/npm/js",
+    "@mpetuska/browser": "../browser/build/publications/npm/js",
+    "@mpetuska/mpp-browser": "../mpp/build/publications/npm/browser",
+    "@mpetuska/mpp-node": "../mpp/build/publications/npm/node",
+    "@mpetuska/node": "../node/build/publications/npm/js",
+    "@mpetuska/sandbox": "../build/publications/npm/js"
   },
   "devDependencies": {
     "@types/node": "^16.4.0",

@@ -64,9 +64,6 @@ npmPublishing {
           type = "git"
           url = "https://github.com/mpetuska/npm-publish.git"
         }
-        // bundledDependencies("kotlin-test") {
-        //
-        // }
       }
     }
   }

@@ -3,6 +3,7 @@
 .theia/
 .yarn/
 .yarnrc
+yarn.lock
 
 # Ignore Gradle build output directory
 build

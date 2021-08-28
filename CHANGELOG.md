@@ -1,3 +1,12 @@
+# vWIP
+## Versions
+* Kotlin: 1.5.21
+* Gradle: 7.2.0
+* JDK: 11
+
+## Changes
+* 
+
 # v2.1.1
 ## Versions
 * Kotlin: 1.5.21
