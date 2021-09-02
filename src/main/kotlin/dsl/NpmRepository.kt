@@ -24,7 +24,9 @@ class NpmRepository internal constructor(
   /**
    * Repository access.
    */
-  var access: NpmAccess by project.propertyDelegate(propGroup) { NpmAccess.fromString(it) } or npmExtension.fallbackDelegate(NpmPublishExtension::access)
+  var access: NpmAccess by project.propertyDelegate(propGroup) {
+    NpmAccess.fromString(it)
+  } or npmExtension.fallbackDelegate(NpmPublishExtension::access)
 
   /**
    * NPM Registry uri to publish packages to. Should include schema domain and path if required
@@ -44,7 +46,9 @@ class NpmRepository internal constructor(
   /**
    * Overrides [NpmPublishExtension.dry] option for this repository
    */
-  var dry: Boolean by project.propertyDelegate(propGroup) { it.notFalse() } or npmExtension.fallbackDelegate(NpmPublishExtension::dry)
+  var dry: Boolean by project.propertyDelegate(propGroup) { it.notFalse() } or npmExtension.fallbackDelegate(
+    NpmPublishExtension::dry
+  )
 
   internal fun validate(): NpmRepository? {
     return takeIf {

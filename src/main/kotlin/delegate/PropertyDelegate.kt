@@ -2,6 +2,7 @@ package dev.petuska.npm.publish.delegate
 
 import dev.petuska.npm.publish.util.propertyOrNull
 import org.gradle.api.Project
+import java.util.Locale
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -29,7 +30,8 @@ internal class PropertyDelegate<V>(
   }
 
   private fun KProperty<*>.findEnv(): String? {
-    return System.getenv(buildPropertyKey().toUpperCase().replace("[.\\- ]".toRegex(), "_"))?.toString()
+    return System.getenv(buildPropertyKey().uppercase(Locale.getDefault()).replace("[.\\- ]".toRegex(), "_"))
+      ?.toString()
   }
 
   private fun KProperty<*>.buildPropertyKey() =

@@ -2,7 +2,12 @@ package dev.petuska.npm.publish.dsl
 
 import dev.petuska.npm.publish.util.npmFullName
 
-class NpmShrinkwrapJson(name: String, version: String, scope: String? = null, config: NpmShrinkwrapJson.() -> Unit = {}) : JsonObject<Any>() {
+class NpmShrinkwrapJson(
+  name: String,
+  version: String,
+  scope: String? = null,
+  config: NpmShrinkwrapJson.() -> Unit = {}
+) : JsonObject<Any>() {
   /**
    * [name](https://docs.npmjs.com/files/package.json#name)
    */
@@ -31,7 +36,8 @@ class NpmShrinkwrapJson(name: String, version: String, scope: String? = null, co
   /**
    * Creates or extends shrinkwrap dependencies config.
    */
-  fun dependencies(config: JsonObject<ShrinkwrapDependency>.() -> Unit = {}) = (dependencies ?: JsonObject()).apply(config).also { dependencies = it }
+  fun dependencies(config: JsonObject<ShrinkwrapDependency>.() -> Unit = {}) =
+    (dependencies ?: JsonObject()).apply(config).also { dependencies = it }
 
   /**
    * Creates and adds a shrinkwrap dependency.

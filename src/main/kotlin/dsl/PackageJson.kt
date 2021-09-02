@@ -78,7 +78,8 @@ operator fun <R> JsonObject<Any>.setValue(thisRef: JsonObject<Any>, property: KP
 }
 
 /**
- * A class representing [package.json](https://docs.npmjs.com/files/package.json) schema. Custom fields can be added as regular map entries.
+ * A class representing [package.json](https://docs.npmjs.com/files/package.json) schema.
+ * Custom fields can be added as regular map entries.
  */
 class PackageJson() : JsonObject<Any>() {
   constructor(name: String, version: String?, scope: String? = null, config: PackageJson.() -> Unit = {}) : this() {

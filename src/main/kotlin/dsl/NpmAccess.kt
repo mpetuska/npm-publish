@@ -1,5 +1,7 @@
 package dev.petuska.npm.publish.dsl
 
+import java.util.Locale
+
 /**
  * Enum representation of NPM repository access
  */
@@ -8,7 +10,7 @@ enum class NpmAccess {
   RESTRICTED;
 
   override fun toString(): String {
-    return name.toLowerCase()
+    return name.lowercase(Locale.getDefault())
   }
 
   companion object {

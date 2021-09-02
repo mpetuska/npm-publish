@@ -50,7 +50,8 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   var shrinkwrapBundledDependencies: Boolean by project.propertyDelegate(default = true) { it.notFalse() }
 
   /**
-   * Specifies if a dry-run should be added to the npm command arguments. Dry run does all the normal run des except actual file uploading.
+   * Specifies if a dry-run should be added to the npm command arguments.
+   * Dry run does all the normal run des except actual file uploading.
    * Defaults to `npm.publish.dry` project property if set or `false` otherwise.
    */
   var dry: Boolean by project.propertyDelegate(default = false) { it.notFalse() }
@@ -137,9 +138,14 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
    * Will look for existing publication with the same name or create a new one before applying the configuration
    */
   fun NpmPublicationContainer.publication(name: String, config: NpmPublication.() -> Unit): NpmPublication {
-    val pub = findByName(name) ?: NpmPublication(name, this@NpmPublishExtension.project, this@NpmPublishExtension).also {
-      add(it)
-    }
+    val pub = findByName(name)
+      ?: NpmPublication(
+        name = name,
+        project = this@NpmPublishExtension.project,
+        extension = this@NpmPublishExtension
+      ).also {
+        add(it)
+      }
     pub.apply(config)
     return pub
   }
