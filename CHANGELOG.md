@@ -1,21 +1,21 @@
-# vWIP
+# WIP
 ## Versions
 * Kotlin: 1.5.21
-* Gradle: 7.2.0
+* Gradle: 7.2.0cd ..
 * JDK: 11
-
 ## Changes
 * 
+
 
 # v2.1.1
 ## Versions
 * Kotlin: 1.5.21
 * Gradle: 7.2.0
 * JDK: 11
-
 ## Changes
 * Kotlin version bumped to `1.5.30`
 * Sample GH action introduced to showcase CI publishing
+* Reworked ts-consumer to showcase module inter-dependencies
 
 
 # v2.1.0
@@ -23,7 +23,6 @@
 * Kotlin: 1.5.21
 * Gradle: 7.2.0
 * JDK: 11
-
 ## Changes
 * Fixed [#24](https://github.com/mpetuska/npm-publish/issues/24): `types` configuration property was ignored
 * Added support for setting configuration properties via environment variables too
@@ -35,7 +34,6 @@
 * Kotlin: 1.5.10
 * Gradle: 7.1.1
 * JDK: 11
-
 ## Changes
 * Updated versions
 * Dynamic version ranges for increased compatibility
