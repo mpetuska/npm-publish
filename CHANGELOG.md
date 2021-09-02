@@ -1,6 +1,6 @@
 # v2.1.1
 ## Versions
-* Kotlin: 1.5.21
+* Kotlin: 1.5.30
 * Gradle: 7.2.0
 * JDK: 11
 
