@@ -1,20 +1,22 @@
-import de.fayard.refreshVersions.core.versionFor
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+  if (System.getenv("CI") == null) {
+    id("plugin.git-hooks")
+  }
   kotlin("jvm") version "1.4.31"
   id("com.gradle.plugin-publish")
   id("org.jetbrains.dokka")
-  id("com.github.jakemarsden.git-hooks")
-  id("org.jlleitschuh.gradle.ktlint")
   id("io.github.gradle-nexus.publish-plugin")
+  id("com.diffplug.spotless")
   `java-gradle-plugin`
   `maven-publish`
   signing
   idea
 }
 
-description = """
+description =
+    """
               A maven-publish alternative for NPM package publishing.
               Integrates with kotlin JS/MPP plugins (if applied) to automatically
               setup publishing to NPM repositories for all JS targets.
@@ -27,9 +29,9 @@ idea {
   }
 }
 
-ktlint {
-  version by versionFor("version.ktlint")
-  additionalEditorconfigFile.set(rootDir.resolve(".editorconfig"))
+spotless {
+  kotlin { ktfmt() }
+  kotlinGradle { ktfmt() }
 }
 
 gradleEnterprise {
@@ -37,15 +39,6 @@ gradleEnterprise {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
   }
-}
-
-gitHooks {
-  setHooks(
-    mapOf(
-      "pre-commit" to "ktlintFormat",
-      "pre-push" to "ktlintCheck"
-    )
-  )
 }
 
 repositories {
@@ -58,11 +51,14 @@ kotlin {
   dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     implementation("com.google.code.gson:gson:_")
+    api("dev.petuska:kon:_")
     testImplementation("io.kotest:kotest-runner-junit5:_")
+    testImplementation("dev.petuska:klip:_")
   }
 }
 
 val pluginId = "dev.petuska.npm.publish"
+
 gradlePlugin {
   plugins {
     create(name) {
@@ -105,13 +101,7 @@ signing {
   }
 }
 
-tasks {
-  withType<KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = "${JavaVersion.VERSION_11}"
-    }
-  }
-}
+tasks { withType<KotlinCompile> { kotlinOptions { jvmTarget = "${JavaVersion.VERSION_11}" } } }
 
 publishing {
   publications {
@@ -159,17 +149,15 @@ afterEvaluate {
   tasks {
     withType<Jar> {
       manifest {
-        attributes += sortedMapOf(
-          "Built-By" to System.getProperty("user.name"),
-          "Build-Jdk" to System.getProperty("java.version"),
-          "Implementation-Version" to project.version,
-          "Created-By" to "Gradle v${GradleVersion.current()}",
-          "Created-From" to Git.headCommitHash
-        )
+        attributes +=
+            sortedMapOf(
+                "Built-By" to System.getProperty("user.name"),
+                "Build-Jdk" to System.getProperty("java.version"),
+                "Implementation-Version" to project.version,
+                "Created-By" to "Gradle v${GradleVersion.current()}",
+                "Created-From" to Git.headCommitHash)
       }
     }
-    withType<Test> {
-      useJUnitPlatform()
-    }
+    withType<Test> { useJUnitPlatform() }
   }
 }

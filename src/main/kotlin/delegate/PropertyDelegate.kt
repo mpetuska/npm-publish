@@ -1,16 +1,16 @@
 package dev.petuska.npm.publish.delegate
 
 import dev.petuska.npm.publish.util.propertyOrNull
-import org.gradle.api.Project
 import java.util.Locale
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import org.gradle.api.Project
 
 internal class PropertyDelegate<V>(
-  private val project: Project,
-  private val prefix: String?,
-  private val converter: (String) -> V?,
-  private val default: V
+    private val project: Project,
+    private val prefix: String?,
+    private val converter: (String) -> V?,
+    private val default: V
 ) : ReadWriteProperty<Any, V> {
   private var value: V? = null
 
@@ -30,12 +30,13 @@ internal class PropertyDelegate<V>(
   }
 
   private fun KProperty<*>.findEnv(): String? {
-    return System.getenv(buildPropertyKey().uppercase(Locale.getDefault()).replace("[.\\- ]".toRegex(), "_"))
-      ?.toString()
+    return System.getenv(
+            buildPropertyKey().uppercase(Locale.getDefault()).replace("[.\\- ]".toRegex(), "_"))
+        ?.toString()
   }
 
   private fun KProperty<*>.buildPropertyKey() =
-    "$PROP_BASE${
+      "$PROP_BASE${
     prefix?.removeSuffix(".")
       ?.removePrefix(".")
       ?.let { ".$it" } ?: ""

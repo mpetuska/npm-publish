@@ -2,9 +2,7 @@ package dev.petuska.npm.publish.dsl
 
 import java.util.Locale
 
-/**
- * Enum representation of NPM repository access
- */
+/** Enum representation of NPM repository access */
 enum class NpmAccess {
   PUBLIC,
   RESTRICTED;
