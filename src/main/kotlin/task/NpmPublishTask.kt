@@ -19,26 +19,32 @@ open class NpmPublishTask
 constructor(publication: NpmPublication, repository: NpmRepository) : NpmExecTask() {
   override var nodeJsDir by publication.fallbackDelegate(NpmPublication::nodeJsDir)
 
-  /** @see [NpmRepository.registry] */
-  @get:Internal var registry by repository.fallbackDelegate(NpmRepository::registry)
+/** @see [NpmRepository.registry] */
+  @get:Internal
+  var registry by repository.fallbackDelegate(NpmRepository::registry)
 
-  /** @see [NpmRepository.access] */
-  @get:Internal var access by repository.fallbackDelegate(NpmRepository::access)
+/** @see [NpmRepository.access] */
+  @get:Internal
+  var access by repository.fallbackDelegate(NpmRepository::access)
 
-  /** @see [NpmRepository.authToken] */
-  @get:Internal var authToken by repository.fallbackDelegate(NpmRepository::authToken)
+/** @see [NpmRepository.authToken] */
+  @get:Internal
+  var authToken by repository.fallbackDelegate(NpmRepository::authToken)
 
-  /**
+/**
    * The directory where the assembled and ready-to-publish package is. Defaults to
    * [NpmPublication.destinationDir]
    */
-  @get:Internal var packageDir by publication.fallbackDelegate(NpmPublication::destinationDir)
+  @get:Internal
+  var packageDir by publication.fallbackDelegate(NpmPublication::destinationDir)
 
-  /** @see [NpmRepository.otp] */
-  @get:Internal var otp by repository.fallbackDelegate(NpmRepository::otp)
+/** @see [NpmRepository.otp] */
+  @get:Internal
+  var otp by repository.fallbackDelegate(NpmRepository::otp)
 
-  /** See Also: [dev.petuska.npm.publish.dsl.NpmPublishExtension.dry] */
-  @get:Internal var dry by project.npmPublishing.fallbackDelegate(NpmPublishExtension::dry)
+/** See Also: [dev.petuska.npm.publish.dsl.NpmPublishExtension.dry] */
+  @get:Internal
+  var dry by project.npmPublishing.fallbackDelegate(NpmPublishExtension::dry)
 
   init {
     group = "publishing"

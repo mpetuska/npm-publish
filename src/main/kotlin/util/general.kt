@@ -12,3 +12,5 @@ fun <T> Project.propertyOrNull(name: String): T? =
     @Suppress("UNCHECKED_CAST")
     property(name) as? T
   } else null
+
+typealias Builder<T> = T.() -> Unit

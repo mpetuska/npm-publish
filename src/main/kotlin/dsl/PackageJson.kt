@@ -6,6 +6,7 @@ import dev.petuska.kon.core.TypedKON
 import dev.petuska.kon.core.TypedKObject
 import dev.petuska.kon.core.karr
 import dev.petuska.kon.core.kobj
+import dev.petuska.npm.publish.util.Builder
 import dev.petuska.npm.publish.util.npmFullName
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
@@ -31,7 +32,7 @@ annotation class PackageJsonDsl
 open class JsonObject<T>(seed: TypedKON<T?>? = null) : TypedKObject<T?> by kobj(seed ?: mutableMapOf()), Serializable {
   /** Creates a Json Object */
   @PackageJsonDsl
-  fun jsonObject(block: JsonObject<Any>.() -> Unit) = JsonObject(block)
+  fun jsonObject(block: Builder<JsonObject<Any>>) = JsonObject(block)
 
 /** Creates a Json Array */
   @PackageJsonDsl
@@ -49,7 +50,7 @@ open class JsonObject<T>(seed: TypedKON<T?>? = null) : TypedKObject<T?> by kobj(
 
 /** Creates a Json Object */
     @PackageJsonDsl
-    operator fun <V> invoke(seed: TypedKON<V?>? = null, block: JsonObject<V>.() -> Unit) =
+    operator fun <V> invoke(seed: TypedKON<V?>? = null, block: Builder<JsonObject<V>>) =
       JsonObject(seed).apply(block)
 
 /** Creates a Json Array */
@@ -87,7 +88,7 @@ class PackageJson() : JsonObject<Any>() {
     name: String,
     version: String?,
     scope: String? = null,
-    config: PackageJson.() -> Unit = {}
+    config: Builder<PackageJson> = {}
   ) : this() {
     this.name = npmFullName(name, scope)
     this.version = version
@@ -113,7 +114,7 @@ class PackageJson() : JsonObject<Any>() {
   var bugs: TypedKON<Any?>? by this
 
 /** [bugs](https://docs.npmjs.com/files/package.json#bugs) */
-  fun bugs(config: Bugs.() -> Unit = {}) = Bugs(bugs, config).also { bugs = it }
+  fun bugs(config: Builder<Bugs> = {}) = Bugs(bugs, config).also { bugs = it }
 
 /** [license](https://docs.npmjs.com/files/package.json#license) */
   var license: String? by this
@@ -123,14 +124,14 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [author](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
   @PackageJsonDsl
-  fun author(config: Person.() -> Unit = {}) = Person(author, config).also { author = it }
+  fun author(config: Builder<Person> = {}) = Person(author, config).also { author = it }
 
 /** [contributors](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
   var contributors: MutableList<Person>? by this
 
 /** [contributors](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
   @PackageJsonDsl
-  fun MutableList<Person>.contributor(config: Person.() -> Unit = {}) =
+  fun MutableList<Person>.contributor(config: Builder<Person> = {}) =
     Person(config = config).also { add(it) }
 
 /** [files](https://docs.npmjs.com/files/package.json#files) */
@@ -156,7 +157,7 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [directories](https://docs.npmjs.com/files/package.json#directories) */
   @PackageJsonDsl
-  fun directories(config: Directories.() -> Unit = {}) =
+  fun directories(config: Builder<Directories> = {}) =
     Directories(directories, config).also { directories = it }
 
 /** [repository](https://docs.npmjs.com/files/package.json#repository) */
@@ -164,7 +165,7 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [repository](https://docs.npmjs.com/files/package.json#repository) */
   @PackageJsonDsl
-  fun repository(config: Repository.() -> Unit = {}) =
+  fun repository(config: Builder<Repository> = {}) =
     Repository(repository, config).also { repository = it }
 
 /** [scripts](https://docs.npmjs.com/files/package.json#scripts) */
@@ -178,7 +179,7 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [dependencies](https://docs.npmjs.com/files/package.json#dependencies) */
   @PackageJsonDsl
-  fun dependencies(config: JsonObject<String>.() -> Unit = {}) =
+  fun dependencies(config: Builder<JsonObject<String>> = {}) =
     JsonObject(dependencies, config).also { dependencies = it }
 
 /** [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies) */
@@ -186,7 +187,7 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies) */
   @PackageJsonDsl
-  fun devDependencies(config: JsonObject<String>.() -> Unit = {}) =
+  fun devDependencies(config: Builder<JsonObject<String>> = {}) =
     JsonObject(devDependencies, config).also { devDependencies = it }
 
 /** [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies) */
@@ -194,7 +195,7 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies) */
   @PackageJsonDsl
-  fun peerDependencies(config: JsonObject<String>.() -> Unit = {}) =
+  fun peerDependencies(config: Builder<JsonObject<String>> = {}) =
     JsonObject(peerDependencies, config).also { peerDependencies = it }
 
 /** [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies) */
@@ -202,7 +203,7 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies) */
   @PackageJsonDsl
-  fun optionalDependencies(config: JsonObject<String>.() -> Unit = {}) =
+  fun optionalDependencies(config: Builder<JsonObject<String>> = {}) =
     JsonObject(optionalDependencies, config).also { optionalDependencies = it }
 
 /**
@@ -222,7 +223,7 @@ class PackageJson() : JsonObject<Any>() {
    * @param config include/exclude spec to filter out bundled dependencies
    */
   @PackageJsonDsl
-  fun bundledDependencies(vararg mustBundle: String, config: BundledDependenciesSpec.() -> Unit) {
+  fun bundledDependencies(vararg mustBundle: String, config: Builder<BundledDependenciesSpec>) {
     val target = bundledDependenciesSpec ?: BundledDependenciesSpec()
     target.apply(config)
     target.apply { mustBundle.forEach { +it } }
@@ -246,10 +247,10 @@ class PackageJson() : JsonObject<Any>() {
 
 /** [publishConfig](https://docs.npmjs.com/files/package.json#publishconfig) */
   @PackageJsonDsl
-  fun publishConfig(config: PublishConfig.() -> Unit = {}) =
+  fun publishConfig(config: Builder<PublishConfig> = {}) =
     PublishConfig(publishConfig, config).also { publishConfig = it }
 
-  inner class BundledDependenciesSpec(config: (BundledDependenciesSpec.() -> Unit)? = null) {
+  inner class BundledDependenciesSpec(config: (Builder<BundledDependenciesSpec>)? = null) {
     private val specs: MutableList<(MutableSet<String>) -> Unit> = mutableListOf()
 
     init {
@@ -286,7 +287,7 @@ class PackageJson() : JsonObject<Any>() {
   }
 
 /** [bugs](https://docs.npmjs.com/files/package.json#bugs) */
-  inner class Bugs(seed: TypedKON<Any?>? = null, config: Bugs.() -> Unit = {}) : JsonObject<Any>(seed) {
+  inner class Bugs(seed: TypedKON<Any?>? = null, config: Builder<Bugs> = {}) : JsonObject<Any>(seed) {
     var url: String? by this
     var email: String? by this
 
@@ -296,7 +297,7 @@ class PackageJson() : JsonObject<Any>() {
   }
 
 /** [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
-  inner class Person(seed: TypedKON<Any?>? = null, config: Person.() -> Unit = {}) : JsonObject<Any>(seed) {
+  inner class Person(seed: TypedKON<Any?>? = null, config: Builder<Person> = {}) : JsonObject<Any>(seed) {
     var name: String? by this
     var email: String? by this
     var url: String? by this
@@ -307,7 +308,7 @@ class PackageJson() : JsonObject<Any>() {
   }
 
 /** [directories](https://docs.npmjs.com/files/package.json#directories) */
-  inner class Directories(seed: TypedKON<Any?>? = null, config: Directories.() -> Unit = {}) : JsonObject<Any>(seed) {
+  inner class Directories(seed: TypedKON<Any?>? = null, config: Builder<Directories> = {}) : JsonObject<Any>(seed) {
     /** [lib](https://docs.npmjs.com/files/package.json#directorieslib) */
     var lib: String? by this
 
@@ -332,7 +333,7 @@ class PackageJson() : JsonObject<Any>() {
   }
 
 /** [repository](https://docs.npmjs.com/files/package.json#repository) */
-  inner class Repository(seed: TypedKON<Any?>? = null, config: Repository.() -> Unit = {}) : JsonObject<Any>(seed) {
+  inner class Repository(seed: TypedKON<Any?>? = null, config: Builder<Repository> = {}) : JsonObject<Any>(seed) {
     var type: String? by this
     var url: String? by this
     var directory: String? by this
@@ -343,7 +344,7 @@ class PackageJson() : JsonObject<Any>() {
   }
 
 /** [publish config](https://docs.npmjs.com/files/package.json#publishconfig) */
-  inner class PublishConfig(seed: TypedKON<Any?>? = null, config: PublishConfig.() -> Unit = {}) :
+  inner class PublishConfig(seed: TypedKON<Any?>? = null, config: Builder<PublishConfig> = {}) :
     JsonObject<Any>(seed) {
     var registry: String? by this
     var access: String? by this

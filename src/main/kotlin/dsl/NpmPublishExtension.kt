@@ -3,6 +3,7 @@ package dev.petuska.npm.publish.dsl
 import dev.petuska.npm.publish.delegate.fallbackDelegate
 import dev.petuska.npm.publish.delegate.or
 import dev.petuska.npm.publish.delegate.propertyDelegate
+import dev.petuska.npm.publish.util.Builder
 import dev.petuska.npm.publish.util.notFalse
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
@@ -60,7 +61,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   internal val repositories: NpmRepositoryContainer =
     project.container(NpmRepository::class.java) { name -> NpmRepository(name, project, this) }
 
-  private fun repositories(index: Int, config: NpmRepositoryContainer.() -> Unit) {
+  private fun repositories(index: Int, config: Builder<NpmRepositoryContainer>) {
     repoConfigs.add(
       index,
       object : Closure<Unit>(this, this) {
@@ -73,7 +74,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   }
 
   /** DSL exposing [NpmRepository] setup */
-  fun repositories(config: NpmRepositoryContainer.() -> Unit) {
+  fun repositories(config: Builder<NpmRepositoryContainer>) {
     repositories(repoConfigs.size, config)
   }
 
@@ -85,7 +86,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   /** DSL exposing [NpmRepository] creation and configuration */
   fun NpmRepositoryContainer.repository(
     name: String,
-    config: NpmRepository.() -> Unit
+    config: Builder<NpmRepository>
   ): NpmRepository {
     val pub =
       NpmRepository(name, this@NpmPublishExtension.project, this@NpmPublishExtension)
@@ -98,7 +99,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   internal val publications: NpmPublicationContainer =
     project.container(NpmPublication::class.java) { name -> NpmPublication(name, project, this) }
 
-  internal fun publications(index: Int, config: NpmPublicationContainer.() -> Unit) {
+  internal fun publications(index: Int, config: Builder<NpmPublicationContainer>) {
     pubConfigs.add(
       index,
       object : Closure<Unit>(this, this) {
@@ -111,7 +112,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
   }
 
   /** DSL exposing [NpmPublication] setup */
-  fun publications(config: NpmPublicationContainer.() -> Unit) {
+  fun publications(config: Builder<NpmPublicationContainer>) {
     publications(pubConfigs.size, config)
   }
 
@@ -126,7 +127,7 @@ open class NpmPublishExtension(private val project: Project) : NpmPublishExtensi
    */
   fun NpmPublicationContainer.publication(
     name: String,
-    config: NpmPublication.() -> Unit
+    config: Builder<NpmPublication>
   ): NpmPublication {
     val pub =
       findByName(name)
