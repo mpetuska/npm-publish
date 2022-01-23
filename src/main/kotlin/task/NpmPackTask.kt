@@ -26,9 +26,7 @@ open class NpmPackTask @Inject constructor(publication: NpmPublication) : NpmExe
 
 /** Output directory to pack the publication to. Defaults to [NpmPackTask.packageDir] parent */
   @get:Internal
-  var destinationDir: File by fallbackDelegate<NpmPackTask, File, File>(NpmPackTask::packageDir) {
-    parentFile
-  }
+  var destinationDir: File by fallbackDelegate<NpmPackTask, File, File>(NpmPackTask::packageDir) { parentFile }
 
 /** See Also: [dev.petuska.npm.publish.dsl.NpmPublishExtension.dry] */
   @get:Internal

@@ -7,6 +7,7 @@ import dev.petuska.npm.publish.dsl.NpmRepository
 import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.task.NpmPackageAssembleTask
 import dev.petuska.npm.publish.task.NpmPublishTask
+import dev.petuska.npm.publish.util.Builder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -193,5 +194,5 @@ internal val Project.npmPublishing: NpmPublishExtension
       ?: throw IllegalStateException("$EXTENSION_NAME is not of the correct type")
 
 internal fun Project.npmPublishing(
-  config: NpmPublishExtension.() -> Unit = {}
+  config: Builder<NpmPublishExtension> = {}
 ): NpmPublishExtension = npmPublishing.apply(config)
