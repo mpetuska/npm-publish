@@ -5,9 +5,9 @@ import dev.petuska.npm.publish.dsl.NpmPublication
 import dev.petuska.npm.publish.dsl.NpmPublishExtension
 import dev.petuska.npm.publish.dsl.NpmRepository
 import dev.petuska.npm.publish.npmPublishing
-import javax.inject.Inject
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import javax.inject.Inject
 
 /**
  * A publishing task that publishes a given publication to a given repository.
@@ -49,15 +49,17 @@ constructor(publication: NpmPublication, repository: NpmRepository) : NpmExecTas
   private fun doAction() {
     val repo = "${registry!!.authority.trim()}${registry!!.path.trim()}/"
     npmExec(
-        listOf(
-            "publish",
-            packageDir,
-            "--access",
-            "$access",
-            "--registry",
-            "${registry!!.scheme.trim()}://$repo",
-            "--//$repo:_authToken=$authToken",
-            if (otp != null) "--otp $otp" else null,
-            if (dry) "--dry-run" else null)) { workingDir = packageDir }
+      listOf(
+        "publish",
+        packageDir,
+        "--access",
+        "$access",
+        "--registry",
+        "${registry!!.scheme.trim()}://$repo",
+        "--//$repo:_authToken=$authToken",
+        if (otp != null) "--otp $otp" else null,
+        if (dry) "--dry-run" else null
+      )
+    ) { workingDir = packageDir }
   }
 }

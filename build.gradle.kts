@@ -1,3 +1,4 @@
+import de.fayard.refreshVersions.core.versionFor
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -16,11 +17,11 @@ plugins {
 }
 
 description =
-    """
+  """
               A maven-publish alternative for NPM package publishing.
               Integrates with kotlin JS/MPP plugins (if applied) to automatically
               setup publishing to NPM repositories for all JS targets.
-""".trimIndent()
+  """.trimIndent()
 
 idea {
   module {
@@ -30,8 +31,19 @@ idea {
 }
 
 spotless {
-  kotlin { ktfmt() }
-  kotlinGradle { ktfmt() }
+  val ktlintSettings = mapOf(
+    "indent_size" to "2",
+    "continuation_indent_size" to "4",
+    "disabled_rules" to "no-wildcard-imports"
+  )
+  kotlin {
+    target("src/**/*.kt")
+    ktlint(versionFor("version.ktlint")).userData(ktlintSettings)
+  }
+  kotlinGradle {
+    target("*.kts")
+    ktlint(versionFor("version.ktlint")).userData(ktlintSettings)
+  }
 }
 
 gradleEnterprise {
@@ -150,12 +162,13 @@ afterEvaluate {
     withType<Jar> {
       manifest {
         attributes +=
-            sortedMapOf(
-                "Built-By" to System.getProperty("user.name"),
-                "Build-Jdk" to System.getProperty("java.version"),
-                "Implementation-Version" to project.version,
-                "Created-By" to "Gradle v${GradleVersion.current()}",
-                "Created-From" to Git.headCommitHash)
+          sortedMapOf(
+            "Built-By" to System.getProperty("user.name"),
+            "Build-Jdk" to System.getProperty("java.version"),
+            "Implementation-Version" to project.version,
+            "Created-By" to "Gradle v${GradleVersion.current()}",
+            "Created-From" to Git.headCommitHash
+          )
       }
     }
     withType<Test> { useJUnitPlatform() }

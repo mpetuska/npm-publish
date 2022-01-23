@@ -5,22 +5,22 @@ import dev.petuska.npm.publish.delegate.or
 import dev.petuska.npm.publish.delegate.propertyDelegate
 import dev.petuska.npm.publish.npmPublishing
 import dev.petuska.npm.publish.util.notFalse
-import java.net.URI
 import org.gradle.api.Project
+import java.net.URI
 
 /** Npm repository (registry) configuration container */
 class NpmRepository
 internal constructor(
-    /** Repository name. */
-    val name: String,
-    private val project: Project,
-    npmExtension: NpmPublishExtension
+  /** Repository name. */
+  val name: String,
+  private val project: Project,
+  npmExtension: NpmPublishExtension
 ) {
   private val propGroup = "$PROP_PREFIX.$name"
 
   /** Repository access. */
   var access: NpmAccess by project.propertyDelegate(propGroup) { NpmAccess.fromString(it) } or
-      npmExtension.fallbackDelegate(NpmPublishExtension::access)
+    npmExtension.fallbackDelegate(NpmPublishExtension::access)
 
   /** NPM Registry uri to publish packages to. Should include schema domain and path if required */
   var registry: URI? by project.propertyDelegate(propGroup) { URI(it) }
@@ -33,7 +33,7 @@ internal constructor(
 
   /** Overrides [NpmPublishExtension.dry] option for this repository */
   var dry: Boolean by project.propertyDelegate(propGroup) { it.notFalse() } or
-      npmExtension.fallbackDelegate(NpmPublishExtension::dry)
+    npmExtension.fallbackDelegate(NpmPublishExtension::dry)
 
   internal fun validate(): NpmRepository? {
     return takeIf { registry != null && (authToken != null || project.npmPublishing.dry) }

@@ -1,37 +1,40 @@
-# WIP
-## Versions
-* Kotlin: 1.5.21
-* Gradle: 7.2.0cd ..
+# 2.1.2
+## Build Versions
+* Kotlin: 1.4.31
+* Gradle: 7.3.3
 * JDK: 11
 ## Changes
-* 
+* Kotlin plugin version bumped to `1.6.10`
+* Simplified `JsonObject` DSL builders by rebasing it onto `dev.petuska:kon`
+* Implemented proper nested `package.json` template merging
+* Rolled back to good old `ktlint` formatting
 
 
-# v2.1.1
-## Versions
-* Kotlin: 1.5.21
+# 2.1.1
+## Build Versions
+* Kotlin: 1.4.31
 * Gradle: 7.2.0
 * JDK: 11
 ## Changes
-* Kotlin version bumped to `1.5.30`
+* Kotlin plugin version bumped to `1.5.30`
 * Sample GH action introduced to showcase CI publishing
 * Reworked ts-consumer to showcase module inter-dependencies
 
 
-# v2.1.0
-## Versions
-* Kotlin: 1.5.21
+# 2.1.0
+## Build Versions
+* Kotlin: 1.4.31
 * Gradle: 7.2.0
 * JDK: 11
 ## Changes
 * Fixed [#24](https://github.com/mpetuska/npm-publish/issues/24): `types` configuration property was ignored
 * Added support for setting configuration properties via environment variables too
-* Kotlin version bumped to `1.5.21`
+* Kotlin plugin version bumped to `1.5.21`
 
 
-# v2.0.4
-## Versions
-* Kotlin: 1.5.10
+# 2.0.4
+## Build Versions
+* Kotlin: 1.4.31
 * Gradle: 7.1.1
 * JDK: 11
 ## Changes

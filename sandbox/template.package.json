@@ -1,6 +1,7 @@
 {
   "license": "MIT",
   "author": {
-    "name": "Mr. Should be Overridden"
+    "name": "Mr. Should be Overridden",
+    "email": "from-template@custom.com"
   }
 }
