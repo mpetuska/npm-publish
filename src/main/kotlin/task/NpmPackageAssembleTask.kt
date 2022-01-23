@@ -7,6 +7,7 @@ import dev.petuska.npm.publish.dsl.JsonObject
 import dev.petuska.npm.publish.dsl.NpmPublication
 import dev.petuska.npm.publish.dsl.NpmShrinkwrapJson
 import dev.petuska.npm.publish.dsl.PackageJson
+import dev.petuska.npm.publish.dsl.overrideFrom
 import dev.petuska.npm.publish.dsl.writeTo
 import dev.petuska.npm.publish.npmPublishing
 import org.gradle.api.DefaultTask
@@ -186,7 +187,7 @@ open class NpmPackageAssembleTask @Inject constructor(publication: NpmPublicatio
             // Apply overrides from provided template
             publication.packageJsonTemplateFile?.let {
               val template = gson.fromJson(it.readText(), PackageJson::class.java)
-              putAll(template)
+              overrideFrom(template)
             }
 
             packageJsonSpecs.forEach { it() }

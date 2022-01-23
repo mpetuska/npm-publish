@@ -5,6 +5,9 @@
 * JDK: 11
 ## Changes
 * Kotlin plugin version bumped to `1.6.10`
+* Simplified `JsonObject` DSL builders by rebasing it onto `dev.petuska:kon`
+* Implemented proper nested `package.json` template merging
+* Rolled back to good old `ktlint` formatting
 
 
 # v2.1.1
