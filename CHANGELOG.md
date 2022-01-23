@@ -1,4 +1,4 @@
-# WIP
+# 2.1.2
 ## Build Versions
 * Kotlin: 1.4.31
 * Gradle: 7.3.3
@@ -10,7 +10,7 @@
 * Rolled back to good old `ktlint` formatting
 
 
-# v2.1.1
+# 2.1.1
 ## Build Versions
 * Kotlin: 1.4.31
 * Gradle: 7.2.0
@@ -21,7 +21,7 @@
 * Reworked ts-consumer to showcase module inter-dependencies
 
 
-# v2.1.0
+# 2.1.0
 ## Build Versions
 * Kotlin: 1.4.31
 * Gradle: 7.2.0
@@ -32,7 +32,7 @@
 * Kotlin plugin version bumped to `1.5.21`
 
 
-# v2.0.4
+# 2.0.4
 ## Build Versions
 * Kotlin: 1.4.31
 * Gradle: 7.1.1
