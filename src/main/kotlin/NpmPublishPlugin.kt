@@ -44,22 +44,23 @@ class NpmPublishPlugin : Plugin<Project> {
     private const val MAVEN_PUBLISH_PLUGIN = "org.gradle.maven-publish"
 
     private fun Project.createExtension() =
-        extensions.findByType(NpmPublishExtension::class.java)
-            ?: extensions.create(
-                EXTENSION_NAME, NpmPublishExtension::class.java, this@createExtension)
+      extensions.findByType(NpmPublishExtension::class.java)
+        ?: extensions.create(
+          EXTENSION_NAME, NpmPublishExtension::class.java, this@createExtension
+        )
 
     private fun Project.configureExtension(
-        extension: NpmPublishExtension,
-        target: KotlinJsTargetDsl
+      extension: NpmPublishExtension,
+      target: KotlinJsTargetDsl
     ) {
       target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }?.let { binary ->
         val deps =
-            binary.compilation.relatedConfigurationNames.flatMap { conf ->
-              val mainName = "${target.name}Main${conf.substringAfter(target.name)}"
-              val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
-              val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
-              (normDeps + mainDeps).filterIsInstance<NpmDependency>()
-            }
+          binary.compilation.relatedConfigurationNames.flatMap { conf ->
+            val mainName = "${target.name}Main${conf.substringAfter(target.name)}"
+            val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
+            val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
+            (normDeps + mainDeps).filterIsInstance<NpmDependency>()
+          }
 
         extension.apply {
           publications(0) {
@@ -76,97 +77,97 @@ class NpmPublishPlugin : Plugin<Project> {
 
     private fun Project.configureTasks(extension: NpmPublishExtension) {
       val nodeJsSetupTask =
-          project.rootProject.tasks.findByName("kotlinNodeJsSetup") as NodeJsSetupTask?
+        project.rootProject.tasks.findByName("kotlinNodeJsSetup") as NodeJsSetupTask?
 
       val publishTask =
-          tasks.findByName("publish")
-              ?: tasks.create("publish") {
-                it.group = "publishing"
-                it.enabled = false
-              }
+        tasks.findByName("publish")
+          ?: tasks.create("publish") {
+            it.group = "publishing"
+            it.enabled = false
+          }
       val assembleTask = tasks.findByName("assemble")
       val packTask =
-          tasks.findByName("pack")
-              ?: tasks.create("pack") {
-                it.group = "build"
-                it.enabled = false
-              }
+        tasks.findByName("pack")
+          ?: tasks.create("pack") {
+            it.group = "build"
+            it.enabled = false
+          }
 
       val publications =
-          with(extension) {
-            pubConfigs.forEach { publications.configure(it) }
-            publications.mapNotNull { pub ->
-              val needsNode = pub.nodeJsDir == null
-              pub.validate(nodeJsSetupTask?.destination)?.let {
-                it to nodeJsSetupTask?.takeIf { needsNode }
-              }
-                  ?: null.also {
-                    logger.warn("NPM Publication [${pub.name}] is invalid. Skipping...")
-                  }
+        with(extension) {
+          pubConfigs.forEach { publications.configure(it) }
+          publications.mapNotNull { pub ->
+            val needsNode = pub.nodeJsDir == null
+            pub.validate(nodeJsSetupTask?.destination)?.let {
+              it to nodeJsSetupTask?.takeIf { needsNode }
             }
+              ?: null.also {
+                logger.warn("NPM Publication [${pub.name}] is invalid. Skipping...")
+              }
           }
+        }
 
       val repositories =
-          with(extension) {
-            repoConfigs.forEach { repositories.configure(it) }
-            repositories.mapNotNull { repo ->
-              repo.validate()
-                  ?: null.also {
-                    logger.warn("NPM Repository [${repo.name}] is invalid. Skipping...")
-                  }
-            }
+        with(extension) {
+          repoConfigs.forEach { repositories.configure(it) }
+          repositories.mapNotNull { repo ->
+            repo.validate()
+              ?: null.also {
+                logger.warn("NPM Repository [${repo.name}] is invalid. Skipping...")
+              }
           }
+        }
 
       val pubTasks =
-          publications.flatMap { (pub, nodeJsTask) ->
-            val processResourcesTask =
-                pub.binary?.compilation?.let {
-                  val processResourcesTask =
-                      project.tasks.findByName(it.processResourcesTaskName) as Copy
-                  pub.kotlinDestinationDir?.let { kotlinDestinationDir ->
-                    pub.files {
-                      from(kotlinDestinationDir)
-                      from(processResourcesTask.destinationDir)
-                    }
-                  }
-                  processResourcesTask
+        publications.flatMap { (pub, nodeJsTask) ->
+          val processResourcesTask =
+            pub.binary?.compilation?.let {
+              val processResourcesTask =
+                project.tasks.findByName(it.processResourcesTaskName) as Copy
+              pub.kotlinDestinationDir?.let { kotlinDestinationDir ->
+                pub.files {
+                  from(kotlinDestinationDir)
+                  from(processResourcesTask.destinationDir)
                 }
-            val upperName = GUtil.toCamelCase(pub.name)
-
-            val assembleTaskName = "assemble${upperName}NpmPublication"
-            val packTaskName = "pack${upperName}NpmPublication"
-            val assemblePackageTask =
-                tasks.findByName(assembleTaskName) as NpmPackageAssembleTask?
-                    ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub)
-                        .also { task ->
-                          task.onlyIf {
-                            pub.compileKotlinTask?.outputFileProperty?.orNull?.exists() ?: true
-                          }
-                          task.dependsOn(
-                              *listOfNotNull(processResourcesTask, pub.kotlinMainTask, nodeJsTask)
-                                  .toTypedArray())
-                          assembleTask?.dependsOn(task)
-                        }
-            val npmPackTask =
-                tasks.findByName(packTaskName) as NpmPackTask?
-                    ?: tasks.create(packTaskName, NpmPackTask::class.java, pub).also {
-                      it.onlyIf { assemblePackageTask.didWork }
-                      it.dependsOn(assemblePackageTask)
-                    }
-            packTask.dependsOn(npmPackTask)
-            packTask.enabled = true
-            repositories.map { repo ->
-              val upperRepoName = GUtil.toCamelCase(repo.name)
-              val publishTaskName = "publish${upperName}NpmPublicationTo$upperRepoName"
-              tasks.findByName(publishTaskName)
-                  ?: tasks.create(publishTaskName, NpmPublishTask::class.java, pub, repo).also {
-                      task ->
-                    task.onlyIf { assemblePackageTask.didWork }
-                    task.dependsOn(assemblePackageTask)
-                    publishTask.dependsOn(task)
-                  }
+              }
+              processResourcesTask
             }
+          val upperName = GUtil.toCamelCase(pub.name)
+
+          val assembleTaskName = "assemble${upperName}NpmPublication"
+          val packTaskName = "pack${upperName}NpmPublication"
+          val assemblePackageTask =
+            tasks.findByName(assembleTaskName) as NpmPackageAssembleTask?
+              ?: tasks.create(assembleTaskName, NpmPackageAssembleTask::class.java, pub)
+                .also { task ->
+                  task.onlyIf {
+                    pub.compileKotlinTask?.outputFileProperty?.orNull?.exists() ?: true
+                  }
+                  task.dependsOn(
+                    *listOfNotNull(processResourcesTask, pub.kotlinMainTask, nodeJsTask)
+                      .toTypedArray()
+                  )
+                  assembleTask?.dependsOn(task)
+                }
+          val npmPackTask =
+            tasks.findByName(packTaskName) as NpmPackTask?
+              ?: tasks.create(packTaskName, NpmPackTask::class.java, pub).also {
+                it.onlyIf { assemblePackageTask.didWork }
+                it.dependsOn(assemblePackageTask)
+              }
+          packTask.dependsOn(npmPackTask)
+          packTask.enabled = true
+          repositories.map { repo ->
+            val upperRepoName = GUtil.toCamelCase(repo.name)
+            val publishTaskName = "publish${upperName}NpmPublicationTo$upperRepoName"
+            tasks.findByName(publishTaskName)
+              ?: tasks.create(publishTaskName, NpmPublishTask::class.java, pub, repo).also { task ->
+                task.onlyIf { assemblePackageTask.didWork }
+                task.dependsOn(assemblePackageTask)
+                publishTask.dependsOn(task)
+              }
           }
+        }
       if (pubTasks.isNotEmpty()) {
         publishTask.enabled = true
       }
@@ -176,9 +177,9 @@ class NpmPublishPlugin : Plugin<Project> {
 
 internal val Project.npmPublishing: NpmPublishExtension
   get() =
-      extensions.getByName(EXTENSION_NAME) as? NpmPublishExtension
-          ?: throw IllegalStateException("$EXTENSION_NAME is not of the correct type")
+    extensions.getByName(EXTENSION_NAME) as? NpmPublishExtension
+      ?: throw IllegalStateException("$EXTENSION_NAME is not of the correct type")
 
 internal fun Project.npmPublishing(
-    config: NpmPublishExtension.() -> Unit = {}
+  config: NpmPublishExtension.() -> Unit = {}
 ): NpmPublishExtension = npmPublishing.apply(config)

@@ -5,7 +5,6 @@ import dev.petuska.npm.publish.delegate.gradleNullableProperty
 import dev.petuska.npm.publish.delegate.or
 import dev.petuska.npm.publish.delegate.propertyDelegate
 import dev.petuska.npm.publish.util.notFalse
-import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.CopySpec
@@ -15,16 +14,17 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.Library
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import java.io.File
 
 /** NPM publication (package) configuration container */
 class NpmPublication
 internal constructor(
-    /** Publication name. Always in lowerCamelCase. */
-    val name: String,
-    private val project: Project,
-    extension: NpmPublishExtension,
-    /** A container for package's npm dependencies */
-    val npmDependencies: MutableList<NpmDependency> = mutableListOf()
+  /** Publication name. Always in lowerCamelCase. */
+  val name: String,
+  private val project: Project,
+  extension: NpmPublishExtension,
+  /** A container for package's npm dependencies */
+  val npmDependencies: MutableList<NpmDependency> = mutableListOf()
 ) {
   private val propGroup = "$PROP_PREFIX.$name"
 
@@ -33,7 +33,7 @@ internal constructor(
    * kotlin publications.
    */
   var bundleKotlinDependencies: Boolean by project.propertyDelegate(propGroup) { it.notFalse() } or
-      extension.fallbackDelegate(NpmPublishExtension::bundleKotlinDependencies)
+    extension.fallbackDelegate(NpmPublishExtension::bundleKotlinDependencies)
 
   /** Flag to add bundled dependencies to npm-shrinkwrap.json. Defaults to true. */
   var shrinkwrapBundledDependencies: Boolean by project.propertyDelegate(propGroup) {
@@ -45,15 +45,15 @@ internal constructor(
    * Defaults to [NpmPublishExtension.organization].
    */
   var scope: String? by project.propertyDelegate(propGroup) { it } or
-      extension.fallbackDelegate(NpmPublishExtension::organization)
+    extension.fallbackDelegate(NpmPublishExtension::organization)
 
   /** NPM module name. Defaults to [Project.getName]. */
   var moduleName: String by project.propertyDelegate(propGroup) { it } or
-      project.fallbackDelegate { this.name }
+    project.fallbackDelegate { this.name }
 
   /** NPM package version. Defaults to [NpmPublishExtension.version]. */
   var version: String? by project.propertyDelegate(propGroup) { it } or
-      extension.fallbackDelegate(NpmPublishExtension::version)
+    extension.fallbackDelegate(NpmPublishExtension::version)
 
   /**
    * Main js entry file. Can also be set via [packageJson] DSL.
@@ -72,7 +72,7 @@ internal constructor(
    * renamed to README.MD (regardless of the actual name). Defaults to [NpmPublishExtension.readme]
    */
   var readme: File? by project.propertyDelegate(propGroup) { File(it) } or
-      extension.fallbackDelegate(NpmPublishExtension::readme)
+    extension.fallbackDelegate(NpmPublishExtension::readme)
 
   /**
    * Base NodeJS directory to be used when building and publishing the publication. Defaults to
@@ -86,47 +86,47 @@ internal constructor(
    * Publication assembly directory. Defaults to `${project.buildDir}/publications/npm/${this.name}`
    */
   var destinationDir: File by project.propertyDelegate(propGroup) { File(it) } or
-      project.fallbackDelegate {
-        File("${this.buildDir}/publications/npm/${this@NpmPublication.name}")
-      }
+    project.fallbackDelegate {
+      File("${this.buildDir}/publications/npm/${this@NpmPublication.name}")
+    }
 
   internal var binary by project.gradleNullableProperty<JsBinary>()
 
   internal val kotlinDestinationDir: File?
     get() =
-        kotlinMainTask?.let {
-          when (it) {
-            is Kotlin2JsCompile -> it.outputFileProperty.orNull?.parentFile
-            is Copy -> it.destinationDir
-            else -> null
-          }
+      kotlinMainTask?.let {
+        when (it) {
+          is Kotlin2JsCompile -> it.outputFileProperty.orNull?.parentFile
+          is Copy -> it.destinationDir
+          else -> null
         }
+      }
 
   internal val kotlinMainTask: Task? // Kotlin2JsCompile | Copy
     get() =
-        binary?.let {
-          when (it) {
-            is JsIrBinary ->
-                when (it) {
-                  is Library -> it.linkSyncTask.orNull
-                  else -> null
-                }
-            else -> it.compilation.compileKotlinTask
-          }
+      binary?.let {
+        when (it) {
+          is JsIrBinary ->
+            when (it) {
+              is Library -> it.linkSyncTask.orNull
+              else -> null
+            }
+          else -> it.compilation.compileKotlinTask
         }
+      }
 
   internal val compileKotlinTask: Kotlin2JsCompile?
     get() =
-        binary?.let {
-          when (it) {
-            is JsIrBinary ->
-                when (it) {
-                  is Library -> it.linkTask.orNull
-                  else -> null
-                }
-            else -> it.compilation.compileKotlinTask
-          }
+      binary?.let {
+        when (it) {
+          is JsIrBinary ->
+            when (it) {
+              is Library -> it.linkTask.orNull
+              else -> null
+            }
+          else -> it.compilation.compileKotlinTask
         }
+      }
 
   var fileSpecs = mutableListOf<CopySpec.(File) -> Unit>()
 
@@ -163,29 +163,29 @@ internal constructor(
   /** DSL builder to configure NPM dependencies for this publication. */
   fun dependencies(config: MutableList<NpmDependency>.() -> Unit) = npmDependencies.config()
   fun MutableList<NpmDependency>.dependency(
-      name: String,
-      version: String,
-      scope: NpmDependency.Scope
+    name: String,
+    version: String,
+    scope: NpmDependency.Scope
   ) = NpmDependency(project, name, version, scope, false).also { add(it) }
 
   /** Adds a [regular](https://docs.npmjs.com/files/package.json#dependencies) npm dependency. */
   fun MutableList<NpmDependency>.npm(name: String, version: String) =
-      dependency(name, version, NpmDependency.Scope.NORMAL)
+    dependency(name, version, NpmDependency.Scope.NORMAL)
 
   /** Adds a [dev](https://docs.npmjs.com/files/package.json#devdependencies) npm dependency. */
   fun MutableList<NpmDependency>.npmDev(name: String, version: String) =
-      dependency(name, version, NpmDependency.Scope.DEV)
+    dependency(name, version, NpmDependency.Scope.DEV)
 
   /**
    * Adds an [optional](https://docs.npmjs.com/files/package.json#optionaldependencies) npm
    * dependency.
    */
   fun MutableList<NpmDependency>.npmOptional(name: String, version: String) =
-      dependency(name, version, NpmDependency.Scope.OPTIONAL)
+    dependency(name, version, NpmDependency.Scope.OPTIONAL)
 
   /** Adds a [peer](https://docs.npmjs.com/files/package.json#peerdependencies) npm dependency. */
   fun MutableList<NpmDependency>.npmPeer(name: String, version: String) =
-      dependency(name, version, NpmDependency.Scope.PEER)
+    dependency(name, version, NpmDependency.Scope.PEER)
 
   internal fun validate(alternativeNodeJsDir: File?): NpmPublication? {
     nodeJsDir = nodeJsDir ?: alternativeNodeJsDir

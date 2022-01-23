@@ -3,7 +3,6 @@
 .theia/
 .yarn/
 .yarnrc
-yarn.lock
 
 # Ignore Gradle build output directory
 build
@@ -13,3 +12,4 @@ apiDiff.api
 public/
 node_modules
 *.log
+lint.xml

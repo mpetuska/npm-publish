@@ -4,10 +4,10 @@ import dev.petuska.npm.publish.delegate.fallbackDelegate
 import dev.petuska.npm.publish.dsl.NpmPublication
 import dev.petuska.npm.publish.dsl.NpmPublishExtension
 import dev.petuska.npm.publish.npmPublishing
-import java.io.File
-import javax.inject.Inject
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import java.io.File
+import javax.inject.Inject
 
 /**
  * A publishing task that publishes a given publication to a given repository.
@@ -17,20 +17,22 @@ import org.gradle.api.tasks.TaskAction
 open class NpmPackTask @Inject constructor(publication: NpmPublication) : NpmExecTask() {
   override var nodeJsDir by publication.fallbackDelegate(NpmPublication::nodeJsDir)
 
-  /**
+/**
    * The directory where the assembled and ready-to-publish package is. Defaults to
    * [NpmPublication.destinationDir]
    */
-  @get:Internal var packageDir: File by publication.fallbackDelegate(NpmPublication::destinationDir)
+  @get:Internal
+  var packageDir: File by publication.fallbackDelegate(NpmPublication::destinationDir)
 
-  /** Output directory to pack the publication to. Defaults to [NpmPackTask.packageDir] parent */
+/** Output directory to pack the publication to. Defaults to [NpmPackTask.packageDir] parent */
   @get:Internal
   var destinationDir: File by fallbackDelegate<NpmPackTask, File, File>(NpmPackTask::packageDir) {
     parentFile
   }
 
-  /** See Also: [dev.petuska.npm.publish.dsl.NpmPublishExtension.dry] */
-  @get:Internal var dry by project.npmPublishing.fallbackDelegate(NpmPublishExtension::dry)
+/** See Also: [dev.petuska.npm.publish.dsl.NpmPublishExtension.dry] */
+  @get:Internal
+  var dry by project.npmPublishing.fallbackDelegate(NpmPublishExtension::dry)
 
   init {
     group = "build"

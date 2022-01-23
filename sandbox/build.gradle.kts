@@ -9,6 +9,7 @@ allprojects {
   repositories {
     mavenLocal()
     mavenCentral()
+    google()
   }
 }
 
@@ -47,8 +48,8 @@ npmPublishing {
       moduleName = "sandbox"
     }
     publication("custom") {
-      nodeJsDir =
-        file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()?.find { it.name.startsWith("node") }
+      nodeJsDir = file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()
+        ?.find { it.isDirectory && it.name.startsWith("node") }
       packageJsonTemplateFile = rootDir.resolve("template.package.json")
       packageJson {
         author to "Custom Author"
@@ -78,4 +79,3 @@ npmPublishing {
     }
   }
 }
-

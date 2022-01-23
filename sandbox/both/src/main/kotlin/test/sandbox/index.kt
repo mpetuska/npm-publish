@@ -1,7 +1,6 @@
 package test.sandbox
 
 import io.ktor.http.HttpMethod
-import kotlin.js.JsExport
 
 @JsExport
 fun direct() {

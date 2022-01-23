@@ -3,16 +3,16 @@ package dev.petuska.npm.publish.dsl
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.Expose
 import dev.petuska.npm.publish.util.npmFullName
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.io.Serializable
 import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 
 typealias Record<T> = MutableMap<String, T?>
 
 /** Utility class for building Json Trees */
 open class JsonObject<T>(seed: Record<T>? = null) :
-    Record<T> by seed ?: mutableMapOf(), Serializable {
+  Record<T> by seed ?: mutableMapOf(), Serializable {
   /** Creates a Json Object */
   fun jsonObject(block: JsonObject<Any>.() -> Unit) = JsonObject(block)
 
@@ -35,7 +35,7 @@ open class JsonObject<T>(seed: Record<T>? = null) :
 
     /** Creates a Json Object */
     operator fun <V> invoke(seed: Record<V>? = null, block: JsonObject<V>.() -> Unit) =
-        JsonObject<V>(seed).apply(block)
+      JsonObject<V>(seed).apply(block)
 
     /** Creates a Json Array */
     operator fun <V> invoke(vararg elements: V) = mutableListOf(*elements)
@@ -44,19 +44,19 @@ open class JsonObject<T>(seed: Record<T>? = null) :
 
 /** Writes the current state of the object into a file as json string */
 fun <T : JsonObject<*>> T.writeTo(packageJsonFile: File) =
-    this.also {
-      packageJsonFile.ensureParentDirsCreated()
-      packageJsonFile.writer().use { JsonObject.gson.toJson(this as MutableMap<*, *>, it) }
-    }
+  this.also {
+    packageJsonFile.ensureParentDirsCreated()
+    packageJsonFile.writer().use { JsonObject.gson.toJson(this as MutableMap<*, *>, it) }
+  }
 
 operator fun <R> JsonObject<Any>.getValue(thisRef: JsonObject<Any>, property: KProperty<*>): R? {
   @Suppress("UNCHECKED_CAST") return thisRef[property.name] as? R
 }
 
 operator fun <R> JsonObject<Any>.setValue(
-    thisRef: JsonObject<Any>,
-    property: KProperty<*>,
-    value: R?
+  thisRef: JsonObject<Any>,
+  property: KProperty<*>,
+  value: R?
 ) {
   thisRef[property.name] = value
 }
@@ -67,10 +67,10 @@ operator fun <R> JsonObject<Any>.setValue(
  */
 class PackageJson() : JsonObject<Any>() {
   constructor(
-      name: String,
-      version: String?,
-      scope: String? = null,
-      config: PackageJson.() -> Unit = {}
+    name: String,
+    version: String?,
+    scope: String? = null,
+    config: PackageJson.() -> Unit = {}
   ) : this() {
     this.name = npmFullName(name, scope)
     this.version = version
@@ -112,7 +112,7 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [contributors](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
   fun MutableList<Person>.contributor(config: Person.() -> Unit = {}) =
-      Person(config = config).also { add(it) }
+    Person(config = config).also { add(it) }
 
   /** [files](https://docs.npmjs.com/files/package.json#files) */
   var files: MutableList<String>? by this
@@ -137,14 +137,14 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [directories](https://docs.npmjs.com/files/package.json#directories) */
   fun directories(config: Directories.() -> Unit = {}) =
-      Directories(directories, config).also { directories = it }
+    Directories(directories, config).also { directories = it }
 
   /** [repository](https://docs.npmjs.com/files/package.json#repository) */
   var repository: Record<Any>? by this
 
   /** [repository](https://docs.npmjs.com/files/package.json#repository) */
   fun repository(config: Repository.() -> Unit = {}) =
-      Repository(repository, config).also { repository = it }
+    Repository(repository, config).also { repository = it }
 
   /** [scripts](https://docs.npmjs.com/files/package.json#scripts) */
   var scripts: Record<String>? by this
@@ -157,28 +157,28 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [dependencies](https://docs.npmjs.com/files/package.json#dependencies) */
   fun dependencies(config: JsonObject<String>.() -> Unit = {}) =
-      JsonObject(dependencies, config).also { dependencies = it }
+    JsonObject(dependencies, config).also { dependencies = it }
 
   /** [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies) */
   var devDependencies: Record<String>? by this
 
   /** [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies) */
   fun devDependencies(config: JsonObject<String>.() -> Unit = {}) =
-      JsonObject(devDependencies, config).also { devDependencies = it }
+    JsonObject(devDependencies, config).also { devDependencies = it }
 
   /** [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies) */
   var peerDependencies: Record<String>? by this
 
   /** [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies) */
   fun peerDependencies(config: JsonObject<String>.() -> Unit = {}) =
-      JsonObject(peerDependencies, config).also { peerDependencies = it }
+    JsonObject(peerDependencies, config).also { peerDependencies = it }
 
   /** [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies) */
   var optionalDependencies: Record<String>? by this
 
   /** [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies) */
   fun optionalDependencies(config: JsonObject<String>.() -> Unit = {}) =
-      JsonObject(optionalDependencies, config).also { optionalDependencies = it }
+    JsonObject(optionalDependencies, config).also { optionalDependencies = it }
 
   /**
    * [bundledDependencies](https://docs.npmjs.com/files/package.json#bundleddependencies) Top
@@ -220,7 +220,7 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [publishConfig](https://docs.npmjs.com/files/package.json#publishconfig) */
   fun publishConfig(config: PublishConfig.() -> Unit = {}) =
-      PublishConfig(publishConfig, config).also { publishConfig = it }
+    PublishConfig(publishConfig, config).also { publishConfig = it }
 
   inner class BundledDependenciesSpec(config: (BundledDependenciesSpec.() -> Unit)? = null) {
     private val specs: MutableList<(MutableSet<String>) -> Unit> = mutableListOf()
@@ -251,12 +251,12 @@ class PackageJson() : JsonObject<Any>() {
 
     /** Applies this spec to the given dependencies set. */
     fun applyTo(set: MutableSet<String>): MutableSet<String> =
-        set.apply { specs.forEach { it(this) } }
+      set.apply { specs.forEach { it(this) } }
   }
 
   /** [bugs](https://docs.npmjs.com/files/package.json#bugs) */
   inner class Bugs(seed: Record<Any>? = null, config: Bugs.() -> Unit = {}) :
-      JsonObject<Any>(seed) {
+    JsonObject<Any>(seed) {
     var url: String? by this
     var email: String? by this
 
@@ -267,7 +267,7 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
   inner class Person(seed: Record<Any>? = null, config: Person.() -> Unit = {}) :
-      JsonObject<Any>(seed) {
+    JsonObject<Any>(seed) {
     var name: String? by this
     var email: String? by this
     var url: String? by this
@@ -279,7 +279,7 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [directories](https://docs.npmjs.com/files/package.json#directories) */
   inner class Directories(seed: Record<Any>? = null, config: Directories.() -> Unit = {}) :
-      JsonObject<Any>(seed) {
+    JsonObject<Any>(seed) {
     /** [lib](https://docs.npmjs.com/files/package.json#directorieslib) */
     var lib: String? by this
 
@@ -305,7 +305,7 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [repository](https://docs.npmjs.com/files/package.json#repository) */
   inner class Repository(seed: Record<Any>? = null, config: Repository.() -> Unit = {}) :
-      JsonObject<Any>(seed) {
+    JsonObject<Any>(seed) {
     var type: String? by this
     var url: String? by this
     var directory: String? by this
@@ -317,7 +317,7 @@ class PackageJson() : JsonObject<Any>() {
 
   /** [publish config](https://docs.npmjs.com/files/package.json#publishconfig) */
   inner class PublishConfig(seed: Record<Any>? = null, config: PublishConfig.() -> Unit = {}) :
-      JsonObject<Any>(seed) {
+    JsonObject<Any>(seed) {
     var registry: String? by this
     var access: String? by this
     var tag: String? by this
