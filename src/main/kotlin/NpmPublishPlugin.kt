@@ -8,11 +8,11 @@ import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.task.NpmPackageAssembleTask
 import dev.petuska.npm.publish.task.NpmPublishTask
 import dev.petuska.npm.publish.util.Builder
+import dev.petuska.npm.publish.util.toCamelCase
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
-import org.gradle.util.internal.GUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -149,7 +149,7 @@ class NpmPublishPlugin : Plugin<Project> {
           }
           processResourcesTask
         }
-      val upperName = GUtil.toCamelCase(pub.name)
+      val upperName = pub.name.toCamelCase()
 
       val assembleTaskName = "assemble${upperName}NpmPublication"
       val packTaskName = "pack${upperName}NpmPublication"
@@ -175,7 +175,7 @@ class NpmPublishPlugin : Plugin<Project> {
       packTask.dependsOn(npmPackTask)
       packTask.enabled = true
       repositories.map { repo ->
-        val upperRepoName = GUtil.toCamelCase(repo.name)
+        val upperRepoName = repo.name.toCamelCase()
         val publishTaskName = "publish${upperName}NpmPublicationTo$upperRepoName"
         tasks.findByName(publishTaskName)
           ?: tasks.create(publishTaskName, NpmPublishTask::class.java, pub, repo).also { task ->
