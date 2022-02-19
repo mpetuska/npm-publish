@@ -63,6 +63,7 @@ kotlin {
   dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     implementation("com.google.code.gson:gson:_")
+    implementation("dev.petuska:gradle-kotlin-delegates:_")
     api("dev.petuska:kon:_")
     testImplementation("io.kotest:kotest-runner-junit5:_")
     testImplementation("dev.petuska:klip:_")

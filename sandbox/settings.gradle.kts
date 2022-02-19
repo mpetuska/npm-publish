@@ -7,11 +7,11 @@ pluginManagement {
   }
 }
 plugins {
-  id("de.fayard.refreshVersions") version "0.30.2"
+  id("de.fayard.refreshVersions") version "0.40.1"
   id("com.gradle.enterprise") version "3.8.1"
 }
 
 rootProject.name = "sandbox"
 
 includeBuild("../")
-include(":node", ":browser", ":both", ":mpp")
+include(":node", ":browser", ":both", ":mpp", ":legacy")
