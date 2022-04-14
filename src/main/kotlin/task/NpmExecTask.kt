@@ -1,36 +1,31 @@
 package dev.petuska.npm.publish.task
 
-import dev.petuska.npm.publish.util.Builder
-import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.api.tasks.InputFile
-import org.gradle.process.ExecResult
-import org.gradle.process.ExecSpec
-import java.io.File
-import javax.inject.Inject
+import org.apache.tools.ant.taskdefs.condition.*
+import org.gradle.api.*
+import org.gradle.api.file.*
+import org.gradle.api.provider.*
+import org.gradle.api.tasks.*
+import org.gradle.process.*
 
 /**
  * Basic task for executing various npm commands. Provides access to npm and node executables.
- *
- * @constructor base NodeJS directory to extract executables from.
  */
-open class NpmExecTask @Inject constructor(nodeJsDir: File?) : NodeExecTask(nodeJsDir) {
-  constructor() : this(null)
+@Suppress("LeakingThis")
+abstract class NpmExecTask : NodeExecTask() {
 
-/** NPM CLI executable. Use as argument to node executable as this is a JS script. */
+  /**
+   * NPM CLI executable. Use as argument to node executable as this is a JS script.
+   */
   @get:InputFile
-  val npm by lazy {
+  @get:PathSensitive(PathSensitivity.NAME_ONLY)
+  val npm: Provider<RegularFile> = nodeHome.file(
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-      this.nodeJsDir!!.resolve("node_modules").resolve("npm").resolve("bin").resolve("npm-cli.js")
+      "node_modules/"
     } else {
-      this.nodeJsDir!!
-        .resolve("lib")
-        .resolve("node_modules")
-        .resolve("npm")
-        .resolve("bin")
-        .resolve("npm-cli.js")
-    }
-  }
+      "lib/node_modules/"
+    } + "npm/bin/npm-cli.js"
+  )
 
-  fun npmExec(args: Collection<Any?>, config: Builder<ExecSpec> = {}): ExecResult =
-    nodeExec(listOf(npm) + args, config)
+  fun npmExec(args: Collection<Any?>, config: Action<ExecSpec> = Action {}): ExecResult =
+    nodeExec(listOf(npm.get()) + args, config)
 }

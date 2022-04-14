@@ -22,24 +22,26 @@ kotlin {
   }
 }
 
-npmPublishing {
-  organization = group as String
+npmPublish {
+  organization.set(group.toString())
 
-  publications {
+  packages {
     named("js") {
-      packageJsonTemplateFile = projectDir.resolve("../template.package.json")
+      packageJsonTemplateFile.set(rootDir.resolve("template.package.json"))
       packageJson {
-        author { name = "Martynas Petuška" }
+        author {
+          name.set("Martynas Petuška")
+        }
         repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
+          type.set("git")
+          url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
     }
   }
-  repositories {
-    repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/")
+  registries {
+    register("GitHub") {
+      uri.set(uri("https://npm.pkg.github.com/"))
     }
   }
 }

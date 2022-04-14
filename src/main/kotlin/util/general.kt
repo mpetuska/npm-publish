@@ -1,16 +1,31 @@
 package dev.petuska.npm.publish.util
 
-import org.gradle.api.Project
+import org.gradle.api.*
+import org.gradle.api.plugins.*
+import org.gradle.api.provider.*
 
-fun String.notFalse() = !equals("false", true)
+internal fun String?.notFalse() = !equals("false", true)
 
-fun npmFullName(name: String, scope: String?) =
+internal fun npmFullName(name: String, scope: String?) =
   "${scope?.let { "@${it.trim()}/" } ?: ""}${name.trim()}"
 
-fun <T> Project.propertyOrNull(name: String): T? =
-  if (hasProperty(name)) {
-    @Suppress("UNCHECKED_CAST")
-    property(name) as? T
-  } else null
+internal fun <T, P : Property<T>> P.configure(config: Action<T>) {
+  set(map { it.apply(config::execute) })
+}
 
-typealias Builder<T> = T.() -> Unit
+internal fun <T, P : Provider<T>> P.configure(config: Action<T>): Provider<T> = map { config.execute(it); it }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> Any?.unsafeCast(): T = this as T
+
+internal fun <T> Property<T>.finalise(): Provider<T> {
+  finalizeValue()
+  return this
+}
+
+internal val <T> Property<T>.final: T get() = finalise().get()
+internal val <T> Property<T>.finalOrNull: T? get() = finalise().orNull
+
+internal inline fun <reified T> ExtensionContainer.configure(crossinline action: T.() -> Unit) {
+  configure(T::class.java) { it.apply(action) }
+}

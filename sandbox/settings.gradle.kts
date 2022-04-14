@@ -14,4 +14,5 @@ plugins {
 rootProject.name = "sandbox"
 
 includeBuild("../")
-include(":node", ":browser", ":both", ":mpp", ":legacy")
+include(":both")
+//include(":node", ":browser", ":both", ":mpp", ":legacy")

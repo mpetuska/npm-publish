@@ -1,6 +1,6 @@
-package dev.petuska.npm.publish.dsl
+package dev.petuska.npm.publish.extension.domain
 
-import java.util.Locale
+import java.util.*
 
 /** Enum representation of NPM repository access */
 enum class NpmAccess {
@@ -12,6 +12,6 @@ enum class NpmAccess {
   }
 
   companion object {
-    fun fromString(name: String): NpmAccess? = values().find { it.name.equals(name, true) }
+    fun fromString(name: String): NpmAccess = values().first { it.name.equals(name, true) }
   }
 }

@@ -1,5 +1,19 @@
 # 2.1.2
 ## Build Versions
+* Kotlin: 1.5.31
+* Gradle: 7.4.2
+* JDK: 11
+## Breaking Changes
+* `publication` and `repository` DSLs removed. Use regula gradle's `register` DSL
+* All API reworked to use gradle provider API. Replace all `=` assignments to `by` infix DSL or proper `.set()` invocation.
+* `NpmPublication::nodeJsDir` renamed to `nodeHome` and moved to `NpmPublishExtension`. It is now shared across all publications.
+* `NpmPublication::destinationDir` moved to `NpmPackageAssembleTask`.
+* `NpmRepository::dry` moved to `NpmPackTask` and `NpmPublishTask` with `--dry` cli option added. Both still default to `NpmPublishExtension::dry`
+## Changes
+* Kotlin plugin version bumped to `1.6.20`
+
+# 2.1.2
+## Build Versions
 * Kotlin: 1.4.31
 * Gradle: 7.3.3
 * JDK: 11

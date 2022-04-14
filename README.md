@@ -84,19 +84,22 @@ npmPublishing {
     Overriding default version. Defaults to project.version or rootProject.version, whichever found first
    */
   version = "1.0.0"
-
+  /*
+    NodeJs home directory. Defaults to $NODE_HOME if present or kotlinNodeJsSetup output for default publications
+   */
+  nodeHome = file("~/nodejs")
+  
   repositories {
-    repository("npmjs") {
+    register("npmjs") {
       registry = uri("https://registry.npmjs.org") // Registry to publish to
       authToken = "asdhkjsdfjvhnsdrishdl" // NPM registry authentication token
       otp = "gfahsdjglknamsdkpjnmasdl" // NPM registry authentication OTP
     }
-    repository("bintray") {
+    register("bintray") {
       access = RESTRICTED
       registry = ("https://dl.bintray.com/mpetuska/dev.petuska.npm") // Registry to publish to
       authToken = "sngamascdgb" // NPM registry authentication token
       otp = "miopuhimpdfsazxfb" // (Optional) NPM registry authentication OTP
-      dry = true // (Optional) Overrides extension default
     }
   }
   publications {
@@ -104,21 +107,17 @@ npmPublishing {
       scope = "not.my.org" // Overriding package scope that defaulted to organization property from before
       version = "1.0.0-custom" // Overriding version for this publication. Defaults to extension default version
     }
-    publication("customPublication") { //Custom publication
+    register("customPublication") { //Custom publication
       bundleKotlinDependencies = true // Overrides the global default for this publication
       shrinkwrapBundledDependencies = true // Overrides the global default for this publication
-      nodeJsDir =
-        file("~/nodejs") // NodeJs home directory. Defaults to $NODE_HOME if present or kotlinNodeJsSetup output for default publications
       moduleName = "my-module-name-override" // Defaults to project name
       scope = "other.comp" // Defaults to global organisation
       readme = file("docs/OTHER.MD") // Defaults to global readme
-      destinationDir =
-        file("$buildDir/vipPackage") // Package collection directory, defaults to File($buildDir/publications/npm/$name")
       main = "my-module-name-override-js.js" // Main output file name, set automatically for default publications
       types = "my-module-name-override-js.d.ts" // TS types output file name, set automatically for default publications
-
+      
       // Entirely Optional
-
+      
       dependencies {
         npm("snabbdom", "*")
         npmDev("typescript", "*")
@@ -168,9 +167,11 @@ properties (`./gradlew task -Pprop.name=propValue`), `gradle.properties` or `loc
 also be set via environment variables by replacing `.`, ` ` & `-` with `_` and capitalising all names. Properties are
 resolved in the following priority:
 
-1. Gradle Properties
-2. Environment Variables
-3. DSL
+1. System Properties
+2. Gradle Properties
+3. Environment Variables
+4. DSL
+5. Defaults
 
 ##### Extension
 
@@ -181,6 +182,7 @@ resolved in the following priority:
 * `npm.publish.shrinkwrapBundledDependencies (NPM_PUBLISH_SHRINKWRAPBUNDLEDDEPENDENCIES)`
 * `npm.publish.dry (NPM_PUBLISH_DRY)`
 * `npm.publish.version (NPM_PUBLISH_VERSION)`
+* `npm.publish.nodeHome (NPM_PUBLISH_NODEHOME)`
 
 ##### Publication
 
@@ -192,12 +194,9 @@ resolved in the following priority:
 * `npm.publish.publication.<name>.main (NPM_PUBLISH_PUBLICATION_<NAME>_MAIN)`
 * `npm.publish.publication.<name>.types (NPM_PUBLISH_PUBLICATION_<NAME>_TYPES)`
 * `npm.publish.publication.<name>.readme (NPM_PUBLISH_PUBLICATION_<NAME>_README)`
-* `npm.publish.publication.<name>.nodeJsDir (NPM_PUBLISH_PUBLICATION_<NAME>_NODEJSDIR)`
-* `npm.publish.publication.<name>.destinationDir (NPM_PUBLISH_PUBLICATION_<NAME>_DESTINATIONDIR)`
 
 ##### Repository
 
-* `npm.publish.repository.<name>.dry (NPM_PUBLISH_REPOSITORY_<NAME>_DRY)`
 * `npm.publish.repository.<name>.access (NPM_PUBLISH_REPOSITORY_<NAME>_ACCESS)`
 * `npm.publish.repository.<name>.registry (NPM_PUBLISH_REPOSITORY_<NAME>_REGISTRY)`
 * `npm.publish.repository.<name>.otp (NPM_PUBLISH_REPOSITORY_<NAME>_OTP)`
@@ -225,7 +224,9 @@ priority order by their name (descending priority):
 1. Optional
 2. Peer
 3. Dev
-4. Normal This ensures that any given dependency does not appear in multiple dependency scopes.
+4. Normal
+   
+This ensures that any given dependency does not appear in multiple dependency scopes.
 
 ## Known Issues
 

@@ -1,11 +1,11 @@
 package dev.petuska.npm.publish.util
 
-import java.util.Locale
-import java.util.regex.Pattern
+import java.util.*
+import java.util.regex.*
 
 private val WORD_SEPARATOR = Pattern.compile("\\W+")
 
-fun String.toCamelCase(lower: Boolean = false): String {
+internal fun String.toCamelCase(lower: Boolean = false): String {
   val builder = StringBuilder()
   val matcher = WORD_SEPARATOR.matcher(this)
   var pos = 0

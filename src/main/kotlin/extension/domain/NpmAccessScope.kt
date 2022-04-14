@@ -1,6 +1,7 @@
-package dev.petuska.npm.publish.dsl
+package dev.petuska.npm.publish.extension.domain
 
-interface NpmPublishExtensionScope {
+@Suppress("PropertyName", "unused")
+interface NpmAccessScope {
   val PUBLIC: NpmAccess
     get() = NpmAccess.PUBLIC
   val RESTRICTED: NpmAccess

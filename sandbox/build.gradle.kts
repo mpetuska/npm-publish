@@ -14,7 +14,7 @@ allprojects {
 }
 
 kotlin {
-  js {
+  js(IR) {
     browser()
     binaries.library()
   }
@@ -36,49 +36,49 @@ tasks {
     kotlinOptions {
 //      sourceMap = true
 //      sourceMapEmbedSources = "always"
-      freeCompilerArgs += listOf("-Xir-per-module")
+//      freeCompilerArgs += listOf("-Xir-per-module")
     }
   }
 }
 
-npmPublishing {
-  organization = "$group"
-  publications {
+npmPublish {
+  organization.set("$group")
+  packages {
     named("js") {
-      moduleName = "sandbox"
-    }
-    publication("custom") {
-      nodeJsDir = file("${System.getProperty("user.home")}/.gradle/nodejs").listFiles()
-        ?.find { it.isDirectory && it.name.startsWith("node") }
-      packageJsonTemplateFile = rootDir.resolve("template.package.json")
-      moduleName = "custom"
-      packageJson {
-        author {
-          name = "Custom Author from DSL"
-        }
-        keywords = jsonArray(
-          "kotlin"
-        )
-        publishConfig {
-          tag = "latest"
-        }
-        "customField" to jsonObject {
-          "customValues" to jsonArray(1, 2, 3)
-        }
-        repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
-        }
+      packageName.set("sandbox")
+      dependencies {
+        normal("axios", "*")
       }
     }
-  }
-  repositories {
-    repository("GitLab") {
-      registry = uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")?.trim()}/packages/npm")
-      authToken = System.getenv("PRIVATE_TOKEN")?.trim() ?: ""
+    register("custom") {
+      main.set("custom.js")
+//      packageJsonTemplateFile.set(rootDir.resolve("template.package.json"))
+      packageName.set("custom")
+//      packageJson {
+//        author {
+//          name ("Custom Author from DSL")
+//        }
+//        keywords("kotlin")
+//        publishConfig {
+//          tag = "latest"
+//        }
+//        "customField" by jsonObject {
+//          "customValues" by jsonArray(1, 2, 3)
+//        }
+//        repository {
+//          type = "git"
+//          url = "https://github.com/mpetuska/npm-publish.git"
+//        }
+//      }
     }
-    repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/")
+  }
+  registries {
+    register("GitLab") {
+      uri.set(uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")?.trim()}/packages/npm"))
+      authToken.set(System.getenv("PRIVATE_TOKEN")?.trim() ?: "")
+    }
+    register("GitHub") {
+      uri.set(uri("https://npm.pkg.github.com/"))
     }
   }
 }
