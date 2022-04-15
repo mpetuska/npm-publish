@@ -1,14 +1,14 @@
 package dev.petuska.npm.publish.config
 
-import dev.petuska.npm.publish.extension.domain.*
-import dev.petuska.npm.publish.util.*
-import org.gradle.configurationcache.extensions.*
+import dev.petuska.npm.publish.extension.domain.NpmPackage
+import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.util.toCamelCase
 
 internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
   val prefix = pkg.prefix
-  pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme) { layout.projectDirectory.file(it) }
-  pkg.types.sysProjectEnvPropertyConvention(prefix + "types")
   pkg.main.sysProjectEnvPropertyConvention(prefix + "main")
+  pkg.types.sysProjectEnvPropertyConvention(prefix + "types")
+  pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme) { layout.projectDirectory.file(it) }
   pkg.version.sysProjectEnvPropertyConvention(prefix + "version", extension.version)
   pkg.packageName.sysProjectEnvPropertyConvention(prefix + "packageName", provider { project.name })
   pkg.scope.sysProjectEnvPropertyConvention(prefix + "scope", extension.organization)
@@ -16,5 +16,5 @@ internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
 
 internal inline val NpmPackage.prefix get() = "package.$name."
 
-internal fun assembleTaskName(packageName: String) = "assemble${packageName.capitalized()}NpmPackage"
-internal fun packTaskName(packageName: String) = "pack${packageName.capitalized()}NpmPackage"
+internal fun assembleTaskName(packageName: String) = "assemble${packageName.toCamelCase()}NpmPackage"
+internal fun packTaskName(packageName: String) = "pack${packageName.toCamelCase()}NpmPackage"

@@ -2,26 +2,30 @@ package dev.petuska.npm.publish.config
 
 import dev.petuska.npm.publish.extension.domain.*
 import dev.petuska.npm.publish.extension.domain.NpmDependency.Scope
-import dev.petuska.npm.publish.util.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.util.unsafeCast
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Copy
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.Library
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.DEV
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.NORMAL
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.OPTIONAL
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.PEER
-import org.jetbrains.kotlin.gradle.tasks.*
-import java.io.*
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import java.io.File
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency as KJsNpmDependency
 
 internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
+  if (target !is KotlinJsIrTarget) return logger.info("${target.name} Kotlin/JS target is not using IR compiler - skipping...")
   extension.packages.register(target.name) { pkg ->
-    val binary = provider<JsBinary> { target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION } }
-    configureDependencies(pkg, target, binary)
-    val compileKotlinTask = binary.flatMap<Kotlin2JsCompile> {
-      when (it) {
-        is Library -> it.linkTask
+    val binary = provider<JsIrBinary> {
+      when (val it = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }) {
+        is Library -> it
         is Executable -> error(
           "Kotlin/JS executable binaries are not valid npm package targets. " +
             "Consider switching to Kotlin/JS library binary:\n" + """
@@ -32,23 +36,31 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
             }
           """.trimIndent()
         )
+        null -> null
         !is JsIrBinary -> error(
-          "${it::class.java} legacy binaries are no longer supported. " +
+          "Legacy binaries are no longer supported. " +
             "Please consider switching to the new Kotlin/JS IR compiler backend"
         )
-        else -> error("Unrecognised Kotlin/JS binary type: ${it::class.java}")
+        else -> error("Unrecognised Kotlin/JS binary type: ${it::class.java.name}")
       }
     }
+    val compileKotlinTask = binary.flatMap<Kotlin2JsCompile>(JsIrBinary::linkTask)
     val processResourcesTask = target.compilations.named("main").flatMap {
       tasks.named(it.processResourcesTaskName, Copy::class.java)
     }
+    val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
+    val typesFile = outputFile.map { File(it.parentFile, "${it.nameWithoutExtension}.d.ts") }
+
     tasks.named(assembleTaskName(pkg.name)) {
       it.dependsOn(compileKotlinTask, processResourcesTask)
     }
-    val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
-    val typesFile = outputFile.map { File(it.parentFile, "${it.nameWithoutExtension}.d.ts") }
-    pkg.main.set(outputFile.map(File::getName))
-    pkg.types.set(typesFile.map { it.takeIf(File::exists)?.name.unsafeCast() })
+
+    pkg.main.sysProjectEnvPropertyConvention(pkg.prefix + "main", outputFile.map(File::getName))
+    pkg.types.sysProjectEnvPropertyConvention(
+      pkg.prefix + "types",
+      typesFile.map { it.takeIf(File::exists)?.name.unsafeCast() }
+    )
+    pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
     pkg.files { files ->
       files.from(outputFile)
       files.from(typesFile)
@@ -57,33 +69,28 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   }
 }
 
-private fun ProjectEnhancer.configureDependencies(
-  pkg: NpmPackage,
-  target: KotlinJsTargetDsl,
-  binary: Provider<JsBinary>
-) {
-  val dependencies = binary.map { bin ->
-    bin.compilation.relatedConfigurationNames.flatMap { conf ->
-      val mainName = "${target.name}Main${conf.substringAfter(target.name)}"
-      val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
-      val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
-      (normDeps + mainDeps).filterIsInstance<KJsNpmDependency>()
-    }
-  }.map { dependencies ->
-    dependencies.map { dependency ->
-      objects.newInstance(NpmDependency::class.java, dependency.name).apply {
-        scope.set(
-          when (dependency.scope) {
-            NORMAL -> Scope.NORMAL
-            DEV -> Scope.DEV
-            OPTIONAL -> Scope.OPTIONAL
-            PEER -> Scope.PEER
-          }
-        )
-        version.set(dependency.version)
-      }
+private fun ProjectEnhancer.resolveDependencies(
+  targetName: String,
+  binary: Provider<JsIrBinary>
+) = binary.map { bin ->
+  bin.compilation.relatedConfigurationNames.flatMap { conf ->
+    val mainName = "${targetName}Main${conf.substringAfter(targetName)}"
+    val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
+    val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
+    (normDeps + mainDeps).filterIsInstance<KJsNpmDependency>()
+  }
+}.map { dependencies ->
+  dependencies.map { dependency ->
+    objects.newInstance(NpmDependency::class.java, dependency.name).apply {
+      scope.set(
+        when (dependency.scope) {
+          NORMAL -> Scope.NORMAL
+          DEV -> Scope.DEV
+          OPTIONAL -> Scope.OPTIONAL
+          PEER -> Scope.PEER
+        }
+      )
+      version.set(dependency.version)
     }
   }
-
-  pkg.dependencies.addAllLater(dependencies)
 }

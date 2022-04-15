@@ -1,8 +1,9 @@
 package dev.petuska.npm.publish.util
 
-import dev.petuska.npm.publish.extension.*
-import org.gradle.api.*
-import org.gradle.api.provider.*
+import dev.petuska.npm.publish.extension.NpmPublishExtension
+import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 
 internal class ProjectEnhancer(
   project: Project,
@@ -31,11 +32,12 @@ internal class ProjectEnhancer(
     default: Provider<T> = providers.provider { null },
     converter: (String) -> T
   ) {
-    val propName = globalPrefix + name.replace(" ", ".")
+    val propName = globalPrefix + name
     val envName = name.uppercase().replace(".", "_")
 
     convention(
       providers.systemProperty(propName)
+        .orElse(provider { extensions.extraProperties.properties[propName]?.toString() })
         .orElse(providers.gradleProperty(propName))
         .orElse(providers.environmentVariable(envName))
         .map(converter)

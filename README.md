@@ -88,7 +88,7 @@ npmPublishing {
     NodeJs home directory. Defaults to $NODE_HOME if present or kotlinNodeJsSetup output for default publications
    */
   nodeHome = file("~/nodejs")
-  
+
   repositories {
     register("npmjs") {
       registry = uri("https://registry.npmjs.org") // Registry to publish to
@@ -115,9 +115,9 @@ npmPublishing {
       readme = file("docs/OTHER.MD") // Defaults to global readme
       main = "my-module-name-override-js.js" // Main output file name, set automatically for default publications
       types = "my-module-name-override-js.d.ts" // TS types output file name, set automatically for default publications
-      
+
       // Entirely Optional
-      
+
       dependencies {
         npm("snabbdom", "*")
         npmDev("typescript", "*")
@@ -178,29 +178,25 @@ resolved in the following priority:
 * `npm.publish.readme (NPM_PUBLISH_README)`
 * `npm.publish.organization (NPM_PUBLISH_ORGANIZATION)`
 * `npm.publish.access (NPM_PUBLISH_ACCESS)`
-* `npm.publish.bundleKotlinDependencies (NPM_PUBLISH_BUNDLEKOTLINDEPENDENCIES)`
-* `npm.publish.shrinkwrapBundledDependencies (NPM_PUBLISH_SHRINKWRAPBUNDLEDDEPENDENCIES)`
 * `npm.publish.dry (NPM_PUBLISH_DRY)`
 * `npm.publish.version (NPM_PUBLISH_VERSION)`
 * `npm.publish.nodeHome (NPM_PUBLISH_NODEHOME)`
 
-##### Publication
+##### Package
 
-* `npm.publish.publication.<name>.bundleKotlinDependencies (NPM_PUBLISH_PUBLICATION_<NAME>_BUNDLEKOTLINDEPENDENCIES)`
-* `npm.publish.publication.<name>.shrinkwrapBundledDependencies (NPM_PUBLISH_PUBLICATION_<NAME>_SHRINKWRAPBUNDLEDDEPENDENCIES)`
 * `npm.publish.publication.<name>.scope (NPM_PUBLISH_PUBLICATION_<NAME>_SCOPE)`
-* `npm.publish.publication.<name>.moduleName (NPM_PUBLISH_PUBLICATION_<NAME>_MODULENAME)`
+* `npm.publish.publication.<name>.packageName (NPM_PUBLISH_PUBLICATION_<NAME>_PACKAGENAME)`
 * `npm.publish.publication.<name>.version (NPM_PUBLISH_PUBLICATION_<NAME>_VERSION)`
 * `npm.publish.publication.<name>.main (NPM_PUBLISH_PUBLICATION_<NAME>_MAIN)`
 * `npm.publish.publication.<name>.types (NPM_PUBLISH_PUBLICATION_<NAME>_TYPES)`
 * `npm.publish.publication.<name>.readme (NPM_PUBLISH_PUBLICATION_<NAME>_README)`
 
-##### Repository
+##### Registry
 
-* `npm.publish.repository.<name>.access (NPM_PUBLISH_REPOSITORY_<NAME>_ACCESS)`
-* `npm.publish.repository.<name>.registry (NPM_PUBLISH_REPOSITORY_<NAME>_REGISTRY)`
-* `npm.publish.repository.<name>.otp (NPM_PUBLISH_REPOSITORY_<NAME>_OTP)`
-* `npm.publish.repository.<name>.authToken (NPM_PUBLISH_REPOSITORY_<NAME>_AUTHTOKEN)`
+* `npm.publish.registry.<name>.access (NPM_PUBLISH_REGISTRY_<NAME>_ACCESS)`
+* `npm.publish.registry.<name>.uri (NPM_PUBLISH_REGISTRY_<NAME>_URI)`
+* `npm.publish.registry.<name>.otp (NPM_PUBLISH_REGISTRY_<NAME>_OTP)`
+* `npm.publish.registry.<name>.authToken (NPM_PUBLISH_REGISTRY_<NAME>_AUTHTOKEN)`
 
 ## Tasks
 
@@ -225,7 +221,7 @@ priority order by their name (descending priority):
 2. Peer
 3. Dev
 4. Normal
-   
+
 This ensures that any given dependency does not appear in multiple dependency scopes.
 
 ## Known Issues

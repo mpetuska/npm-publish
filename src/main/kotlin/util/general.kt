@@ -1,8 +1,10 @@
 package dev.petuska.npm.publish.util
 
-import org.gradle.api.*
-import org.gradle.api.plugins.*
-import org.gradle.api.provider.*
+import org.gradle.api.Action
+import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import java.util.logging.Logger
 
 internal fun String?.notFalse() = !equals("false", true)
 
@@ -29,3 +31,5 @@ internal val <T> Property<T>.finalOrNull: T? get() = finalise().orNull
 internal inline fun <reified T> ExtensionContainer.configure(crossinline action: T.() -> Unit) {
   configure(T::class.java) { it.apply(action) }
 }
+
+internal val logger = Logger.getLogger("dev.petuska.npm.publish")

@@ -1,53 +1,51 @@
 package dev.petuska.npm.publish.test.util
 
-import io.kotest.core.*
-import io.kotest.core.spec.style.*
-import io.kotest.core.spec.style.scopes.*
-import io.kotest.engine.spec.*
-import io.kotest.engine.test.logging.*
-import org.gradle.testkit.runner.*
-import java.io.*
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.GradleRunner
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
+import org.junit.jupiter.api.io.TempDir
+import org.junit.platform.commons.logging.Logger
+import org.junit.platform.commons.logging.LoggerFactory
+import java.io.File
+import java.io.Writer
 
-abstract class FTest : StringSpec() {
-  init {
-    tags(Tag("functional"))
-  }
+@Tags(Tag("functional"))
+abstract class FTest {
+  protected val logger: Logger by lazy { LoggerFactory.getLogger(this::class.java) }
 
-  protected fun StringSpecScope.executeBuild(
+  @TempDir
+  private lateinit var tempDir: File
+  protected fun executeBuild(
     vararg arguments: String,
     init: (projectDir: File) -> Unit = {},
     buildFile: BuildFileBuilder.() -> Unit
   ): BuildResult {
-    val buildDir = tempdir()
+    val buildDir = tempDir
     val buildF = buildDir.resolve("build.gradle.kts")
     val buildFC = BuildFileBuilder(buildFile).toString()
     buildF.writeText(buildFC)
     init(buildDir)
-    debug { "=============== BUILD FILE =============================================>" }
-    debug { buildFC }
-    debug { "=============== BUILD OUTPUT =============================================>" }
-    val stdOut = LogWriter { info { it } }
-    val errOut = LogWriter { error { it } }
+    logger.debug { "=============== BUILD FILE =============================================>" }
+    logger.debug { buildFC }
+    logger.debug { "=============== BUILD OUTPUT =============================================>" }
+    val stdOut = LogWriter { logger.info(it) }
+    val errOut = LogWriter { logger.error(it) }
     val result = kotlin.runCatching {
-      GradleRunner.create()
-        .forwardStdOutput(stdOut)
-        .forwardStdError(errOut)
-        .withPluginClasspath()
-        .withProjectDir(buildDir)
-        .withArguments(listOf("--console=plain") + arguments)
-        .forwardStdError(Writer.nullWriter())
-        .build()
+      GradleRunner.create().forwardStdOutput(stdOut).forwardStdError(errOut).withPluginClasspath()
+        .withProjectDir(buildDir).withArguments(listOf("--console=plain") + arguments)
+        .forwardStdError(Writer.nullWriter()).build()
     }
     stdOut.close()
     errOut.close()
     return result.getOrThrow()
   }
 
-  private class LogWriter(private val log: (String) -> Unit) : Writer() {
+  private class LogWriter(private val log: (() -> String) -> Unit) : Writer() {
     private val buffer = StringBuffer()
 
     override fun close() {
-      log(buffer.toString())
+      log { buffer.toString() }
       buffer.delete(0, buffer.length)
     }
 

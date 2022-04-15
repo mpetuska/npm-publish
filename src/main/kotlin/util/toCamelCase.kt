@@ -1,7 +1,7 @@
 package dev.petuska.npm.publish.util
 
-import java.util.*
-import java.util.regex.*
+import java.util.Locale
+import java.util.regex.Pattern
 
 private val WORD_SEPARATOR = Pattern.compile("\\W+")
 
@@ -16,19 +16,22 @@ internal fun String.toCamelCase(lower: Boolean = false): String {
     if (chunk.isEmpty()) {
       continue
     }
-    if (lower && first) {
-      chunk = chunk.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-      first = false
-    } else {
-      chunk = chunk.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    chunk = chunk.replaceFirstChar {
+      when {
+        first && lower -> it.lowercase(Locale.getDefault()).also { first = false }
+        it.isLowerCase() -> it.titlecase(Locale.getDefault())
+        else -> it.toString()
+      }
     }
     builder.append(chunk)
   }
   var rest: String = subSequence(pos, length).toString()
-  rest = if (lower && first) {
-    rest.replaceFirstChar { it.lowercase(Locale.getDefault()) }
-  } else {
-    rest.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+  rest = rest.replaceFirstChar {
+    when {
+      first && lower -> it.lowercase(Locale.getDefault()).also { first = false }
+      it.isLowerCase() -> it.titlecase(Locale.getDefault())
+      else -> it.toString()
+    }
   }
   builder.append(rest)
   return builder.toString()

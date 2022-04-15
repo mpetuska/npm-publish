@@ -4,6 +4,7 @@ import dev.petuska.npm.publish.extension.domain.NpmAccess
 import dev.petuska.npm.publish.extension.domain.NpmAccessScope
 import dev.petuska.npm.publish.extension.domain.NpmPackages
 import dev.petuska.npm.publish.extension.domain.NpmRegistries
+import dev.petuska.npm.publish.util.WithGradleFactories
 import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.model.*
@@ -12,15 +13,12 @@ import org.gradle.api.provider.*
 import javax.inject.*
 
 @Suppress("unused", "LeakingThis")
-abstract class NpmPublishExtension : ExtensionAware, NpmAccessScope {
+abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAware, NpmAccessScope {
   companion object {
     internal const val NAME = "npmPublish"
     val PUBLIC = NpmAccess.PUBLIC
     val RESTRICTED = NpmAccess.RESTRICTED
   }
-
-  @get:Inject
-  protected abstract val objects: ObjectFactory
 
   /**
    * Base NodeJS directory to be used when building and publishing the publications.

@@ -1,10 +1,13 @@
 package dev.petuska.npm.publish.extension.domain
 
-import dev.petuska.npm.publish.util.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import kotlin.math.*
+import dev.petuska.npm.publish.util.NamedInput
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import kotlin.math.abs
 
+@Suppress("unused")
 interface NpmDependency : NamedInput {
   @get:Input
   val version: Property<String>
@@ -29,3 +32,5 @@ interface NpmDependency : NamedInput {
     inline val priority: Int get() = abs(0 - ordinal)
   }
 }
+
+typealias NpmDependencies = NamedDomainObjectContainer<NpmDependency>

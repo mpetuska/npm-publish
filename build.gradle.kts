@@ -18,15 +18,10 @@ kotlin {
   dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     implementation("com.google.code.gson:gson:_")
-    api("dev.petuska:kon:_")
-    testImplementation("io.kotest:kotest-runner-junit5:_")
-    testImplementation("dev.petuska:klip:_")
-  }
-
-  sourceSets.configureEach {
-    languageSettings {
-      optIn("io.kotest.common.ExperimentalKotest")
-    }
+    testImplementation("io.kotest:kotest-assertions-core:_")
+    testImplementation("io.kotest:kotest-assertions-json:_")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:_")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:_")
   }
 }
 
@@ -37,7 +32,7 @@ tasks {
     }
   }
   withType<Test>().configureEach {
-    systemProperty("kotest.framework.loglevel", "warn")
+    useJUnitPlatform()
   }
 }
 
