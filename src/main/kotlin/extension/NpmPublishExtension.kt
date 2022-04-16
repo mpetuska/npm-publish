@@ -4,12 +4,14 @@ import dev.petuska.npm.publish.extension.domain.NpmAccess
 import dev.petuska.npm.publish.extension.domain.NpmAccessScope
 import dev.petuska.npm.publish.extension.domain.NpmPackages
 import dev.petuska.npm.publish.extension.domain.NpmRegistries
+import dev.petuska.npm.publish.extension.domain.NpmRegistry
 import dev.petuska.npm.publish.util.WithGradleFactories
 import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.model.*
 import org.gradle.api.plugins.*
 import org.gradle.api.provider.*
+import java.net.URI
 import javax.inject.*
 
 @Suppress("unused", "LeakingThis")
@@ -31,6 +33,8 @@ abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAware, NpmA
    * all publications that do not have one set explicitly.
    */
   abstract val readme: RegularFileProperty
+
+  abstract val npmIgnore: RegularFileProperty
 
   /**
    * Default [NpmPublication.scope]
@@ -68,6 +72,11 @@ abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAware, NpmA
 
   fun registries(action: Action<NpmRegistries>) {
     action.execute(registries)
+  }
+
+  fun NpmRegistries.npmjs(action: Action<NpmRegistry>) = register("npmjs") {
+    it.uri.set(URI("https://registry.npmjs.org"))
+    action.execute(it)
   }
 
   // endregion

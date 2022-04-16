@@ -10,7 +10,8 @@ internal class ProjectEnhancer(
   val extension: NpmPublishExtension = project.extensions.findByType(NpmPublishExtension::class.java)
     ?: error("NpmPublishExtension not found"),
   private val globalPrefix: String = "npm.publish."
-) : Project by project {
+) : Project by project, PluginLogger {
+
   fun <T> withExtension(action: NpmPublishExtension.() -> T) = with(extension, action)
 
   /**

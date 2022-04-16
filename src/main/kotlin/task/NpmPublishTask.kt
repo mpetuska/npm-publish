@@ -51,21 +51,25 @@ abstract class NpmPublishTask : NpmExecTask() {
   @Suppress("unused")
   @TaskAction
   private fun doAction() {
+    val pDir = packageDir.final.asFile
     val reg = registry.final
     val uri = reg.uri.final
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
+    val d = dry.final
+    debug { "Publishing package at ${pDir.path} to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag" }
     npmExec(
       listOf(
         "publish",
-        packageDir.final,
+        pDir,
         "--access",
         "${reg.access.final}",
         "--registry",
         "${uri.scheme.trim()}://$repo",
         if (reg.authToken.finalise().isPresent) "--//$repo:_authToken=${reg.authToken.get()}" else null,
         if (reg.otp.finalise().isPresent) "--otp ${reg.otp.get()}" else null,
-        if (dry.final) "--dry-run" else null
+        if (d) "--dry-run" else null
       )
     ) { it.workingDir(packageDir.final) }
+    if (!d) info { "Published package at ${pDir.path} to ${reg.name} registry" }
   }
 }

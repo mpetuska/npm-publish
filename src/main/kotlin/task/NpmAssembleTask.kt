@@ -15,7 +15,7 @@ import org.gradle.api.tasks.*
  * @constructor publication to assemble
  */
 @Suppress("LeakingThis")
-abstract class NpmAssembleTask : DefaultTask() {
+abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   companion object {
     /** Gson instance to be reused across multiple functions of the task. */
     private val gson = GsonBuilder().setPrettyPrinting().create()
@@ -53,20 +53,30 @@ abstract class NpmAssembleTask : DefaultTask() {
   private fun action() {
     val pkg = `package`.final
     val dest = destinationDir.final
+    debug { "Assembling ${pkg.name} package in ${dest.asFile.path}" }
     val files = pkg.files.apply(ConfigurableFileCollection::finalizeValue).files
 
     project.copy { cp ->
       cp.from(files)
       cp.from(pkg.readme.finalOrNull)
+      cp.from(pkg.npmIgnore.finalOrNull)
       cp.into(dest)
     }
+    val pJsonFile = dest.file("package.json").asFile
+    debug { "Resolving package.json for ${pkg.name} package to ${pJsonFile.path}" }
     val pJson = pkg.resolvePackageJson()
-    dest.file("package.json").asFile.writeText(gson.toJson(pJson))
+    pJsonFile.writeText(gson.toJson(pJson))
+    info { "Resolved package.json for ${pkg.name} package to ${pJsonFile.path}" }
+    info { "Assembled ${pkg.name} package in ${dest.asFile.path}" }
   }
 
   private fun NpmPackage.resolvePackageJson(): Map<String, Any> {
-    packageJsonFile.finalOrNull?.let { return gson.fromJson(it.asFile.reader(), Map::class.java).unsafeCast() }
+    packageJsonFile.finalOrNull?.let {
+      info { "package.json file set and found for $name package. Not resolving further..." }
+      return gson.fromJson(it.asFile.reader(), Map::class.java).unsafeCast()
+    }
     val pJson = packageJsonTemplateFile.finalOrNull?.let {
+      info { "package.json template file set and found for $name package. Using it as a baseline..." }
       gson.fromJson(it.asFile.reader(), Map::class.java).unsafeCast<MutableMap<String, Any>>()
     } ?: mutableMapOf()
 
@@ -89,13 +99,19 @@ abstract class NpmAssembleTask : DefaultTask() {
       pJson.mergeDependencies("optionalDependencies", direct.getOrDefault(NpmDependency.Scope.OPTIONAL, listOf()))
     val dPeer =
       pJson.mergeDependencies("peerDependencies", direct.getOrDefault(NpmDependency.Scope.PEER, listOf())) { d ->
-        dOptional.keys.none { d == it }
+        dOptional.keys.none { d == it }.also {
+          if (!it) warn { "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..." }
+        }
       }
     val dDev = pJson.mergeDependencies("devDependencies", direct.getOrDefault(NpmDependency.Scope.DEV, listOf())) { d ->
-      dOptional.keys.none { d == it } && dPeer.keys.none { d == it }
+      (dOptional.keys.none { d == it } && dPeer.keys.none { d == it }).also {
+        if (!it) warn { "Registered dev dependency $d for $name package already present in higher priority scope. Skipping..." }
+      }
     }
     pJson.mergeDependencies("dependencies", direct.getOrDefault(NpmDependency.Scope.NORMAL, listOf())) { d ->
-      dOptional.keys.none { d == it } && dPeer.keys.none { d == it } && dDev.keys.none { d == it }
+      (dOptional.keys.none { d == it } && dPeer.keys.none { d == it } && dDev.keys.none { d == it }).also {
+        if (!it) warn { "Registered normal dependency $d for $name package already present in higher priority scope. Skipping..." }
+      }
     }
   }
 

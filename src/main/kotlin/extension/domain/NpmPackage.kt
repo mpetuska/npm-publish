@@ -55,6 +55,10 @@ abstract class NpmPackage : NamedInput, WithGradleFactories() {
   @get:Optional
   abstract val readme: RegularFileProperty
 
+  @get:InputFile
+  @get:Optional
+  abstract val npmIgnore: RegularFileProperty
+
   /**
    * Files that compose this publication
    */

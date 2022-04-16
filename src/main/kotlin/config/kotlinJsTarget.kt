@@ -21,7 +21,7 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency as KJsNpmDependency
 
 internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
-  if (target !is KotlinJsIrTarget) return logger.info("${target.name} Kotlin/JS target is not using IR compiler - skipping...")
+  if (target !is KotlinJsIrTarget) return info { "${target.name} Kotlin/JS target is not using IR compiler - skipping..." }
   extension.packages.register(target.name) { pkg ->
     val binary = provider<JsIrBinary> {
       when (val it = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }) {
@@ -67,6 +67,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       files.from(processResourcesTask.map(Copy::getDestinationDir))
     }
   }
+  info { "Automatically registered [${target.name}] NpmPackage for [${target.name}] Kotlin/JS target" }
 }
 
 private fun ProjectEnhancer.resolveDependencies(

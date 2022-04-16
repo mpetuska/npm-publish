@@ -59,11 +59,16 @@ abstract class NpmPackTask : NpmExecTask() {
   @Suppress("unused")
   @TaskAction
   private fun doAction() {
+    val pDir = packageDir.final.asFile
+    val oDir = outputFile.final.asFile
+    val d = dry.final
+    debug { "Packing package at ${pDir.path} to ${oDir.parentFile.path} ${if (d) "with" else "without"} --dry-run flag" }
     val tmpDir = temporaryDir
-    npmExec(listOf("pack", packageDir.final, if (dry.final) "--dry-run" else null)) {
+    npmExec(listOf("pack", pDir, if (d) "--dry-run" else null)) {
       it.workingDir(tmpDir)
     }
-    val outFile = tmpDir.listFiles().firstOrNull()
-    outFile?.copyTo(outputFile.final.asFile, true)
+    val outFile = tmpDir.listFiles().firstOrNull() ?: error("Internal error. Temporary packed file not found.")
+    outFile.copyTo(oDir, true)
+    if (!d) info { "Packed package at ${pDir.path} to ${oDir.path}" }
   }
 }

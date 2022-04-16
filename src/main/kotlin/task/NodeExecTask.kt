@@ -1,17 +1,24 @@
 package dev.petuska.npm.publish.task
 
-import org.apache.tools.ant.taskdefs.condition.*
-import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import org.gradle.process.*
+import dev.petuska.npm.publish.util.PluginLogger
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.api.Action
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.process.ExecResult
+import org.gradle.process.ExecSpec
 
 /**
  * Basic task for executing various node commands. Provides access to node executable.
  */
 @Suppress("LeakingThis")
-abstract class NodeExecTask : DefaultTask() {
+abstract class NodeExecTask : DefaultTask(), PluginLogger {
 
   /**
    * Base NodeJS directory used to extract other node executables from. Defaults to 'NODE_HOME' env

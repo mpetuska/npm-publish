@@ -9,6 +9,10 @@ internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
   pkg.main.sysProjectEnvPropertyConvention(prefix + "main")
   pkg.types.sysProjectEnvPropertyConvention(prefix + "types")
   pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme) { layout.projectDirectory.file(it) }
+  pkg.npmIgnore.sysProjectEnvPropertyConvention(
+    prefix + "npmIgnore",
+    extension.npmIgnore
+  ) { layout.projectDirectory.file(it) }
   pkg.version.sysProjectEnvPropertyConvention(prefix + "version", extension.version)
   pkg.packageName.sysProjectEnvPropertyConvention(prefix + "packageName", provider { project.name })
   pkg.scope.sysProjectEnvPropertyConvention(prefix + "scope", extension.organization)
@@ -16,5 +20,5 @@ internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
 
 internal inline val NpmPackage.prefix get() = "package.$name."
 
-internal fun assembleTaskName(packageName: String) = "assemble${packageName.toCamelCase()}NpmPackage"
-internal fun packTaskName(packageName: String) = "pack${packageName.toCamelCase()}NpmPackage"
+internal fun assembleTaskName(packageName: String) = "assemble${packageName.toCamelCase()}Package"
+internal fun packTaskName(packageName: String) = "pack${packageName.toCamelCase()}Package"
