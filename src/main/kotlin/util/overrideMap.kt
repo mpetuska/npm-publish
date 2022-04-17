@@ -1,9 +1,6 @@
 package dev.petuska.npm.publish.util
 
-internal fun Map<String, Any>.mergeWith(other: Map<String, Any>) {
-}
-
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "ComplexMethod")
 internal fun MutableMap<String, Any>.overrideFrom(other: Map<String, Any>): MutableMap<String, Any> = apply {
   other.entries.forEach { (key, new) ->
     val old = this[key]

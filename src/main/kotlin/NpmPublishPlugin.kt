@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 
-/** Main entry point for npm-publish plugin */
+/**
+ * Main entry point for npm-publish plugin
+ */
 @Suppress("unused")
-class NpmPublishPlugin : Plugin<Project> {
+public class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     ProjectEnhancer(
       project = project,
@@ -64,7 +66,7 @@ class NpmPublishPlugin : Plugin<Project> {
     }
   }
 
-  companion object {
+  private companion object {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
   }

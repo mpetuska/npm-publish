@@ -1,21 +1,33 @@
 package dev.petuska.npm.publish.extension.domain.json
 
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
-/** [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors) */
-abstract class Person : JsonObject<Any>() {
+/**
+ * [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
+ */
+public abstract class Person : JsonObject<Any>() {
+  /**
+   * [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
+   */
   @get:Input
   @get:Optional
-  abstract val name: Property<String>
+  public abstract val name: Property<String>
 
+  /**
+   * [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
+   */
   @get:Input
   @get:Optional
-  abstract val email: Property<String>
+  public abstract val email: Property<String>
 
+  /**
+   * [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
+   */
   @get:Input
   @get:Optional
-  abstract val url: Property<String>
+  public abstract val url: Property<String>
 
   override fun finalise(): MutableMap<String, Any> = super.finalise().apply {
     name.finalOrNull?.let { put("name", it) }

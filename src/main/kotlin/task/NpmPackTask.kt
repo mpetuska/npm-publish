@@ -1,39 +1,52 @@
 package dev.petuska.npm.publish.task
 
-import com.google.gson.*
-import dev.petuska.npm.publish.util.*
-import org.gradle.api.file.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import org.gradle.api.tasks.options.*
-import java.io.*
+import com.google.gson.Gson
+import dev.petuska.npm.publish.extension.NpmPublishExtension
+import dev.petuska.npm.publish.util.final
+import dev.petuska.npm.publish.util.unsafeCast
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
+import java.io.File
 
 /**
- * A publishing task that publishes a given publication to a given repository.
+ * A task to pack a tgs archive for the given package
  */
 @CacheableTask
 @Suppress("LeakingThis")
-abstract class NpmPackTask : NpmExecTask() {
+public abstract class NpmPackTask : NpmExecTask() {
 
   /**
    * The directory where the assembled and ready-to-pack package is.
-   * @see [NpmPublication.destinationDir]
+   * @see [NpmAssembleTask]
    */
   @get:InputDirectory
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
-  abstract val packageDir: DirectoryProperty
+  public abstract val packageDir: DirectoryProperty
 
-  /** See Also: [dev.petuska.npm.publish.dsl.NpmPublishExtension.dry] */
+  /**
+   * Controls dry-tun mode for the execution.
+   * @see [NpmPublishExtension.dry]
+   */
   @get:Input
   @get:Option(option = "dry", description = "Execute in dry-run mode")
-  abstract val dry: Property<Boolean>
+  public abstract val dry: Property<Boolean>
 
   /**
    * Output file to pack the publication to.
-   * @see [NpmPackTask.packageDir]
+   *
+   * Defaults to `build/packages/<name>.tgz`
    */
   @get:OutputFile
-  abstract val outputFile: RegularFileProperty
+  public abstract val outputFile: RegularFileProperty
 
   init {
     group = "build"
@@ -62,7 +75,9 @@ abstract class NpmPackTask : NpmExecTask() {
     val pDir = packageDir.final.asFile
     val oDir = outputFile.final.asFile
     val d = dry.final
-    debug { "Packing package at ${pDir.path} to ${oDir.parentFile.path} ${if (d) "with" else "without"} --dry-run flag" }
+    debug {
+      "Packing package at ${pDir.path} to ${oDir.parentFile.path} ${if (d) "with" else "without"} --dry-run flag"
+    }
     val tmpDir = temporaryDir
     npmExec(listOf("pack", pDir, if (d) "--dry-run" else null)) {
       it.workingDir(tmpDir)

@@ -18,7 +18,7 @@ import org.gradle.process.ExecSpec
  * Basic task for executing various node commands. Provides access to node executable.
  */
 @Suppress("LeakingThis")
-abstract class NodeExecTask : DefaultTask(), PluginLogger {
+public abstract class NodeExecTask : DefaultTask(), PluginLogger {
 
   /**
    * Base NodeJS directory used to extract other node executables from. Defaults to 'NODE_HOME' env
@@ -26,12 +26,12 @@ abstract class NodeExecTask : DefaultTask(), PluginLogger {
    */
   @get:InputDirectory
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
-  abstract val nodeHome: DirectoryProperty
+  public abstract val nodeHome: DirectoryProperty
 
   /** Main Node executable. Allows for executing any js script from your builds. */
   @get:InputFile
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
-  val node: Provider<RegularFile> = nodeHome.file(
+  public val node: Provider<RegularFile> = nodeHome.file(
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
       "node.exe"
     } else {
@@ -43,7 +43,14 @@ abstract class NodeExecTask : DefaultTask(), PluginLogger {
     nodeHome.convention(project.layout.projectDirectory.dir(project.providers.environmentVariable("NODE_HOME")))
   }
 
-  fun nodeExec(args: Collection<Any?>, config: Action<ExecSpec> = Action {}): ExecResult = project.exec {
+  /**
+   * Executes a Node command
+   * @param args to be passed in to the Node executable
+   * @param config to be applied to the execution process
+   * @return execution result
+   */
+  @Suppress("SpreadOperator")
+  public fun nodeExec(args: Collection<Any?>, config: Action<ExecSpec> = Action {}): ExecResult = project.exec {
     val cmd = listOfNotNull(node.get(), *args.toTypedArray()).toTypedArray()
     it.commandLine(*cmd)
     config.execute(it)

@@ -1,6 +1,5 @@
 plugins {
   id("com.gradle.plugin-publish")
-  id("org.jetbrains.dokka")
   id("io.github.gradle-nexus.publish-plugin")
   `java-gradle-plugin`
   `maven-publish`

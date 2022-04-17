@@ -1,39 +1,50 @@
 package dev.petuska.npm.publish.task
 
-import com.google.gson.*
-import dev.petuska.npm.publish.extension.domain.*
-import dev.petuska.npm.publish.extension.domain.json.*
-import dev.petuska.npm.publish.util.*
-import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
+import com.google.gson.GsonBuilder
+import dev.petuska.npm.publish.extension.domain.NpmDependency
+import dev.petuska.npm.publish.extension.domain.NpmPackage
+import dev.petuska.npm.publish.util.PluginLogger
+import dev.petuska.npm.publish.util.configure
+import dev.petuska.npm.publish.util.final
+import dev.petuska.npm.publish.util.finalOrNull
+import dev.petuska.npm.publish.util.npmFullName
+import dev.petuska.npm.publish.util.overrideFrom
+import dev.petuska.npm.publish.util.unsafeCast
+import org.gradle.api.Action
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 
 /**
- * A task to assemble all required files for a given [NpmPublication].
- *
- * @constructor publication to assemble
+ * A task to assemble all required files for a given [NpmPackage].
  */
 @Suppress("LeakingThis")
-abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
-  companion object {
-    /** Gson instance to be reused across multiple functions of the task. */
+public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
+  private companion object {
     private val gson = GsonBuilder().setPrettyPrinting().create()
   }
 
   /**
-   * Main configuration of the publication to assemble. If no publication is passed to a
-   * constructor, a default one will be constructed with basic project properties.
+   * The configuration of the package to assemble.
+   * @see [NpmPackage]
    */
   @get:Nested
+  @Suppress("VariableNaming")
   internal abstract val `package`: Property<NpmPackage>
 
   /** Output directory to assemble the package to. */
   @get:OutputDirectory
-  abstract val destinationDir: DirectoryProperty
+  public abstract val destinationDir: DirectoryProperty
 
-  /** Configuration DSL allowing to modify a given publication config. */
-  fun `package`(action: Action<NpmPackage>) {
+  /**
+   * Configuration DSL allowing to modify a given package config.
+   */
+  @Suppress("FunctionNaming")
+  public fun `package`(action: Action<NpmPackage>) {
     `package`.configure(action)
   }
 
@@ -58,7 +69,11 @@ abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
 
     project.copy { cp ->
       cp.from(files)
-      cp.from(pkg.readme.finalOrNull)
+      pkg.readme.finalOrNull?.let { md ->
+        cp.from(md) {
+          it.rename(md.asFile.name, "README.md")
+        }
+      }
       cp.from(pkg.npmIgnore.finalOrNull)
       cp.into(dest)
     }
@@ -94,23 +109,29 @@ abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   }
 
   private fun NpmPackage.resolveDependencies(pJson: MutableMap<String, Any>) {
-    val direct = dependencies.toList().groupBy { it.scope.final }
+    val direct = dependencies.toList().groupBy { it.type.final }
     val dOptional =
-      pJson.mergeDependencies("optionalDependencies", direct.getOrDefault(NpmDependency.Scope.OPTIONAL, listOf()))
+      pJson.mergeDependencies("optionalDependencies", direct.getOrDefault(NpmDependency.Type.OPTIONAL, listOf()))
     val dPeer =
-      pJson.mergeDependencies("peerDependencies", direct.getOrDefault(NpmDependency.Scope.PEER, listOf())) { d ->
+      pJson.mergeDependencies("peerDependencies", direct.getOrDefault(NpmDependency.Type.PEER, listOf())) { d ->
         dOptional.keys.none { d == it }.also {
-          if (!it) warn { "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..." }
+          if (!it) warn {
+            "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..."
+          }
         }
       }
-    val dDev = pJson.mergeDependencies("devDependencies", direct.getOrDefault(NpmDependency.Scope.DEV, listOf())) { d ->
+    val dDev = pJson.mergeDependencies("devDependencies", direct.getOrDefault(NpmDependency.Type.DEV, listOf())) { d ->
       (dOptional.keys.none { d == it } && dPeer.keys.none { d == it }).also {
-        if (!it) warn { "Registered dev dependency $d for $name package already present in higher priority scope. Skipping..." }
+        if (!it) warn {
+          "Registered dev dependency $d for $name package already present in higher priority scope. Skipping..."
+        }
       }
     }
-    pJson.mergeDependencies("dependencies", direct.getOrDefault(NpmDependency.Scope.NORMAL, listOf())) { d ->
+    pJson.mergeDependencies("dependencies", direct.getOrDefault(NpmDependency.Type.NORMAL, listOf())) { d ->
       (dOptional.keys.none { d == it } && dPeer.keys.none { d == it } && dDev.keys.none { d == it }).also {
-        if (!it) warn { "Registered normal dependency $d for $name package already present in higher priority scope. Skipping..." }
+        if (!it) warn {
+          "Registered normal dependency $d for $name package already present in higher priority scope. Skipping..."
+        }
       }
     }
   }

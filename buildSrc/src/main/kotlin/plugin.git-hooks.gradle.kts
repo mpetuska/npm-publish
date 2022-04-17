@@ -5,8 +5,8 @@ plugins {
 gitHooks {
   setHooks(
     mapOf(
-      "pre-commit" to "spotlessApply",
-      "pre-push" to "spotlessCheck"
+      "pre-commit" to "detekt --auto-correct",
+      "pre-push" to "detekt"
     )
   )
 }

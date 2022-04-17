@@ -4,16 +4,29 @@ import dev.petuska.npm.publish.util.*
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 
-abstract class JsonObject<T : Any> : WithGradleFactories() {
+/**
+ * Generic json object container supporting extra properties and Gradle serialisation
+ */
+public abstract class JsonObject<T : Any> : WithGradleFactories() {
 
   @get:Input
   protected abstract val extras: MapProperty<String, T>
 
-  operator fun set(key: String, value: T) {
+  /**
+   * Set a custom value
+   * @param key of the value
+   * @param value to set under the given key
+   */
+  public operator fun set(key: String, value: T) {
     extras.put(key, value)
   }
 
-  operator fun set(key: String, value: Provider<T>) {
+  /**
+   * Set a custom value provider to be resolved when [finalise] is invoked
+   * @param key of the value
+   * @param value to set under the given key
+   */
+  public operator fun set(key: String, value: Provider<T>) {
     extras.put(key, value)
   }
 
@@ -35,12 +48,11 @@ abstract class JsonObject<T : Any> : WithGradleFactories() {
       return orNull?.takeIf(Collection<T>::isNotEmpty)
     }
 
-//  protected inline fun <reified T> Property<T>.configure(action: Action<T>) {
-//    val instance = providers.provider { objects.newInstance(T::class.java) }
-//    set(orElse(instance).map { action.execute(it); it })
-//  }
-
-  open fun finalise(): MutableMap<String, T> = mutableMapOf<String, T>().apply {
+  /**
+   * Resolves the underlying json value to a [MutableMap] instance,
+   * recursively merging known and custom properties and resolving all [Provider] values
+   */
+  public open fun finalise(): MutableMap<String, T> = mutableMapOf<String, T>().apply {
     extras.finalizeValue()
     extras.orNull?.map { (k, v) ->
       val value = when (v) {

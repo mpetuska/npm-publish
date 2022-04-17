@@ -7,30 +7,63 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import kotlin.math.abs
 
+/**
+ * A simple representation of a npm dependency
+ */
 @Suppress("unused")
-interface NpmDependency : NamedInput {
+public interface NpmDependency : NamedInput {
+  /**
+   * Dependency version specification.
+   * [More info](https://docs.npmjs.com/about-semantic-versioning#using-semantic-versioning-to-specify-update-types-your-package-can-accept)
+   */
   @get:Input
-  val version: Property<String>
+  public val version: Property<String>
 
+  /**
+   * Dependency type
+   * @see [Type]
+   */
   @get:Input
   @get:Optional
-  val scope: Property<Scope>
+  public val type: Property<Type>
 
-  companion object {
-    val OPTIONAL = Scope.OPTIONAL
-    val PEER = Scope.PEER
-    val DEV = Scope.DEV
-    val NORMAL = Scope.NORMAL
+  public companion object {
+    /**
+     * @see [Type.OPTIONAL]
+     */
+    public val OPTIONAL: Type = Type.OPTIONAL
+
+    /**
+     * @see [Type.PEER]
+     */
+    public val PEER: Type = Type.PEER
+
+    /**
+     * @see [Type.DEV]
+     */
+    public val DEV: Type = Type.DEV
+
+    /**
+     * @see [Type.NORMAL]
+     */
+    public val NORMAL: Type = Type.NORMAL
   }
 
-  enum class Scope {
+  /**
+   * Npm dependency type.
+   * [More info](https://docs.npmjs.com/cli/v6/configuring-npm/package-json#dependencies)
+   */
+  public enum class Type {
     OPTIONAL,
     PEER,
     DEV,
     NORMAL;
 
-    inline val priority: Int get() = abs(0 - ordinal)
+    /**
+     * Type priority in descending order
+     */
+    public inline val priority: Int get() = abs(0 - ordinal)
   }
 }
 
-typealias NpmDependencies = NamedDomainObjectContainer<NpmDependency>
+public typealias NpmDependencies = NamedDomainObjectContainer<NpmDependency>

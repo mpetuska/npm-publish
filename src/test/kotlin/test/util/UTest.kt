@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
 
 @Tags(Tag("unit"))
+@Suppress("UnnecessaryAbstractClass")
 abstract class UTest {
   protected val packageNames = listOf(
     "testPackage",

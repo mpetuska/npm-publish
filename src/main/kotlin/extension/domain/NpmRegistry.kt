@@ -1,32 +1,52 @@
 package dev.petuska.npm.publish.extension.domain
 
-import dev.petuska.npm.publish.util.*
-import org.gradle.api.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import java.net.*
+import dev.petuska.npm.publish.extension.NpmPublishExtension
+import dev.petuska.npm.publish.util.NamedInput
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import java.net.URI
 
+/**
+ * Npm registry configuration
+ */
 @Suppress("unused", "LeakingThis")
-abstract class NpmRegistry : NamedInput {
-  /** Repository access. */
+public abstract class NpmRegistry : NamedInput {
+  /**
+   * Registry access
+   * @see [NpmPublishExtension.access]
+   */
   @get:Input
-  abstract val access: Property<NpmAccess>
+  public abstract val access: Property<NpmAccess>
 
-  /** NPM Registry uri to publish packages to. Should include schema domain and path if required */
+  /**
+   * NPM Registry uri to publish packages to.
+   * Should include schema domain and path if required
+   */
   @get:Input
-  abstract val uri: Property<URI>
+  public abstract val uri: Property<URI>
 
-  /** Optional OTP to use when authenticating with the registry. */
+  /**
+   * Optional OTP to use when authenticating with the registry
+   */
   @get:Input
   @get:Optional
-  abstract val otp: Property<String>
+  public abstract val otp: Property<String>
 
-  /** Auth token to use when authenticating with the registry */
+  /**
+   * Auth token to use when authenticating with the registry.
+   * [More info](https://docs.npmjs.com/about-access-tokens)
+   */
   @get:Input
   @get:Optional
-  abstract val authToken: Property<String>
+  public abstract val authToken: Property<String>
 
-  fun Property<URI>.set(uri: String) {
+  /**
+   * Convenience DSL to set [URI] properties via [String]
+   * @param uri to use when constructing [URI] instance
+   */
+  public fun Property<URI>.set(uri: String) {
     set(URI(uri))
   }
 
@@ -35,4 +55,4 @@ abstract class NpmRegistry : NamedInput {
   }
 }
 
-typealias NpmRegistries = NamedDomainObjectContainer<NpmRegistry>
+public typealias NpmRegistries = NamedDomainObjectContainer<NpmRegistry>

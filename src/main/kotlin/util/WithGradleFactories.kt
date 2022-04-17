@@ -1,12 +1,16 @@
 package dev.petuska.npm.publish.util
 
-import org.gradle.api.*
-import org.gradle.api.model.*
-import org.gradle.api.provider.*
+import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import javax.inject.*
+import org.gradle.api.provider.ProviderFactory
+import javax.inject.Inject
 
-abstract class WithGradleFactories {
+/**
+ * Utility abstract class to provide injected gradle object factories
+ */
+public abstract class WithGradleFactories {
   @get:Inject
   protected abstract val objects: ObjectFactory
 

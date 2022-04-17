@@ -1,145 +1,226 @@
 package dev.petuska.npm.publish.extension.domain
 
+import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
-import dev.petuska.npm.publish.util.*
-import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
+import dev.petuska.npm.publish.util.NamedInput
+import dev.petuska.npm.publish.util.WithGradleFactories
+import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 
+/**
+ * The main configuration for a package
+ */
 @Suppress("unused", "LeakingThis", "MemberVisibilityCanBePrivate")
-abstract class NpmPackage : NamedInput, WithGradleFactories() {
+public abstract class NpmPackage : NamedInput, WithGradleFactories() {
 
   /**
    * Optional npm scope. If set, package name will be constructed as `@{scope}/{moduleName}`.
    * Defaults to [NpmPublishExtension.organization].
+   * @see [NpmPublishExtension.organization]
    */
   @get:Input
   @get:Optional
-  abstract val scope: Property<String>
+  public abstract val scope: Property<String>
 
   /**
    * NPM package name.
    * Defaults to [Project.getName].
+   * @see [Project.getName]
    */
   @get:Input
-  abstract val packageName: Property<String>
+  public abstract val packageName: Property<String>
 
   /**
    * NPM package version.
    * Defaults to [NpmPublishExtension.version].
+   * @see [NpmPublishExtension.version]
    */
   @get:Input
-  abstract val version: Property<String>
+  public abstract val version: Property<String>
 
   /**
-   * Main js entry file. Can also be set via [packageJson] DSL.
+   * Main js entry file.
+   * Can also be set via [packageJsonFile], [packageJsonTemplateFile] or [packageJson]
    * @see [PackageJson.main]
    */
   @get:Input
-  abstract val main: Property<String>
+  @get:Optional
+  public abstract val main: Property<String>
 
   /**
-   * Main d.ts entry file. Can also be set via [packageJson] DSL.
+   * Main d.ts entry file.
+   * Can also be set via [packageJsonFile], [packageJsonTemplateFile] or [packageJson]
    * @see [PackageJson.types]
    */
   @get:Input
   @get:Optional
-  abstract val types: Property<String>
+  public abstract val types: Property<String>
 
   /**
-   * A location of the main README file. If set, the file will be moved to package assembly root and
-   * renamed to README.MD (regardless of the actual name). Defaults to [NpmPublishExtension.readme]
+   * A location of the `README.md` file.
+   * If set, the file will be moved to package assembly root and renamed to README.MD (regardless of the actual name).
+   * Defaults to [NpmPublishExtension.readme]
+   * @see [NpmPublishExtension.readme]
    */
   @get:InputFile
   @get:Optional
-  abstract val readme: RegularFileProperty
-
-  @get:InputFile
-  @get:Optional
-  abstract val npmIgnore: RegularFileProperty
+  public abstract val readme: RegularFileProperty
 
   /**
-   * Files that compose this publication
+   * A location of the `.npmignore` file.
+   * Defaults to [NpmPublishExtension.npmIgnore]
+   * @see [NpmPublishExtension.npmIgnore]
+   */
+  @get:InputFile
+  @get:Optional
+  public abstract val npmIgnore: RegularFileProperty
+
+  /**
+   * Files that should be assembled for this package
    */
   @get:InputFiles
-  abstract val files: ConfigurableFileCollection
-
-  @get:Nested
-  @get:Optional
-  abstract val packageJson: Property<PackageJson>
+  public abstract val files: ConfigurableFileCollection
 
   /**
-   * If set, fully disregards [packageJson] DSL configuration and used the specified raw
-   * package.json file as-is.
+   * `package.json` customisation container.
+   * @see [packageJsonFile]
+   * @see [packageJsonTemplateFile]
+   */
+  @get:Nested
+  @get:Optional
+  public abstract val packageJson: Property<PackageJson>
+
+  /**
+   * If set, fully disregards [main], [types] & [packageJson] configurations. Used as-is.
+   * @see [packageJson]
+   * @see [packageJsonTemplateFile]
    */
   @get:InputFile
   @get:Optional
-  abstract val packageJsonFile: RegularFileProperty
+  public abstract val packageJsonFile: RegularFileProperty
 
   /**
-   * Similar to [packageJsonFile] except allows the options to be overridden by the [packageJson]
-   * DSL.
+   * Similar to [packageJsonFile] except allows the options to be overridden by the [packageJson] options.
+   * @see [packageJson]
+   * @see [packageJsonFile]
    */
   @get:InputFile
   @get:Optional
-  abstract val packageJsonTemplateFile: RegularFileProperty
+  public abstract val packageJsonTemplateFile: RegularFileProperty
 
   /**
-   * Package's npm dependencies
+   * Package's npm dependencies.
    */
   @get:Nested
-  abstract val dependencies: NpmDependencies
+  public abstract val dependencies: NpmDependencies
 
   //region DSL
-  fun files(action: Action<ConfigurableFileCollection>) {
+  /**
+   * Convenience DSL to configure package's files
+   * @param action to apply
+   */
+  public fun files(action: Action<ConfigurableFileCollection>) {
     action.execute(files)
   }
 
-  fun packageJson(action: Action<PackageJson>) {
+  /**
+   * Convenience DSL to customise `package.json`
+   * @param action to apply
+   */
+  public fun packageJson(action: Action<PackageJson>) {
     packageJson.configure(config = action)
   }
 
-  fun dependencies(action: Action<NpmDependencies>) {
+  /**
+   * Convenience DSL to configure package's dependencies
+   * @param action to apply
+   */
+  public fun dependencies(action: Action<NpmDependencies>) {
     action.execute(dependencies)
   }
 
-  fun NpmDependencies.dependency(
+  /**
+   * Registers an arbitrary npm dependency for the package
+   * @param name of the dependency
+   * @param version of the dependency
+   * @param type of the dependency
+   * @param action to apply
+   * @return registered dependency
+   */
+  public fun NpmDependencies.dependency(
     name: String,
     version: String,
-    scope: NpmDependency.Scope,
+    type: NpmDependency.Type,
     action: Action<NpmDependency> = Action { }
   ): NamedDomainObjectProvider<NpmDependency> = register(name) {
-    it.scope.set(scope)
+    it.type.set(type)
     it.version.set(version)
     action.execute(it)
   }
 
-  fun NpmDependencies.normal(
+  /**
+   * Registers a normal npm dependency for the package
+   * @param name of the dependency
+   * @param version of the dependency
+   * @param action to apply
+   * @return registered dependency
+   */
+  public fun NpmDependencies.normal(
     name: String,
     version: String,
     action: Action<NpmDependency> = Action { }
-  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Scope.NORMAL, action)
+  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Type.NORMAL, action)
 
-  fun NpmDependencies.optional(
+  /**
+   * Registers an optional npm dependency for the package
+   * @param name of the dependency
+   * @param version of the dependency
+   * @param action to apply
+   * @return registered dependency
+   */
+  public fun NpmDependencies.optional(
     name: String,
     version: String,
     action: Action<NpmDependency> = Action { }
-  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Scope.OPTIONAL, action)
+  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Type.OPTIONAL, action)
 
-  fun NpmDependencies.dev(
+  /**
+   * Registers a dev npm dependency for the package
+   * @param name of the dependency
+   * @param version of the dependency
+   * @param action to apply
+   * @return registered dependency
+   */
+  public fun NpmDependencies.dev(
     name: String,
     version: String,
     action: Action<NpmDependency> = Action { }
-  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Scope.DEV, action)
+  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Type.DEV, action)
 
-  fun NpmDependencies.peer(
+  /**
+   * Registers a peer npm dependency for the package
+   * @param name of the dependency
+   * @param version of the dependency
+   * @param action to apply
+   * @return registered dependency
+   */
+  public fun NpmDependencies.peer(
     name: String,
     version: String,
     action: Action<NpmDependency> = Action { }
-  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Scope.PEER, action)
+  ): NamedDomainObjectProvider<NpmDependency> = dependency(name, version, NpmDependency.Type.PEER, action)
 
   // endregion
 }
 
-typealias NpmPackages = NamedDomainObjectContainer<NpmPackage>
+public typealias NpmPackages = NamedDomainObjectContainer<NpmPackage>

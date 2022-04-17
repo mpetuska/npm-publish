@@ -1,39 +1,40 @@
 package dev.petuska.npm.publish.extension.domain.json
 
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 /** [directories](https://docs.npmjs.com/files/package.json#directories) */
-abstract class Directories : JsonObject<Any>() {
+public abstract class Directories : JsonObject<Any>() {
   /** [lib](https://docs.npmjs.com/files/package.json#directorieslib) */
   @get:Input
   @get:Optional
-  abstract val lib: Property<String>
+  public abstract val lib: Property<String>
 
   /** [bin](https://docs.npmjs.com/files/package.json#directoriesbin) */
   @get:Input
   @get:Optional
-  abstract val bin: Property<String>
+  public abstract val bin: Property<String>
 
   /** [man](https://docs.npmjs.com/files/package.json#directoriesman) */
   @get:Input
   @get:Optional
-  abstract val man: Property<String>
+  public abstract val man: Property<String>
 
   /** [doc](https://docs.npmjs.com/files/package.json#directoriesdoc) */
   @get:Input
   @get:Optional
-  abstract val doc: Property<String>
+  public abstract val doc: Property<String>
 
   /** [example](https://docs.npmjs.com/files/package.json#directoriesexample) */
   @get:Input
   @get:Optional
-  abstract val example: Property<String>
+  public abstract val example: Property<String>
 
   /** [test](https://docs.npmjs.com/files/package.json#directoriestest) */
   @get:Input
   @get:Optional
-  abstract val test: Property<String>
+  public abstract val test: Property<String>
 
   override fun finalise(): MutableMap<String, Any> = super.finalise().apply {
     lib.finalOrNull?.let { put("lib", it) }

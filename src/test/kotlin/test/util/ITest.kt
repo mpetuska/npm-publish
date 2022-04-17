@@ -13,6 +13,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 @Tags(Tag("integration"))
+@Suppress("UnnecessaryAbstractClass")
 abstract class ITest {
   class TestProject(project: Project) : Project by project {
     operator fun <T> T.invoke(action: T.() -> Unit) {

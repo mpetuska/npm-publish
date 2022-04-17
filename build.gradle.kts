@@ -1,11 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version embeddedKotlinVersion
   id("plugin.common")
+  id("plugin.docs")
   id("plugin.publishing")
 }
-println("BUILD KOTLIN VERSION: $embeddedKotlinVersion")
 
 description = """
   A maven-publish alternative for NPM package publishing.
@@ -14,7 +13,7 @@ description = """
 """.trimIndent()
 
 kotlin {
-// TODO  explicitApi()
+  explicitApi()
   dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     implementation("com.google.code.gson:gson:_")
