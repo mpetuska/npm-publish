@@ -19,7 +19,7 @@ kotlin {
   sourceSets {
     all {
       dependencies {
-        implementation("io.ktor:ktor-client-core:_")
+        implementation(Ktor.client.core)
         implementation(devNpm("axios", "*"))
         api(npm("snabbdom", "*"))
       }

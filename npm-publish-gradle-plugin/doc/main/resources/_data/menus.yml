@@ -1,0 +1,12 @@
+---
+header:
+  - url: /
+    title: Home
+    identifier: home
+  - url: /gen/api/
+    title: API Documentation
+    identifier: api
+  - url: /gen/CHANGELOG.html
+    title: Changelog
+    identifier: changelog
+---

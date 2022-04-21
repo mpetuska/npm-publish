@@ -18,6 +18,10 @@ kotlin {
     browser()
     binaries.library()
   }
+  js("app", IR) {
+    browser()
+    binaries.executable()
+  }
 
   sourceSets {
     all {

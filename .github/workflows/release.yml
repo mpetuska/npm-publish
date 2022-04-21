@@ -19,7 +19,7 @@ on:
         required: false
         default: "true"
   release:
-    types: [created]
+    types: [ created ]
 
 env:
   VERSION: ${{ github.event.release.tag_name }}
@@ -58,7 +58,7 @@ jobs:
           VERSION=${VERSION:=${{ github.event.inputs.version }}}
           VERSION=${VERSION/v}
           ./gradlew dokkaHtml -Pversion=${VERSION//v};
-          cp -avr build/dokka/html/ public;
+          cp -avr npm-publish-gradle-plugin/build/dokka/html/ public;
           find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
           echo '/npm-publish /npm-publish/npm-publish/index.html 301' > public/_redirects;
           echo '/npm-publish/index.html /npm-publish/npm-publish/index.html 301' >> public/_redirects;
@@ -105,7 +105,7 @@ jobs:
   release-GitHub:
     name: "Release: GitHub"
     runs-on: ubuntu-latest
-    needs: [check]
+    needs: [ check ]
     if: ${{ github.event.inputs.skipGitHub != 'true' }}
     steps:
       - uses: actions/checkout@v2

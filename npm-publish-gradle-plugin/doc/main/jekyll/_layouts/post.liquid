@@ -1,0 +1,19 @@
+---
+layout: default
+---
+<small>{{ page.date | date: "%-d %B %Y" }}</small>
+<h1>{{ page.title }}</h1>
+
+<p class="view profile">
+  <span>by {{ site.data.authors[page.author].name | default: page.author }}</span>
+
+  {% if site.data.authors[page.author].picture %}
+    <img src="{{ site.data.authors[page.author].picture }}" alt="profile_picture">
+  {% endif %}
+</p>
+
+{{ content }}
+
+{% if page.tags %}
+  <small>tags: <em>{{ page.tags | join: "</em> - <em>" }}</em></small>
+{% endif %}

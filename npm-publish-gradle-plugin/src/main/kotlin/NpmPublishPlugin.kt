@@ -71,7 +71,3 @@ public class NpmPublishPlugin : Plugin<Project> {
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
   }
 }
-
-internal val Project.npmPublish: NpmPublishExtension
-  get() = extensions.findByType(NpmPublishExtension::class.java)
-    ?: throw IllegalStateException("${NpmPublishExtension.NAME} is not registered or of incorrect type")

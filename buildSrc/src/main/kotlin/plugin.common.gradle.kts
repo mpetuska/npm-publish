@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   kotlin("jvm")
   id("io.gitlab.arturbosch.detekt")
@@ -10,7 +12,7 @@ plugins {
 println("BUILD KOTLIN VERSION: $embeddedKotlinVersion")
 
 detekt {
-  config.from(projectDir.resolve("detekt.yml"))
+  config.from(rootDir.resolve("detekt.yml"))
   buildUponDefaultConfig = true
 }
 
@@ -29,4 +31,15 @@ repositories {
   mavenLocal()
   mavenCentral()
   gradlePluginPortal()
+}
+
+tasks {
+  withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+      jvmTarget = targetCompatibility
+    }
+  }
+  withType<Test>().configureEach {
+    useJUnitPlatform()
+  }
 }

@@ -1,0 +1,53 @@
+
+.sidebar {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background: transparent;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  transition: .5s; /* 0.5 second transition effect to slide in the sidenav */
+
+  li {
+    &.selected {
+      margin-left: 1em;
+      transition: 0.5s;
+
+      & a.menu-link {
+        color: #b5e853;
+        cursor: default;
+      }
+    }
+
+    &:not(.selected) {
+      transition: .25s;
+
+      &:hover {
+        margin-left: 1em;
+      }
+
+      & a.menu-link {
+        transition: .25s;
+
+        &:hover {
+          background-color: #b5e853;
+          background-blend-mode: darken;
+          border-radius: .5em 1em 1em .5em;
+          padding-left: .5em;
+          padding-right: .75em;
+          color: black;
+          text-shadow: 0 0 5px #616060;
+        }
+      }
+
+    }
+  }
+}
+
+@media screen and (max-width: 1600px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+}
