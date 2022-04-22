@@ -1,9 +1,6 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-
 plugins {
-  id("plugin.common")
+  id("plugin.kotlin-jvm")
   id("plugin.publishing")
-  id("dev.petuska.jekyll")
 }
 
 description = """
@@ -24,21 +21,4 @@ kotlin {
   }
 }
 
-jekyll {
-  environment.put("GIT_DISCOVERY_ACROSS_FILESYSTEM", "true")
-}
-
-tasks {
-  withType<dev.petuska.jekyll.task.JekyllBuildTask>().configureEach {
-    disableBuildCache.set(false)
-  }
-  val dokkaJekyll = named("dokkaJekyll", DokkaTask::class)
-  val dokkaHtml = named("dokkaHtml", DokkaTask::class)
-  named("jekyllMainAssemble", Copy::class) {
-    into("gen/api") {
-      from(dokkaJekyll)
-    }
-    from(rootDir.resolve("gen/CHANGELOG.md"))
-  }
-  jekyll.sourceSets.main.flatMap { it.serveTask }.get().incremental.set(true)
-}
+println("BUILD KOTLIN VERSION: $embeddedKotlinVersion")

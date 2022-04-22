@@ -3,6 +3,12 @@ plugins {
   id("com.gradle.enterprise") version "3.8.1"
 }
 
+refreshVersions {
+  extraArtifactVersionKeyRules(rootDir.resolve("versions.rules"))
+}
+
 rootProject.name = "npm-publish"
-include("npm-publish-gradle-plugin")
-rootDir.resolve("../jekyll-gradle").takeIf(File::exists)?.let(File::getAbsolutePath)?.let(::includeBuild)
+include(
+  "npm-publish-gradle-plugin",
+  "npm-publish-docs",
+)

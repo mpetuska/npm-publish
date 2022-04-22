@@ -1,5 +1,9 @@
 plugins {
   id("io.github.gradle-nexus.publish-plugin")
+  id("plugin.base")
+  if (System.getenv("CI") in arrayOf(null, "0", "false", "n")) {
+    id("plugin.git-hooks")
+  }
 }
 
 gradleEnterprise {
