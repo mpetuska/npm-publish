@@ -4,6 +4,7 @@ import dev.petuska.container.task.ContainerExecTask
 import org.gradle.api.tasks.UntrackedTask
 import java.io.File
 
+@Suppress("LeakingThis")
 @UntrackedTask(because = "Must always run")
 abstract class MikeExec(command: String) : ContainerExecTask("mike") {
   init {
@@ -18,6 +19,7 @@ abstract class MikeExec(command: String) : ContainerExecTask("mike") {
       resolve(".ssh/").let { containerVolumes.put(it, it) }
     }
     containerVolumes.put(project.rootDir, project.rootDir)
+    environment.put("HOME", System.getProperty("user.home"))
     environment.put("USER", System.getProperty("user.name"))
     environment.put("GIT_AUTHOR_NAME", "mike")
     environment.put("GIT_AUTHOR_EMAIL", "mike@mike.mike")
