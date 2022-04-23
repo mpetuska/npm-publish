@@ -1,0 +1,44 @@
+site_name: npm-publish
+site_author: Martynas Petuška
+site_description: >-
+  Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). 
+  Integrates seamlessly with Kotlin/JS/MPP plugin if applied, providing auto configurations.
+site_url: https://mpetuska.github.io/npm-publish
+repo_name: npm-publish
+repo_url: https://github.com/mpetuska/npm-publish
+remote_branch: gh-site
+edit_uri: edit/master/npm-publish-docs/src/pages/
+theme:
+  name: material
+  custom_dir: ${themeDir}
+  features:
+    - header.autohide
+    - search.suggest
+    - search.share
+    - content.code.annotate
+    - navigation.instant
+    - navigation.tracking
+    - navigation.indexes
+    - navigation.top
+    - navigation.tabs
+    - navigation.tabs.sticky
+  icon:
+    repo: fontawesome/brands/github
+  logo: ./api/images/logo-icon.svg
+  favicon: ./api/images/logo-icon.svg
+  palette:
+    - scheme: default
+      primary: black
+      accent: orange
+      media: "(prefers-color-scheme: light)"
+      toggle:
+        icon: material/lightbulb
+        name: Turn off the light
+    - scheme: slate
+      primary: black
+      accent: orange
+      media: "(prefers-color-scheme: dark)"
+      toggle:
+        icon: material/lightbulb-outline
+        name: Turn on the light
+copyright: Copyright &copy; Martynas Petuška

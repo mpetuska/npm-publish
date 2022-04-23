@@ -1,0 +1,2 @@
+docs_dir: ${srcDir}
+site_dir: ${outDir}

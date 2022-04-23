@@ -1,14 +1,15 @@
 package task
 
+import dev.petuska.container.task.ContainerExecTask
 import org.gradle.api.tasks.UntrackedTask
 
 @UntrackedTask(because = "Must always run")
-abstract class MkDocsExec(executable: String) : ContainerExecTask(executable) {
-  override val prefix: String = "mkdocs"
-
+abstract class MkDocsExec(command: String) : ContainerExecTask("mkdocs") {
   init {
     group = "mkdocs"
-    image.convention("squidfunk/mkdocs-material")
+    image.setFinal("docker.io/mpetuska/mkdocs-material-mike")
+    executable.setFinal(command)
+    version.convention("latest")
   }
 
   @UntrackedTask(because = "Must always run")

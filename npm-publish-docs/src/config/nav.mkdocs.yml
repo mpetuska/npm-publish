@@ -1,0 +1,17 @@
+nav:
+  - Home: index.md
+  - Quick Start: quick-start.md
+  - User Guide:
+      - User Guide: user-guide/index.md
+      - Configuration:
+          - Extension: user-guide/configuration/extension.md
+          - Package: user-guide/configuration/package.md
+          - Registry: user-guide/configuration/registry.md
+      - Tasks:
+          - NodeExecTask: user-guide/tasks/NodeExecTask.md
+          - NpmExecTask: user-guide/tasks/NpmExecTask.md
+          - NpmAssembleTask: user-guide/tasks/NpmAssembleTask.md
+          - NpmPackTask: user-guide/tasks/NpmPackTask.md
+          - NpmPublishTask: user-guide/tasks/NpmPublishTask.md
+  - API: api/
+  - Changelog: CHANGELOG.md

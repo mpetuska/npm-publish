@@ -15,5 +15,5 @@ dependencies {
   implementation("org.jetbrains.dokka:dokka-gradle-plugin:_")
   implementation("io.github.gradle-nexus:publish-plugin:_")
   implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:_")
-//  implementation("dev.petuska:jekyll-gradle-plugin:_")
+  implementation("dev.petuska:container-tasks-gradle-plugin:_")
 }
