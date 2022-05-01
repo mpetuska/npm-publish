@@ -1,5 +1,6 @@
 package dev.petuska.npm.publish.extension.domain.json
 
+import dev.petuska.npm.publish.util.unsafeCast
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -12,7 +13,7 @@ import org.gradle.api.tasks.Optional
  * A class representing [package.json](https://docs.npmjs.com/files/package.json) schema. Custom
  * fields can be added as regular map entries.
  */
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "TooManyFunctions")
 public abstract class PackageJson : JsonObject<Any>() {
 
   /** [name](https://docs.npmjs.com/files/package.json#name) */
@@ -163,6 +164,138 @@ public abstract class PackageJson : JsonObject<Any>() {
   @get:Optional
   public abstract val bundledDependencies: SetProperty<String>
 
+  // region DSL
+
+  /**
+   * Override and configure the bugs field
+   * @see [bugs]
+   */
+  public fun bugs(action: Action<Bugs>) {
+    bugs.configure(action)
+  }
+
+  /**
+   * Override and configure the author field
+   * @see [author]
+   */
+  public fun author(action: Action<Person>) {
+    author.configure(action)
+  }
+
+  /**
+   * Create and configure an instance of [Person]
+   * @see [contributors]
+   * @see [author]
+   */
+  public fun Person(action: Action<Person>): Person = instance(Person::class).apply(action::execute)
+
+  /**
+   * Override and configure the bin field
+   * @see [bin]
+   */
+  public fun bin(action: Action<JsonObject<String>>) {
+    bin.configure(action)
+  }
+
+  /**
+   * Override and configure the man field
+   * @see [man]
+   */
+  public fun man(action: Action<JsonObject<String>>) {
+    man.configure(action)
+  }
+
+  /**
+   * Override and configure the directories field
+   * @see [directories]
+   */
+  public fun directories(action: Action<Directories>) {
+    directories.configure(action)
+  }
+
+  /**
+   * Override and configure the repository field
+   * @see [repository]
+   */
+  public fun repository(action: Action<Repository>) {
+    repository.configure(action)
+  }
+
+  /**
+   * Override and configure the scripts field
+   * @see [scripts]
+   */
+  public fun scripts(action: Action<JsonObject<String>>) {
+    scripts.configure(action)
+  }
+
+  /**
+   * Override and configure the config field
+   * @see [config]
+   */
+  public fun config(action: Action<JsonObject<Any>>) {
+    config.configure(action)
+  }
+
+  /**
+   * Override and configure the engines field
+   * @see [engines]
+   */
+  public fun engines(action: Action<JsonObject<String>>) {
+    engines.configure(action)
+  }
+
+  /**
+   * Override and configure the publishConfig field
+   * @see [publishConfig]
+   */
+  public fun publishConfig(action: Action<PublishConfig>) {
+    publishConfig.configure(action)
+  }
+
+  /**
+   * Override and configure the dependencies field
+   * @see [dependencies]
+   */
+  public fun dependencies(action: Action<JsonObject<String>>) {
+    dependencies.configure(action)
+  }
+
+  /**
+   * Override and configure the devDependencies field
+   * @see [devDependencies]
+   */
+  public fun devDependencies(action: Action<JsonObject<String>>) {
+    devDependencies.configure(action)
+  }
+
+  /**
+   * Override and configure the peerDependencies field
+   * @see [peerDependencies]
+   */
+  public fun peerDependencies(action: Action<JsonObject<String>>) {
+    peerDependencies.configure(action)
+  }
+
+  /**
+   * Override and configure the optionalDependencies field
+   * @see [optionalDependencies]
+   */
+  public fun optionalDependencies(action: Action<JsonObject<String>>) {
+    optionalDependencies.configure(action)
+  }
+
+  /**
+   * Set a custom object value for this [JsonObject]
+   * @receiver property key
+   * @param value configuration to apply to a new [JsonObject] instance
+   */
+  public infix fun String.by(value: Action<JsonObject<Any>>) {
+    this by instance(JsonObject::class).also { value.execute(it.unsafeCast()) }
+  }
+
+  // endregion
+
   @Suppress("ComplexMethod")
   override fun finalise(): MutableMap<String, Any> = super.finalise().apply {
     name.finalOrNull?.let { put("name", it) }
@@ -195,24 +328,4 @@ public abstract class PackageJson : JsonObject<Any>() {
     optionalDependencies.finalOrNull?.let { put("optionalDependencies", it.finalise()) }
     bundledDependencies.final?.let { put("bundledDependencies", it) }
   }
-
-  // region DSL
-
-  /**
-   * Override and configure the author field
-   * @see [author]
-   */
-  public fun author(action: Action<Person>) {
-    author.configure(action)
-  }
-
-  /**
-   * Override and configure the repository field
-   * @see [repository]
-   */
-  public fun repository(action: Action<Repository>) {
-    repository.configure(action)
-  }
-
-  // endregion
 }

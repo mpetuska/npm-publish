@@ -1,6 +1,5 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/gitpod-ready_to_code-blue?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/mpetuska/npm-publish)
-[![Slack chat](https://img.shields.io/badge/kotlinlang-%23npm--publish-green?logo=slack&style=flat-square)](https://kotlinlang.slack.com/archives/C01LQTET9P1)
-[![Dokka docs](https://img.shields.io/badge/docs-dokka-orange?style=flat-square)](http://mpetuska.github.io/npm-publish)
+[![Slack chat](https://img.shields.io/badge/kotlinlang-%23npm--publish-green?logo=slack&style=flat-square)](https://kotlinlang.slack.com/channels/npm-publish)
+[![Dokka docs](https://img.shields.io/badge/docs-dokka-orange?style=flat-square)](http://mpetuska.github.io/npm-publish/api)
 [![Version gradle-plugin-portal](https://img.shields.io/maven-metadata/v?label=gradle%20plugin%20portal&logo=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fdev.petuska%2Fnpm-publish%2Fmaven-metadata.xml&style=flat-square)](https://plugins.gradle.org/plugin/dev.petuska.npm.publish)
 [![Version maven-central](https://img.shields.io/maven-central/v/dev.petuska/npm-publish?logo=apache-maven&style=flat-square)](https://mvnrepository.com/artifact/dev.petuska/npm-publish/latest)
 
@@ -9,7 +8,7 @@
 Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with
 Kotlin/JS/MPP plugin if applied, providing auto configurations.
 
-> The plugin was last tested with `JDK 11`, `Kotlin 1.6.10` & `Gradle 7.4.2`
+> The plugin was last tested with `JDK 11`, `Kotlin 1.6.21` & `Gradle 7.4.2`
 
 ## Setup
 

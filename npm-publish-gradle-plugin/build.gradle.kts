@@ -20,5 +20,3 @@ kotlin {
     testRuntimeOnly(Testing.junit.jupiter.engine)
   }
 }
-
-println("BUILD KOTLIN VERSION: $embeddedKotlinVersion")

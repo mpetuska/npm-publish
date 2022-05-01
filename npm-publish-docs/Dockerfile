@@ -2,5 +2,3 @@
 ARG mkdVersion
 FROM squidfunk/mkdocs-material:$mkdVersion
 RUN pip install mike
-RUN git config --global user.name mike
-RUN git config --global user.email mike@mike.mike

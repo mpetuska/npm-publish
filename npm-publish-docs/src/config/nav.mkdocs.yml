@@ -4,10 +4,13 @@ nav:
   - User Guide:
       - User Guide: user-guide/index.md
       - Configuration:
+          - Configuration: user-guide/configuration/index.md
           - Extension: user-guide/configuration/extension.md
           - Package: user-guide/configuration/package.md
           - Registry: user-guide/configuration/registry.md
+          - Properties: user-guide/configuration/properties.md
       - Tasks:
+          - Tasks: user-guide/tasks/index.md
           - NodeExecTask: user-guide/tasks/NodeExecTask.md
           - NpmExecTask: user-guide/tasks/NpmExecTask.md
           - NpmAssembleTask: user-guide/tasks/NpmAssembleTask.md

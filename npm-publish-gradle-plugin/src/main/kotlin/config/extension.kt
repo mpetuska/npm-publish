@@ -15,7 +15,7 @@ internal fun ProjectEnhancer.configure(extension: NpmPublishExtension) {
   )
   extension.readme.sysProjectEnvPropertyConvention("readme") { layout.projectDirectory.file(it) }
   extension.npmIgnore.sysProjectEnvPropertyConvention(
-    "readme",
+    "npmIgnore",
     provider { layout.projectDirectory.file(".npmignore") }
   ) { layout.projectDirectory.file(it) }
   extension.organization.sysProjectEnvPropertyConvention("organization")

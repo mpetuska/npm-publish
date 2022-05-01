@@ -28,41 +28,42 @@ kotlin {
   }
 }
 
-npmPublishing {
-  organization = group as String
-  repositories {
-    repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/")
+npmPublish {
+  organization.set(group as String)
+  registries {
+    register("GitHub") {
+      uri.set("https://npm.pkg.github.com/")
     }
   }
 
-  publications {
+  packages {
     named("browser") {
-      moduleName = "mpp-browser"
+      packageName.set("mpp-browser")
       packageJson {
-        // bundledDependencies = mutableSetOf("kotlin-test")
         repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
+          type.set("git")
+          url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
     }
     named("node") {
-      moduleName = "mpp-node"
+      packageName.set("mpp-node")
       packageJson {
-        author to "Custom Author"
-        keywords = jsonArray(
+        author {
+          name.set("Custom Author")
+        }
+        keywords.addAll(
           "kotlin"
         )
         publishConfig {
-          tag = "latest"
+          tag.set("latest")
         }
-        "customField" to jsonObject {
-          "customValues" to jsonArray(1, 2, 3)
+        "customObject" by {
+          "customValues" by arrayOf(1, 2, 3)
         }
         repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
+          type.set("git")
+          url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
     }

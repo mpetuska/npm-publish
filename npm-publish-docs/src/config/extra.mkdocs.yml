@@ -2,12 +2,12 @@ extra:
   generator: false
   analytics:
     provider: google
-    property: G-DVK22QBQZV
+    property: GTM-TWJ9KQW
   version:
     provider: mike
   social:
     - icon: fontawesome/brands/slack
-      link: https://kotlinlang.slack.com/archives/C01LQTET9P1
+      link: https://kotlinlang.slack.com/channels/npm-publish
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/MartynasPetuska
     - icon: fontawesome/brands/linkedin

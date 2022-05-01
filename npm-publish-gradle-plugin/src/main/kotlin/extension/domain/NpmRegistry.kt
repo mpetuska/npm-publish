@@ -21,7 +21,7 @@ public abstract class NpmRegistry : NamedInput {
   public abstract val access: Property<NpmAccess>
 
   /**
-   * NPM Registry uri to publish packages to.
+   * NPM registry uri to publish packages to.
    * Should include schema domain and path if required
    */
   @get:Input

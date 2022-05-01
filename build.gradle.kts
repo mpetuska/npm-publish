@@ -21,3 +21,12 @@ nexusPublishing {
     }
   }
 }
+
+println(
+  """
+BUILD VERSIONS
+  JDK: ${System.getProperty("java.version")}
+  KOTLIN: $embeddedKotlinVersion
+  Gradle: ${gradle.gradleVersion}
+""".trimIndent()
+)

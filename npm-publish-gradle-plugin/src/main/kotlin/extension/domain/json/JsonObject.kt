@@ -9,9 +9,6 @@ import org.gradle.api.tasks.*
  */
 public abstract class JsonObject<T : Any> : WithGradleFactories() {
 
-  @get:Input
-  protected abstract val extras: MapProperty<String, T>
-
   /**
    * Set a custom value
    * @param key of the value
@@ -29,6 +26,18 @@ public abstract class JsonObject<T : Any> : WithGradleFactories() {
   public operator fun set(key: String, value: Provider<T>) {
     extras.put(key, value)
   }
+
+  /**
+   * Set a custom value for this [JsonObject]
+   * @receiver property key
+   * @param value to set under the key
+   */
+  public infix fun String.by(value: T) {
+    set(this, value)
+  }
+
+  @get:Input
+  protected abstract val extras: MapProperty<String, T>
 
   protected val <V : T> Property<V>.finalOrNull: V?
     get() {

@@ -69,33 +69,32 @@ tasks {
     containerVolumes.put(outDir, outDir)
     outputs.dir(outDir)
   }
-  register("mkdocsDeploy", MkDocsExec.GhDeploy::class) {
-    dependsOn(docsAssemble)
-    workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
-    System.getenv("HOME")?.let(::File)?.run {
-      resolve(".gitconfig").let { containerVolumes.put(it, it) }
-      resolve(".ssh/").let { containerVolumes.put(it, it) }
-    }
-    containerVolumes.put(outDir, outDir)
-    environment.put("GIT_DISCOVERY_ACROSS_FILESYSTEM", "true")
-  }
-
-  register("mikeServe", MikeExec.Serve::class) {
-    dependsOn(docsAssemble)
-    workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
-  }
   register("mikeList", MikeExec.List::class) {
     dependsOn(docsAssemble)
+    workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
+  }
+  register("mikeSetDefault", MikeExec.SetDefault::class) {
+    dependsOn(docsAssemble)
+    workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
+  }
+  val mikeBuild = register("mikeBuild", MikeExec.Deploy::class) {
+    dependsOn(docsAssemble)
+    workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
+    args.addAll(
+      "--update-aliases",
+      "${project.version}",
+      "latest"
+    )
+  }
+  register("mikeServe", MikeExec.Serve::class) {
+    dependsOn(mikeBuild)
     workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
   }
   register("mikeDeploy", MikeExec.Deploy::class) {
     dependsOn(docsAssemble)
     workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
-  }
-  register("deploy", MikeExec.Deploy::class) {
-    dependsOn(docsAssemble)
-    workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
     args.addAll(
+      "--push",
       "--update-aliases",
       "${project.version}",
       "latest"
