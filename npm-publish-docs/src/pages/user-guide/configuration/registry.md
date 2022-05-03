@@ -1,7 +1,7 @@
 ## Summary
 
 The registries configure publication targets and their authentication. For each configured `NpmRegistry`
-and `NpmPackage` combination, 
+and `NpmPackage` combination,
 a unique `publish<PackageName>PackageTo<RegistryName>Registry` [NpmPublishTask](../tasks/NpmPublishTask.md) will be
 generated and added as a dependency to the `publish` lifecycle task.
 
@@ -11,6 +11,25 @@ The registries can be accessed and configured from a `build.gradle.kts` file via
 npmPublish {
   registries {
     ...
+  }
+}
+```
+
+## Shortcuts
+
+Some shortcuts are also available for common npm registries. These shortcuts simply name the registry and sets the
+appropriate uri for you. The names of the registries match the DSL name. Finally, the shortcuts are repeatable and will
+detect and configure existing registries on subsequent invocations.
+
+```kotlin title="build.gradle.kts"
+npmPublish {
+  registries {
+    npmjs {
+      authToken.set("obfuscated")
+    }
+    github {
+      authToken.set("obfuscated")
+    }
   }
 }
 ```

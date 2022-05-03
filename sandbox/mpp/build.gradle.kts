@@ -1,3 +1,5 @@
+import Orchid.Plugins.github
+
 plugins {
   kotlin("multiplatform")
   id("dev.petuska.npm.publish")
@@ -58,7 +60,7 @@ npmPublish {
         }
         "customField" by 1
         "customArray" by arrayOf(json {
-
+          "innerField" by true
         })
         repository {
           type.set("git")
@@ -71,7 +73,7 @@ npmPublish {
     npmjs {
       dry.set(true)
     }
-    gitHub {
+    github {
       dry.set(true)
     }
     register("custom") {

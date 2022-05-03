@@ -155,16 +155,11 @@ It uses standard Gradle's CopySpec to declare copying hierarchies and filtering 
 `package.json` customisation container. All values set here will override top-level configurations
 like [`types`](#types)
 
-### `packageJsonFile`
-
-Path to a static `package.json` file.
-If set, fully disregards all related `package.json` configurations and is used as-is.
-
 The container is modelled on top of Map-like structure with additional standard `package.json` fields added as explicit
 properties. This means that not only you can configure standard `package.json` file in a type-safe manner, but also add
 arbitrary fields of your own.
 
-```kotlin title=build.gradle.kts
+```kotlin title="build.gradle.kts"
 npmPublish {
   packages {
     named("js") {
@@ -183,6 +178,11 @@ npmPublish {
 }
 ```
 
+### `packageJsonFile`
+
+Path to a static `package.json` file.
+If set, fully disregards all related `package.json` configurations and is used as-is.
+
 ### `packageJsonTemplateFile`
 
 Path to a baseline `package.json` template file.
@@ -194,7 +194,7 @@ the [`packageJson`](#packagejson) and top-level options.
 Package's npm dependency container. It can be configured by invoking the property and using provided
 , `optional`, `peer`, `dev` and `normal` DSLs.
 
-```kotlin
+```kotlin title="build.gradle.kts"
 npmPublish {
   packages {
     named("js") {
@@ -210,5 +210,5 @@ npmPublish {
 ```
 
 !!! info
-Dependencies are deduplicated during resolution to void
-multiple occurrences of a dependency across different dependency scopes
+    Dependencies are deduplicated during resolution to avoid
+    multiple occurrences of a dependency across different dependency scopes

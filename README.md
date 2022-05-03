@@ -45,3 +45,13 @@ npmPublish {
 
 Full documentation can be found
 on [npm-publish.petuska.dev](https://npm-publish.petuska.dev/latest/user-guide/quick-start/)
+
+## Contributing
+
+See [CONTRIBUTING](.github/CONTRIBUTING.md)
+
+Thanks to all the people who contributed to npm-publish!
+
+<a href="https://github.com/mpetuska/npm-publish/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mpetuska/npm-publish" />
+</a>

@@ -16,6 +16,7 @@ tasks {
     outputs.upToDateWhen { false }
     destinationDir = mkdocsDir.resolve("source").also(outputs::dir)
     val readme = rootDir.resolve("README.md").also(inputs::file)
+    val license = rootDir.resolve("LICENSE").also(inputs::file)
     val changelog = rootDir.resolve("CHANGELOG.md").also(inputs::file)
     val srcDir = destinationDir.resolve("src").also(outputs::dir)
     val dokkaDir = srcDir.resolve("api").also(outputs::dir)
@@ -23,8 +24,12 @@ tasks {
     into(srcDir.relativeTo(destinationDir)) {
       from(src.resolve("assets"))
       from(src.resolve("pages"))
+      from(rootDir.resolve(".github/CONTRIBUTING.md"))
       from(readme) {
         rename("README.md", "index.md")
+      }
+      from(license) {
+        rename("LICENSE", "LICENSE.md")
       }
       from(changelog)
     }
@@ -54,6 +59,10 @@ tasks {
           configFile.appendText(it.readText())
         }
         deleteRecursively()
+      }
+      srcDir.resolve("index.md").run {
+        val content = readText().replace(".github/CONTRIBUTING.md", "CONTRIBUTING.md")
+        writeText(content)
       }
     }
 

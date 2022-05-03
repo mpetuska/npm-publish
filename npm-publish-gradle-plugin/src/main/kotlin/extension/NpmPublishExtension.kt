@@ -120,11 +120,14 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
    * @param action to apply
    * @see [NpmRegistry]
    */
-  public fun NpmRegistries.npmjs(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> =
-    register("npmjs") {
-      it.uri.set(URI("https://registry.npmjs.org"))
-      action.execute(it)
+  public fun NpmRegistries.npmjs(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> {
+    val name = "npmjs"
+    val config: NpmRegistry.() -> Unit = {
+      uri.set(URI("https://registry.npmjs.org"))
+      action.execute(this)
     }
+    return if (names.contains(name)) named(name, config) else register(name, config)
+  }
 
   /**
    * Registers GitHub Packages [npm.pkg.github.com](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) registry.
@@ -132,11 +135,14 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
    * @param action to apply
    * @see [NpmRegistry]
    */
-  public fun NpmRegistries.gitHub(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> =
-    register("gitHub") {
-      it.uri.set(URI("https://npm.pkg.github.com/"))
-      action.execute(it)
+  public fun NpmRegistries.github(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> {
+    val name = "github"
+    val config: NpmRegistry.() -> Unit = {
+      uri.set(URI("https://npm.pkg.github.com"))
+      action.execute(this)
     }
+    return if (names.contains(name)) named(name, config) else register(name, config)
+  }
 
   // endregion
 }

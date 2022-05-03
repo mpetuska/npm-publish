@@ -16,5 +16,6 @@ nav:
           - NpmAssembleTask: user-guide/tasks/NpmAssembleTask.md
           - NpmPackTask: user-guide/tasks/NpmPackTask.md
           - NpmPublishTask: user-guide/tasks/NpmPublishTask.md
-  - API: api/
+  - API: api/index.html
   - Changelog: CHANGELOG.md
+  - License: LICENSE.md
