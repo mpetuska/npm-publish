@@ -11,15 +11,15 @@ kotlin {
     binaries.library()
   }
   js("node") {
-    useCommonJs()
     nodejs()
+    useCommonJs()
     binaries.library()
   }
 
   sourceSets {
     all {
       dependencies {
-        implementation("io.ktor:ktor-client-core:_")
+        implementation(Ktor.client.core)
         implementation(devNpm("axios", "*"))
         api(npm("snabbdom", "*"))
       }
@@ -28,43 +28,55 @@ kotlin {
   }
 }
 
-npmPublishing {
-  organization = group as String
-  repositories {
-    repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/")
-    }
-  }
+npmPublish {
+  organization.set(group as String)
 
-  publications {
+  packages {
     named("browser") {
-      moduleName = "mpp-browser"
+      packageName.set("mpp-browser")
       packageJson {
-        // bundledDependencies = mutableSetOf("kotlin-test")
         repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
+          type.set("git")
+          url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
     }
     named("node") {
-      moduleName = "mpp-node"
+      packageName.set("mpp-node")
       packageJson {
-        author to "Custom Author"
-        keywords = jsonArray(
+        author {
+          name.set("Custom Author")
+        }
+        keywords.addAll(
           "kotlin"
         )
         publishConfig {
-          tag = "latest"
+          tag.set("latest")
         }
-        "customField" to jsonObject {
-          "customValues" to jsonArray(1, 2, 3)
+        "customObject" by {
+          "customValues" by arrayOf(1, 2, 3)
         }
+        "customField" by 1
+        "customArray" by arrayOf(json {
+          "innerField" by true
+        })
         repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
+          type.set("git")
+          url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
+    }
+  }
+  registries {
+    npmjs {
+      dry.set(true)
+    }
+    github {
+      dry.set(true)
+    }
+    register("custom") {
+      uri.set(uri("https://registry.custom.com/"))
+      dry.set(true)
     }
   }
 }

@@ -8,14 +8,14 @@ on:
     branches:
       - '**'
   workflow_dispatch:
-
-env:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  workflow_call:
 
 jobs:
   check:
     name: Check on ubuntu-latest
     runs-on: ubuntu-latest
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=true"
     steps:
       - uses: actions/checkout@v2
 
@@ -38,7 +38,25 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Gradle Check
-        run: ./gradlew check --scan
+        run: ./gradlew detekt check --scan
+
+      - name: Make artifact location URIs relative
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          cp ${{ github.workspace }}/npm-publish-gradle-plugin/build/reports/detekt/detekt.sarif ${{ github.workspace }}/detekt.sarif.json
+          echo "$(
+            jq \
+              --arg github_workspace ${{ github.workspace }} \
+              '. | ( .runs[].results[].locations[].physicalLocation.artifactLocation.uri |= if test($github_workspace) then .[($github_workspace | length | . + 1):] else . end )' \
+              ${{ github.workspace }}/detekt.sarif.json
+          )" > ${{ github.workspace }}/detekt.sarif.json
+
+      - uses: github/codeql-action/upload-sarif@v1
+        if: ${{ always() }}
+        with:
+          sarif_file: ${{ github.workspace }}/detekt.sarif.json
+          checkout_path: ${{ github.workspace }}
 
       - name: Gradle Assemble
         run: ./gradlew assemble --scan
@@ -54,7 +72,7 @@ jobs:
         working-directory: sandbox
         run: ./gradlew check --scan
 
-      - name: Gradle Assemble
+      - name: Gradle Assemble Sandbox
         working-directory: sandbox
         run: ./gradlew assemble pack --scan
 

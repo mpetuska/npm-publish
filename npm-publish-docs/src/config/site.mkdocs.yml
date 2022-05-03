@@ -1,0 +1,11 @@
+site_name: npm-publish
+site_author: Martynas Petuška
+site_description: >-
+  Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). 
+  Integrates seamlessly with Kotlin/JS/MPP plugin if applied, providing auto configurations.
+site_url: https://mpetuska.github.io/npm-publish
+repo_name: npm-publish
+repo_url: https://github.com/mpetuska/npm-publish
+remote_branch: gh-pages
+edit_uri: edit/master/npm-publish-docs/src/pages/
+copyright: Copyright &copy; Martynas Petuška

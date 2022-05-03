@@ -1,0 +1,34 @@
+config:
+  warningsAsErrors: true
+
+comments:
+  active: true
+  CommentOverPrivateFunction:
+    active: false
+  CommentOverPrivateProperty:
+    active: false
+  DeprecatedBlockTag:
+    active: true
+  OutdatedDocumentation:
+    active: true
+    allowParamOnConstructorProperties: false
+  UndocumentedPublicClass:
+    active: true
+  UndocumentedPublicFunction:
+    active: true
+  UndocumentedPublicProperty:
+    active: true
+
+style:
+  WildcardImport:
+    active: false
+  UnnecessaryAbstractClass:
+    active: false
+  MaxLineLength:
+    active: false
+
+formatting:
+  NoWildcardImports:
+    active: false
+  Indentation:
+    indentSize: 2

@@ -12,7 +12,7 @@ kotlin {
   dependencies {
     implementation(npm("axios", "*"))
     api(devNpm("snabbdom", "*"))
-    implementation("io.ktor:ktor-client-core:_")
+    implementation(Ktor.client.core)
   }
   sourceSets {
     all {
@@ -21,24 +21,30 @@ kotlin {
   }
 }
 
-npmPublishing {
-  organization = group as String
-
-  publications {
+npmPublish {
+  organization.set(group as String)
+  packages {
     named("js") {
-      packageJsonTemplateFile = projectDir.resolve("../template.package.json")
+      packageJsonTemplateFile.set(projectDir.resolve("../template.package.json"))
       packageJson {
-        author { name = "Martynas Petuška" }
+        author { name.set("Martynas Petuška") }
         repository {
-          type = "git"
-          url = "https://github.com/mpetuska/npm-publish.git"
+          type.set("git")
+          url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
     }
   }
-  repositories {
-    repository("GitHub") {
-      registry = uri("https://npm.pkg.github.com/")
+  registries {
+    npmjs {
+      dry.set(true)
+    }
+    github {
+      dry.set(true)
+    }
+    register("custom") {
+      uri.set(uri("https://registry.custom.com/"))
+      dry.set(true)
     }
   }
 }

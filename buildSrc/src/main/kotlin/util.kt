@@ -1,6 +1,6 @@
-import groovy.lang.Closure
-import org.gradle.api.provider.Property
-import java.nio.charset.Charset
+import groovy.lang.*
+import java.nio.charset.*
+import org.gradle.api.provider.*
 
 typealias Lambda<R, V> = R.() -> V
 

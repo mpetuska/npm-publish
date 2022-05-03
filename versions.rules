@@ -1,0 +1,4 @@
+gradle.plugin.com.eden:orchidPlugin
+                       ^^^^^^
+io.github.javaeden.orchid*
+                   ^^^^^^

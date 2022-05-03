@@ -1,0 +1,18 @@
+extra:
+  generator: false
+  analytics:
+    provider: google
+    property: GTM-TWJ9KQW
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/slack
+      link: https://kotlinlang.slack.com/channels/npm-publish
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/MartynasPetuska
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/petuska
+    - icon: fontawesome/brands/github
+      link: https://github.com/mpetuska
+    - icon: fontawesome/solid/envelope
+      link: mailto:martynas@petuska.dev

@@ -1,0 +1,42 @@
+name: Deploy Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Deploy version"
+        required: true
+        type: string
+    workflow_call:
+      inputs:
+        version:
+          description: "Deploy version"
+          required: true
+          type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
+      - name: Restore Gradle cache
+        id: cache
+        uses: actions/cache@v2.1.7
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/yarn
+            ~/.gradle/nodejs
+            ~/.konan
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - uses: actions/checkout@v2
+      - run: pip install mkdocs-material mike
+      - run: ./gradlew :npm-publish-docs:mikeDeploy -Pversion='${{ inputs.version }}'
