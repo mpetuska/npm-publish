@@ -10,13 +10,12 @@ on:
   workflow_dispatch:
   workflow_call:
 
-env:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-
 jobs:
   check:
     name: Check on ubuntu-latest
     runs-on: ubuntu-latest
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=true"
     steps:
       - uses: actions/checkout@v2
 
