@@ -16,14 +16,17 @@ Here's a bare minimum setup when using the plugin standalone or together with on
     
     npmPublishing {
       registries {
-        npmjs {
+        register("npmjs") {
+          uri.set(uri("https://registry.npmjs.org")) // (2)
           authToken.set("obfuscated")
         }
       }
     }
     ```
 
-    1.  `nodejs()` works too
+    1. `nodejs()` works too
+    2. `uri` can also be set from String as `uri.set("https://registry.npmjs.org")` 
+       in which case the plugin will construct an URI instance from the string for you
 
 === "Kotlin/JS"
     ```kotlin title="build.gradle.kts"
@@ -41,14 +44,17 @@ Here's a bare minimum setup when using the plugin standalone or together with on
     
     npmPublishing {
       registries {
-        npmjs {
+        register("npmjs") {
+          uri.set("https://registry.npmjs.org") // (2)
           authToken.set("obfuscated")
         }
       }
     }
     ```
 
-    1.  `nodejs()` works too
+    1. `nodejs()` works too
+    2. `uri` can also be set from String as `uri.set("https://registry.npmjs.org")` 
+       in which case the plugin will construct an URI instance from the string for you
 
 === "Standalone"
     ```kotlin title="build.gradle.kts"
@@ -63,12 +69,16 @@ Here's a bare minimum setup when using the plugin standalone or together with on
         }
       }
       registries {
-        npmjs {
+        register("npmjs") {
+          uri.set("https://registry.npmjs.org") // (1)
           authToken.set("obfuscated")
         }
       }
     }
     ```
+
+    1. `uri` can also be set from String as `uri.set("https://registry.npmjs.org")` 
+       in which case the plugin will construct an URI instance from the string for you
 
 This setup would produce the following tasks:
 
@@ -77,4 +87,5 @@ This setup would produce the following tasks:
 * `publishJsPackageToNpmjsRegistry: NpmPublishTask`
 
 !!! info
-    One publish task is created for every `package` + `registry` combination
+    One publish task is created for every `package` + `registry` combination. 
+    The task is named as `publish<PackageName>PackageTo<RegistryName>Registry`

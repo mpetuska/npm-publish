@@ -19,12 +19,23 @@ npmPublish {
 
 === "Properties"
 
-| Property                  | Type      | Default                                              | When Kotlin plugin is present |
-|:--------------------------|-----------|:-----------------------------------------------------|-------------------------------|
-| [`access`](#access)       | NpmAccess | [`NpmPublishExtension::access`](extension.md#access) |                               |
-| [`uri`](#uri)             | URI       |                                                      |                               |
-| [`otp`](#otp)             | String    |                                                      |                               |
-| [`authToken`](#authtoken) | String    |                                                      |                               |
+    | Property                  | Type      | Default                                              | When Kotlin plugin is present |
+    |:--------------------------|-----------|:-----------------------------------------------------|-------------------------------|
+    | [`access`](#access)       | NpmAccess | [`NpmPublishExtension::access`](extension.md#access) |                               |
+    | [`dry`](#dry)             | NpmAccess | [`NpmPublishExtension::dry`](extension.md#dry)       |                               |
+    | [`uri`](#uri)             | URI       |                                                      |                               |
+    | [`otp`](#otp)             | String    |                                                      |                               |
+    | [`authToken`](#authtoken) | String    |                                                      |                               |
+
+=== "Keys"
+
+    | Property                  | CLI | System/Gradle                           | Environment                             |
+    |:--------------------------|-----|:----------------------------------------|-----------------------------------------|
+    | [`access`](#access)       |     | `npm.publish.registry.<name>.access`    | `NPM_PUBLISH_REGISTRY_<NAME>_ACCESS`    |
+    | [`dry`](#dry)             |     | `npm.publish.registry.<name>.dry`       | `NPM_PUBLISH_REGISTRY_<NAME>_DRY`       |
+    | [`uri`](#uri)             |     | `npm.publish.registry.<name>.uri`       | `NPM_PUBLISH_REGISTRY_<NAME>_URI`       |
+    | [`otp`](#otp)             |     | `npm.publish.registry.<name>.otp`       | `NPM_PUBLISH_REGISTRY_<NAME>_OTP`       |
+    | [`authToken`](#authToken) |     | `npm.publish.registry.<name>.authToken` | `NPM_PUBLISH_REGISTRY_<NAME>_AUTHTOKEN` |
 
 === "Usage"
 
@@ -33,6 +44,7 @@ npmPublish {
       registries {
         register("npmjs") {
           access.set(RESTRICTED)
+          dry.set(true)
           uri.set(uri("https://registry.npmjs.org")) // (1)
           otp.set("obfuscated")
           authToken.set("obfuscated")
@@ -48,6 +60,10 @@ npmPublish {
 
 Registry access.
 [More info](https://docs.npmjs.com/package-scope-access-level-and-visibility)
+
+### `dry`
+
+Overrides [NpmPublishExtension::dry](extension.md#dry) value for this registry
 
 ### `uri`
 

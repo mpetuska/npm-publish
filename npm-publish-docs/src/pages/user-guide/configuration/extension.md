@@ -27,27 +27,26 @@ npmPublish {
     | [`packages`](#packages)         | NpmPackages   |                          |                                 |
     | [`registries`](#registries)     | NpmRegistries |                          |                                 |
 
-=== "CLI Keys"
+=== "Keys"
 
-    | Property                        | CLI | System/Gradle                     | Environment                |
-    |:--------------------------------|-----|:----------------------------------|----------------------------|
-    | [`nodeHome`](#nodehome)         |     | `npm.publish.<name>.nodeHome`     | `NPM_PUBLISH_NODEHOME`     |
-    | [`readme`](#readme)             |     | `npm.publish.<name>.readme`       | `NPM_PUBLISH_README`       |
-    | [`npmIgnore`](#npmignore)       |     | `npm.publish.<name>.npmIgnore`    | `NPM_PUBLISH_NPMIGNORE`    |
-    | [`organization`](#organization) |     | `npm.publish.<name>.organization` | `NPM_PUBLISH_ORGANIZATION` |
-    | [`version`](#version)           |     | `npm.publish.<name>.version`      | `NPM_PUBLISH_VERSION`      |
-    | [`access`](#access)             |     | `npm.publish.<name>.access`       | `NPM_PUBLISH_ACCESS`       |
-    | [`dry`](#dry)                   |     | `npm.publish.<name>.dry`          | `NPM_PUBLISH_DRY`          |
-    | [`packages`](#packages)         |     |                                   |                            |
-    | [`registries`](#registries)     |     |                                   |                            |
-
+    | Property                        | CLI | System/Gradle              | Environment                |
+    |:--------------------------------|-----|:---------------------------|----------------------------|
+    | [`nodeHome`](#nodehome)         |     | `npm.publish.nodeHome`     | `NPM_PUBLISH_NODEHOME`     |
+    | [`readme`](#readme)             |     | `npm.publish.readme`       | `NPM_PUBLISH_README`       |
+    | [`npmIgnore`](#npmignore)       |     | `npm.publish.npmIgnore`    | `NPM_PUBLISH_NPMIGNORE`    |
+    | [`organization`](#organization) |     | `npm.publish.organization` | `NPM_PUBLISH_ORGANIZATION` |
+    | [`version`](#version)           |     | `npm.publish.version`      | `NPM_PUBLISH_VERSION`      |
+    | [`access`](#access)             |     | `npm.publish.access`       | `NPM_PUBLISH_ACCESS`       |
+    | [`dry`](#dry)                   |     | `npm.publish.dry`          | `NPM_PUBLISH_DRY`          |
+    | [`packages`](#packages)         |     |                            |                            |
+    | [`registries`](#registries)     |     |                            |                            |
 
 === "Usage"
 
     ```kotlin title="build.gradle.kts"
     npmPublish {
       nodeHome.set(File("/path/to/node"))
-      readme.set(rootDir.resolve("REAMDE.md"))
+      readme.set(rootDir.resolve("README.md"))
       npmIgnore.set(projectDir.resolve(".npmIgnore"))
       organization.set("${project.group}")
       version.set("${project.version}")

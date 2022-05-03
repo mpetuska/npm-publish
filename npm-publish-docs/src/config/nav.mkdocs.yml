@@ -1,8 +1,8 @@
 nav:
   - Home: index.md
-  - Quick Start: quick-start.md
   - User Guide:
       - User Guide: user-guide/index.md
+      - Quick Start: user-guide/quick-start.md
       - Configuration:
           - Configuration: user-guide/configuration/index.md
           - Extension: user-guide/configuration/extension.md
