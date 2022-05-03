@@ -1,5 +1,3 @@
-import Orchid.Plugins.github
-
 plugins {
   kotlin("multiplatform")
   id("dev.petuska.npm.publish")
@@ -13,8 +11,8 @@ kotlin {
     binaries.library()
   }
   js("node") {
-    useCommonJs()
     nodejs()
+    useCommonJs()
     binaries.library()
   }
 

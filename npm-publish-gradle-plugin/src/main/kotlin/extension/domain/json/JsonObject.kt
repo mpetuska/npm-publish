@@ -79,12 +79,16 @@ public abstract class JsonObject<T : Any> : WithGradleFactories() {
   public open fun finalise(): MutableMap<String, T> = mutableMapOf<String, T>().apply {
     extras.finalizeValue()
     extras.orNull?.map { (k, v) ->
-      val value = when (v) {
-        is Provider<*> -> v.orNull
-        is JsonObject<*> -> v.finalise()
-        else -> v
-      }
+      val value = finaliseValue(v)
       put(k, value.unsafeCast())
     }
+  }
+
+  private fun finaliseValue(value: Any?): Any? = when (value) {
+    is Provider<*> -> value.orNull
+    is JsonObject<*> -> value.finalise()
+    is Array<*> -> value.map(::finaliseValue)
+    is Collection<*> -> value.map(::finaliseValue)
+    else -> value
   }
 }
