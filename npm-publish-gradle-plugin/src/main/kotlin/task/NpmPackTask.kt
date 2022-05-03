@@ -18,7 +18,7 @@ import org.gradle.api.tasks.options.Option
 import java.io.File
 
 /**
- * A task to pack a tgs archive for the given package
+ * A task to pack a `.tgz` archive for the given package
  */
 @CacheableTask
 @Suppress("LeakingThis")
@@ -43,10 +43,19 @@ public abstract class NpmPackTask : NpmExecTask() {
   /**
    * Output file to pack the publication to.
    *
-   * Defaults to `build/packages/<name>.tgz`
+   * Defaults to `build/packages/<scope>-<name>-<version>.tgz`
    */
   @get:OutputFile
   public abstract val outputFile: RegularFileProperty
+
+  /**
+   * Sets [outputFile]
+   * @param path to the output file
+   */
+  @Option(option = "outputFile", description = "Path to the output file")
+  public fun outputFile(path: String) {
+    outputFile.set(File(path))
+  }
 
   init {
     group = "build"

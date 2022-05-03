@@ -40,7 +40,7 @@ npmPublish {
     npmjs {
       dry.set(true)
     }
-    gitHub {
+    github {
       dry.set(true)
     }
     register("custom") {

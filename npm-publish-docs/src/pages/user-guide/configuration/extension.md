@@ -17,9 +17,9 @@ npmPublish {
 
     | Property                        | Type          | Default                  | When Kotlin plugin is present   |
     |:--------------------------------|---------------|:-------------------------|---------------------------------|
-    | [`nodeHome`](#nodehome)         | File          | `NODE_HOME` env variable | `kotlinNodeJsSetup` task output |
-    | [`readme`](#readme)             | File          |                          |                                 |
-    | [`npmIgnore`](#npmignore)       | File          | `$projectDir/.npmignore` |                                 |
+    | [`nodeHome`](#nodehome)         | Directory     | `NODE_HOME` env variable | `kotlinNodeJsSetup` task output |
+    | [`readme`](#readme)             | RegularFile   |                          |                                 |
+    | [`npmIgnore`](#npmignore)       | RegularFile   | `$projectDir/.npmignore` |                                 |
     | [`organization`](#organization) | String        |                          |                                 |
     | [`version`](#version)           | String        | `Project::version`       |                                 |
     | [`access`](#access)             | NpmAccess     | `NpmAccess.PUBLIC`       |                                 |

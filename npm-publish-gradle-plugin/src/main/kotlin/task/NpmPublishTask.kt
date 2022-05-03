@@ -17,7 +17,7 @@ import org.gradle.api.tasks.UntrackedTask
 import org.gradle.api.tasks.options.Option
 
 /**
- * A publishing task that publishes a given package to a given repository.
+ * A publishing task that publishes a given package to a given registry.
  */
 @Suppress("LeakingThis")
 @UntrackedTask(because = "Must always run")

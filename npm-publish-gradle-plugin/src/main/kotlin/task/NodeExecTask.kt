@@ -11,8 +11,10 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
+import java.io.File
 
 /**
  * Basic task for executing various node commands. Provides access to node executable.
@@ -28,7 +30,16 @@ public abstract class NodeExecTask : DefaultTask(), PluginLogger {
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
   public abstract val nodeHome: DirectoryProperty
 
-  /** Main Node executable. Allows for executing any js script from your builds. */
+  /**
+   * Sets [nodeHome]
+   * @param path to the node directory
+   */
+  @Option(option = "nodeNome", description = "Base NodeJS directory path")
+  public fun nodeHome(path: String) {
+    nodeHome.set(File(path))
+  }
+
+  /** Main NodeJS executable. Allows for executing any js script from your builds. */
   @get:InputFile
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
   public val node: Provider<RegularFile> = nodeHome.file(

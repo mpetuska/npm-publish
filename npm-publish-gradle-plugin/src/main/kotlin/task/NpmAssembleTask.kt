@@ -19,6 +19,8 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
+import java.io.File
 
 /**
  * A task to assemble all required files for a given [NpmPackage].
@@ -41,6 +43,15 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   /** Output directory to assemble the package to. */
   @get:OutputDirectory
   public abstract val destinationDir: DirectoryProperty
+
+  /**
+   * Sets [destinationDir]
+   * @param path to the output directory
+   */
+  @Option(option = "nodeNome", description = "Output directory to assemble the package to")
+  public fun destinationDir(path: String) {
+    destinationDir.set(File(path))
+  }
 
   /**
    * Configuration DSL allowing to modify a given package config.

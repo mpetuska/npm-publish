@@ -130,7 +130,7 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   }
 
   /**
-   * Registers GitHub Packages [npm.pkg.github.com](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) registry.
+   * Registers [GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) registry.
    * [More info](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages)
    * @param action to apply
    * @see [NpmRegistry]
