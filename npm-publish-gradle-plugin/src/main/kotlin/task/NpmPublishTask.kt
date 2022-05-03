@@ -13,12 +13,14 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.UntrackedTask
 import org.gradle.api.tasks.options.Option
 
 /**
  * A publishing task that publishes a given package to a given repository.
  */
 @Suppress("LeakingThis")
+@UntrackedTask(because = "Must always run")
 public abstract class NpmPublishTask : NpmExecTask() {
   /**
    * A registry to publish to

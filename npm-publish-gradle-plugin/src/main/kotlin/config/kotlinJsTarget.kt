@@ -23,23 +23,27 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency as KJsNpmDepende
 
 internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   if (target !is KotlinJsIrTarget) {
-    info { "${target.name} Kotlin/JS target is not using IR compiler - skipping..." }
+    warn { "${target.name} Kotlin/JS target is not using IR compiler - skipping..." }
   } else {
 
     extension.packages.register(target.name) { pkg ->
       val binary = provider<JsIrBinary> {
         when (val it = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }) {
           is Library -> it
-          is Executable -> error(
-            "Kotlin/JS executable binaries are not valid npm package targets. " +
-              "Consider switching to Kotlin/JS library binary:\n" + """
-            kotlin {
-              js(IR) {
-                binaries.library()
-              }
+          is Executable -> {
+            warn {
+              """
+                Kotlin/JS executable binaries are not valid npm package targets.
+                Consider switching to Kotlin/JS library binary:
+                  kotlin {
+                    js(IR) {
+                      binaries.library()
+                    }
+                  }
+              """.trimIndent()
             }
-            """.trimIndent()
-          )
+            null
+          }
           null -> null
           !is JsIrBinary -> error(
             "Legacy binaries are no longer supported. " +
@@ -71,7 +75,6 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
         files.from(outputFile.map(File::getParentFile))
-//        files.from(typesFile)
         files.from(processResourcesTask.map(Copy::getDestinationDir))
       }
     }

@@ -16,6 +16,8 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 
 /**
  * The main configuration for a package
@@ -74,6 +76,7 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
    */
   @get:InputFile
   @get:Optional
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   public abstract val readme: RegularFileProperty
 
   /**
@@ -83,12 +86,14 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
    */
   @get:InputFile
   @get:Optional
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   public abstract val npmIgnore: RegularFileProperty
 
   /**
    * Files that should be assembled for this package
    */
   @get:InputFiles
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   public abstract val files: ConfigurableFileCollection
 
   /**
@@ -107,6 +112,7 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
    */
   @get:InputFile
   @get:Optional
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   public abstract val packageJsonFile: RegularFileProperty
 
   /**
@@ -116,6 +122,7 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
    */
   @get:InputFile
   @get:Optional
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   public abstract val packageJsonTemplateFile: RegularFileProperty
 
   /**
