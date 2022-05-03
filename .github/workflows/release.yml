@@ -36,6 +36,7 @@ jobs:
       version: ${{ steps.resolve.outputs.version }}
     steps:
       - name: resolve
+        id: resolve
         run: |
           VERSION=${VERSION:=${{ github.event.inputs.version }}}
           VERSION=${VERSION/v}
