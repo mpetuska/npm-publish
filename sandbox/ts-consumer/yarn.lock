@@ -14,33 +14,30 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
-"@mpetuska/both@../both/build/publications/npm/js":
+"@mpetuska/both@../both/build/packages/js":
   version "0.0.0"
   dependencies:
     axios "*"
 
-"@mpetuska/browser@../browser/build/publications/npm/js":
+"@mpetuska/browser@../browser/build/packages/js":
   version "0.0.0"
   dependencies:
     axios "*"
 
-"@mpetuska/mpp-browser@../mpp/build/publications/npm/browser":
+"@mpetuska/mpp-browser@../mpp/build/packages/browser":
   version "0.0.0"
   dependencies:
     snabbdom "*"
 
-"@mpetuska/mpp-node@../mpp/build/publications/npm/node":
+"@mpetuska/mpp-node@../mpp/build/packages/node":
   version "0.0.0"
   dependencies:
     snabbdom "*"
 
-"@mpetuska/node@../node/build/publications/npm/js":
+"@mpetuska/node@../node/build/packages/js":
   version "0.0.0"
   dependencies:
     axios "*"
-
-"@mpetuska/sandbox@../build/publications/npm/js":
-  version "0.0.0"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"

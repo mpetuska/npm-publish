@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional
 /**
  * [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
  */
-public abstract class Person : JsonObject<Any>() {
+public abstract class Person : GenericJsonObject() {
   /**
    * [people field](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
    */

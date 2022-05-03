@@ -37,8 +37,15 @@ npmPublish {
     }
   }
   registries {
-    register("GitHub") {
-      uri.set("https://npm.pkg.github.com/")
+    npmjs {
+      dry.set(true)
+    }
+    gitHub {
+      dry.set(true)
+    }
+    register("custom") {
+      uri.set(uri("https://registry.custom.com/"))
+      dry.set(true)
     }
   }
 }

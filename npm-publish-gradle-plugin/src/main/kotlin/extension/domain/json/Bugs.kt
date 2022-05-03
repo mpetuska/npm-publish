@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional
 /**
  * [bugs](https://docs.npmjs.com/files/package.json#bugs)
  */
-public abstract class Bugs : JsonObject<Any>() {
+public abstract class Bugs : GenericJsonObject() {
   /**
    * [bugs](https://docs.npmjs.com/files/package.json#bugs)
    */

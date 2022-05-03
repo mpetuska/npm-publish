@@ -30,11 +30,6 @@ kotlin {
 
 npmPublish {
   organization.set(group as String)
-  registries {
-    register("GitHub") {
-      uri.set("https://npm.pkg.github.com/")
-    }
-  }
 
   packages {
     named("browser") {
@@ -66,6 +61,18 @@ npmPublish {
           url.set("https://github.com/mpetuska/npm-publish.git")
         }
       }
+    }
+  }
+  registries {
+    npmjs {
+      dry.set(true)
+    }
+    gitHub {
+      dry.set(true)
+    }
+    register("custom") {
+      uri.set(uri("https://registry.custom.com/"))
+      dry.set(true)
     }
   }
 }

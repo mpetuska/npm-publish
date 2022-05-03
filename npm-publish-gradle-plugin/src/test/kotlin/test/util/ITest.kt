@@ -20,6 +20,8 @@ abstract class ITest {
       apply(action)
     }
 
+    operator fun <R> invoke(action: TestProject.() -> R) = run(action)
+
     val npmPublish by lazy { extensions.getByType(NpmPublishExtension::class.java) }
     val kotlinMpp by lazy { extensions.getByType(KotlinMultiplatformExtension::class.java) }
     val kotlinJs by lazy { extensions.getByType(KotlinJsProjectExtension::class.java) }

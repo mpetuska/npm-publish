@@ -5,6 +5,7 @@ import dev.petuska.npm.publish.extension.domain.NpmRegistry
 import dev.petuska.npm.publish.task.NpmAssembleTask
 import dev.petuska.npm.publish.task.NpmPublishTask
 import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.util.notFalse
 import dev.petuska.npm.publish.util.toCamelCase
 import java.net.URI
 
@@ -14,6 +15,7 @@ internal fun ProjectEnhancer.configure(registry: NpmRegistry) {
   registry.uri.sysProjectEnvPropertyConvention(prefix + "uri", converter = ::URI)
   registry.otp.sysProjectEnvPropertyConvention(prefix + "otp")
   registry.authToken.sysProjectEnvPropertyConvention(prefix + "authToken")
+  registry.dry.sysProjectEnvPropertyConvention(prefix + "dry", extension.dry) { it.notFalse() }
 }
 
 internal fun ProjectEnhancer.registerPublishTask(packageName: String, registryName: String) {

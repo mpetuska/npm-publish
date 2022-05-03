@@ -1,6 +1,5 @@
 package dev.petuska.npm.publish.extension.domain.json
 
-import dev.petuska.npm.publish.util.unsafeCast
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -14,7 +13,7 @@ import org.gradle.api.tasks.Optional
  * fields can be added as regular map entries.
  */
 @Suppress("MemberVisibilityCanBePrivate", "TooManyFunctions")
-public abstract class PackageJson : JsonObject<Any>() {
+public abstract class PackageJson : GenericJsonObject() {
 
   /** [name](https://docs.npmjs.com/files/package.json#name) */
   @get:Input
@@ -124,7 +123,7 @@ public abstract class PackageJson : JsonObject<Any>() {
   /** [config](https://docs.npmjs.com/files/package.json#config) */
   @get:Nested
   @get:Optional
-  public abstract val config: Property<JsonObject<Any>>
+  public abstract val config: Property<GenericJsonObject>
 
   /** [engines](https://docs.npmjs.com/files/package.json#engines) */
   @get:Nested
@@ -233,7 +232,7 @@ public abstract class PackageJson : JsonObject<Any>() {
    * Override and configure the config field
    * @see [config]
    */
-  public fun config(action: Action<JsonObject<Any>>) {
+  public fun config(action: Action<GenericJsonObject>) {
     config.configure(action)
   }
 
@@ -283,15 +282,6 @@ public abstract class PackageJson : JsonObject<Any>() {
    */
   public fun optionalDependencies(action: Action<JsonObject<String>>) {
     optionalDependencies.configure(action)
-  }
-
-  /**
-   * Set a custom object value for this [JsonObject]
-   * @receiver property key
-   * @param value configuration to apply to a new [JsonObject] instance
-   */
-  public infix fun String.by(value: Action<JsonObject<Any>>) {
-    this by instance(JsonObject::class).also { value.execute(it.unsafeCast()) }
   }
 
   // endregion

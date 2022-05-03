@@ -54,7 +54,7 @@ public abstract class NpmPublishTask : NpmExecTask() {
   init {
     group = PUBLISH_TASK_GROUP
     description = "Publishes NPM package to NPM registry"
-    dry.convention(false)
+    dry.convention(registry.flatMap(NpmRegistry::dry))
     registry.convention(
       project.provider {
         project.objects.newInstance(NpmRegistry::class.java, name)

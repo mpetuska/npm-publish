@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional
 /**
  * [repository](https://docs.npmjs.com/files/package.json#repository)
  */
-public abstract class Repository : JsonObject<Any>() {
+public abstract class Repository : GenericJsonObject() {
   /**
    * [repository](https://docs.npmjs.com/files/package.json#repository)
    */

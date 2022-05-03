@@ -5,7 +5,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 
 /** [directories](https://docs.npmjs.com/files/package.json#directories) */
-public abstract class Directories : JsonObject<Any>() {
+public abstract class Directories : GenericJsonObject() {
   /** [lib](https://docs.npmjs.com/files/package.json#directorieslib) */
   @get:Input
   @get:Optional

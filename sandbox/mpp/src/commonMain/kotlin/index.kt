@@ -1,8 +1,18 @@
 package sandbox
 
-import test.sandbox.sayHello
+import io.ktor.client.HttpClient
+
+external interface GreetingArgs {
+  val name: String
+  val sureName: String
+}
 
 @JsExport
-fun sayWelcome(): String {
-  return sayHello()
+fun buildGreeting(args: GreetingArgs): String {
+  return "Hi ${args.name} ${args.sureName}! Here's HttpClient::class.simpleName: ${HttpClient::class.simpleName}"
+}
+
+@JsExport
+fun greet(args: GreetingArgs) {
+  println(buildGreeting(args))
 }

@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional
 /**
  * [publish config](https://docs.npmjs.com/files/package.json#publishconfig)
  */
-public abstract class PublishConfig : JsonObject<Any>() {
+public abstract class PublishConfig : GenericJsonObject() {
   /**
    * [publish config](https://docs.npmjs.com/files/package.json#publishconfig)
    */

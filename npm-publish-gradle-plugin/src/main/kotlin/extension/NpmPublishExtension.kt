@@ -76,6 +76,7 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   /**
    * Specifies if a dry-run should be added to the npm command arguments by default. Dry run does all the
    * normal run des except actual file uploading. Defaults to `false`.
+   * @see [NpmRegistry.dry]
    * @see [NpmPackTask.dry]
    * @see [NpmPublishTask.dry]
    */
@@ -122,6 +123,18 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   public fun NpmRegistries.npmjs(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> =
     register("npmjs") {
       it.uri.set(URI("https://registry.npmjs.org"))
+      action.execute(it)
+    }
+
+  /**
+   * Registers GitHub Packages [npm.pkg.github.com](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) registry.
+   * [More info](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages)
+   * @param action to apply
+   * @see [NpmRegistry]
+   */
+  public fun NpmRegistries.gitHub(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> =
+    register("gitHub") {
+      it.uri.set(URI("https://npm.pkg.github.com/"))
       action.execute(it)
     }
 

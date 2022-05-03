@@ -70,8 +70,8 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
-        files.from(outputFile)
-        files.from(typesFile)
+        files.from(outputFile.map(File::getParentFile))
+//        files.from(typesFile)
         files.from(processResourcesTask.map(Copy::getDestinationDir))
       }
     }
