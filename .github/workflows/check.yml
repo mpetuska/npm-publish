@@ -72,7 +72,7 @@ jobs:
         working-directory: sandbox
         run: ./gradlew check --scan
 
-      - name: Gradle Assemble
+      - name: Gradle Assemble Sandbox
         working-directory: sandbox
         run: ./gradlew assemble pack --scan
 

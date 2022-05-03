@@ -26,9 +26,10 @@ import org.gradle.api.tasks.PathSensitivity
 public abstract class NpmPackage : NamedInput, WithGradleFactories() {
 
   /**
-   * Optional npm scope. If set, package name will be constructed as `@{scope}/{moduleName}`.
+   * Optional npm scope. If set, the package name will be constructed as `@{scope}/{packageName}`.
    * Defaults to [NpmPublishExtension.organization].
    * @see [NpmPublishExtension.organization]
+   * @see [PackageJson.name]
    */
   @get:Input
   @get:Optional
@@ -38,6 +39,7 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
    * NPM package name.
    * Defaults to [Project.getName].
    * @see [Project.getName]
+   * @see [PackageJson.name]
    */
   @get:Input
   public abstract val packageName: Property<String>
@@ -46,6 +48,7 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
    * NPM package version.
    * Defaults to [NpmPublishExtension.version].
    * @see [NpmPublishExtension.version]
+   * @see [PackageJson.version]
    */
   @get:Input
   public abstract val version: Property<String>
@@ -70,7 +73,7 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
 
   /**
    * A location of the `README.md` file.
-   * If set, the file will be moved to package assembly root and renamed to README.MD (regardless of the actual name).
+   * If set, the file will be moved to package assembly root and renamed to README.md (regardless of the actual name).
    * Defaults to [NpmPublishExtension.readme]
    * @see [NpmPublishExtension.readme]
    */

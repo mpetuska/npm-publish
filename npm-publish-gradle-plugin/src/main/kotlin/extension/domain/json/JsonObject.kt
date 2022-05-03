@@ -1,6 +1,7 @@
 package dev.petuska.npm.publish.extension.domain.json
 
 import dev.petuska.npm.publish.util.*
+import org.gradle.api.Action
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 
@@ -35,6 +36,20 @@ public abstract class JsonObject<T : Any> : WithGradleFactories() {
   public infix fun String.by(value: T) {
     set(this, value)
   }
+
+  /**
+   * Build a custom object value
+   * @param value configuration to apply to a new [GenericJsonObject] instance
+   */
+  public fun json(value: Action<GenericJsonObject>): GenericJsonObject =
+    instance(GenericJsonObject::class).also(value::execute)
+
+  /**
+   *  Build a custom object value
+   * @param value configuration to apply to a new [GenericJsonObject] instance
+   */
+  public fun json(value: GenericJsonObject.() -> Unit): GenericJsonObject =
+    instance(GenericJsonObject::class).also(value::invoke)
 
   @get:Input
   protected abstract val extras: MapProperty<String, T>

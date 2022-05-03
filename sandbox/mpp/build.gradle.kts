@@ -56,6 +56,10 @@ npmPublish {
         "customObject" by {
           "customValues" by arrayOf(1, 2, 3)
         }
+        "customField" by 1
+        "customArray" by arrayOf(json {
+
+        })
         repository {
           type.set("git")
           url.set("https://github.com/mpetuska/npm-publish.git")

@@ -1,6 +1,5 @@
 package dev.petuska.npm.publish.extension.domain.json
 
-import dev.petuska.npm.publish.util.unsafeCast
 import org.gradle.api.Action
 
 /**
@@ -13,7 +12,7 @@ public abstract class GenericJsonObject : JsonObject<Any>() {
    * @param value configuration to apply to a new [GenericJsonObject] instance
    */
   public infix fun String.by(value: Action<GenericJsonObject>) {
-    this by instance(GenericJsonObject::class).also { value.execute(it.unsafeCast()) }
+    this by json(value)
   }
 
   /**
@@ -22,6 +21,6 @@ public abstract class GenericJsonObject : JsonObject<Any>() {
    * @param value configuration to apply to a new [GenericJsonObject] instance
    */
   public infix fun String.by(value: GenericJsonObject.() -> Unit) {
-    this by instance(GenericJsonObject::class).also { value.invoke(it) }
+    this by json(value)
   }
 }
