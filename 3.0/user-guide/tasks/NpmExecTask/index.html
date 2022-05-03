@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/NpmExecTask/">
       
       <link rel="icon" href="../../../api/images/logo-icon.svg">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.8c5ef100.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -814,17 +814,16 @@ You're not viewing the latest version.
 <p>Basic task for executing various npm commands. Extends <a href="../NodeExecTask/">NodeExecTask</a> and provides access to npm
 executable.</p>
 <p>The task can be created and configured in a <code>build.gradle.kts</code> file by registering it with correct type.</p>
-<table class="highlighttable"><tr><th colspan="2" class="filename"><div class="highlight"><span class="filename">build.gradle.kts</span></div></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">build.gradle.kts</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
 <span class="normal"><a href="#__codelineno-0-4">4</a></span>
-<span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="n">tasks</span> <span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>  <span class="n">register</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">dev</span><span class="p">.</span><span class="na">petuska</span><span class="p">.</span><span class="na">npm</span><span class="p">.</span><span class="na">publish</span><span class="p">.</span><span class="na">task</span><span class="p">.</span><span class="na">NpmExecTask</span><span class="o">::</span><span class="n">class</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    <span class="p">...</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a>  <span class="p">}</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="n">tasks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="n">register</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dev</span><span class="p">.</span><span class="na">petuska</span><span class="p">.</span><span class="na">npm</span><span class="p">.</span><span class="na">publish</span><span class="p">.</span><span class="na">task</span><span class="p">.</span><span class="na">NpmExecTask</span><span class="o">::</span><span class="n">class</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="p">...</span><span class="w"></span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
 <h2 id="properties">Properties</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Properties</label><label for="__tabbed_1_2">Keys</label><label for="__tabbed_1_3">Usage</label></div>
 <div class="tabbed-content">
@@ -869,23 +868,22 @@ executable.</p>
 </table>
 </div>
 <div class="tabbed-block">
-<table class="highlighttable"><tr><th colspan="2" class="filename"><div class="highlight"><span class="filename">build.gradle.kts</span></div></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">build.gradle.kts</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
 <span class="normal"><a href="#__codelineno-1-3">3</a></span>
 <span class="normal"><a href="#__codelineno-1-4">4</a></span>
 <span class="normal"><a href="#__codelineno-1-5">5</a></span>
 <span class="normal"><a href="#__codelineno-1-6">6</a></span>
 <span class="normal"><a href="#__codelineno-1-7">7</a></span>
-<span class="normal"><a href="#__codelineno-1-8">8</a></span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">tasks</span> <span class="p">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a>  <span class="n">register</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">dev</span><span class="p">.</span><span class="na">petuska</span><span class="p">.</span><span class="na">npm</span><span class="p">.</span><span class="na">publish</span><span class="p">.</span><span class="na">task</span><span class="p">.</span><span class="na">NpmExecTask</span><span class="o">::</span><span class="n">class</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a>    <span class="n">doLast</span> <span class="p">{</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a>      <span class="kd">val</span> <span class="nv">args</span> <span class="o">=</span> <span class="n">listOf</span><span class="p">(</span><span class="s">&quot;--help&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a>      <span class="n">npmExec</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6"></a>    <span class="p">}</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7"></a>  <span class="p">}</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+<span class="normal"><a href="#__codelineno-1-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">tasks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="n">register</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dev</span><span class="p">.</span><span class="na">petuska</span><span class="p">.</span><span class="na">npm</span><span class="p">.</span><span class="na">publish</span><span class="p">.</span><span class="na">task</span><span class="p">.</span><span class="na">NpmExecTask</span><span class="o">::</span><span class="n">class</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span><span class="n">doLast</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">      </span><span class="kd">val</span><span class="w"> </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">listOf</span><span class="p">(</span><span class="s">&quot;--help&quot;</span><span class="p">)</span><span class="w"></span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">      </span><span class="n">npmExec</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
@@ -1008,7 +1006,7 @@ executable.</p>
     
     
 
-      <script src="../../../assets/javascripts/bundle.748e2769.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
 <!-- Google Tag Manager (noscript) -->
