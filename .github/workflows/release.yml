@@ -32,6 +32,8 @@ jobs:
   version:
     name: Resolve Version
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
     steps:
       - name: resolve
         run: |
@@ -51,7 +53,7 @@ jobs:
     if: ${{ github.event.inputs.skipPages != 'true' }}
     uses: ./.github/workflows/deploy-pages.yml
     with:
-      version: ${{ steps.version.outputs.version }}
+      version: ${{ needs.version.outputs.version }}
 
   release-GradlePluginPortal:
     name: "Release: GradlePluginPortal"
@@ -59,7 +61,7 @@ jobs:
     needs: [ check, version ]
     if: ${{ github.event.inputs.skipGradlePluginPortal != 'true' }}
     env:
-      VERSION: ${{ steps.version.outputs.version }}
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
       - name: Restore Gradle cache
@@ -94,7 +96,7 @@ jobs:
     needs: [ check, version ]
     if: ${{ github.event.inputs.skipGitHub != 'true' }}
     env:
-      VERSION: ${{ steps.version.outputs.version }}
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
       - name: Restore Gradle cache
@@ -129,7 +131,7 @@ jobs:
     needs: [ check, version ]
     if: ${{ github.event.inputs.skipMavenCentral != 'true' }}
     env:
-      VERSION: ${{ steps.version.outputs.version }}
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
       - name: Restore Gradle cache
