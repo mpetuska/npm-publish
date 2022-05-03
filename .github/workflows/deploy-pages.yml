@@ -7,12 +7,12 @@ on:
         description: "Deploy version"
         required: true
         type: string
-    workflow_call:
-      inputs:
-        version:
-          description: "Deploy version"
-          required: true
-          type: string
+  workflow_call:
+    inputs:
+      version:
+        description: "Deploy version"
+        required: true
+        type: string
 
 jobs:
   deploy:
