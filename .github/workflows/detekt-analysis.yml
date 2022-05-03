@@ -61,7 +61,7 @@ jobs:
         continue-on-error: true
         run: |
           detekt-cli --input ${{ github.workspace }} \
-            --build-upon-default-config true \
+            --build-upon-default-config \
             --config {{ github.workspace }}/detekt.yml \
             --report sarif:${{ github.workspace }}/detekt.sarif.json
 
