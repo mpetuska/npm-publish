@@ -104,7 +104,7 @@ tasks {
     dependsOn(docsAssemble)
     workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
   }
-  register("clean", MikeExec.Delete::class) {
+  register("clean", Delete::class) {
     delete(buildDir)
   }
 }

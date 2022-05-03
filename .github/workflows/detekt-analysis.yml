@@ -62,7 +62,7 @@ jobs:
         run: |
           detekt-cli --input ${{ github.workspace }} \
             --build-upon-default-config \
-            --config {{ github.workspace }}/detekt.yml \
+            --config ${{ github.workspace }}/detekt.yml \
             --report sarif:${{ github.workspace }}/detekt.sarif.json
 
       # Modifies the SARIF output produced by Detekt so that absolute URIs are relative
