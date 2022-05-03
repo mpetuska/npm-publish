@@ -44,7 +44,7 @@ jobs:
         if: ${{ always() }}
         continue-on-error: true
         run: |
-          cp ${{ github.workspace }}/npm-publish-gradle-plugin/build/reports/detekt/detekt.sarif.json ${{ github.workspace }}/detekt.sarif.json
+          cp ${{ github.workspace }}/npm-publish-gradle-plugin/build/reports/detekt/detekt.sarif ${{ github.workspace }}/detekt.sarif.json
           echo "$(
             jq \
               --arg github_workspace ${{ github.workspace }} \
