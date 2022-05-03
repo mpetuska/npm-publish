@@ -51,7 +51,7 @@ jobs:
             --url https://github.com/detekt/detekt/releases/download/v${{ env.DETEKT_VERSION }}/detekt-cli-${{ env.DETEKT_VERSION }}.zip \
             --silent \
             --location \
-            --output detekt.zip
+            --output detekt-cli-${{ env.DETEKT_VERSION }}.zip
           unzip detekt-cli-${{ env.DETEKT_VERSION }}.zip
           chmod a+x $dest/detekt-cli-${{ env.DETEKT_VERSION }}/bin/detekt-cli
           echo $dest/detekt-cli-${{ env.DETEKT_VERSION }}/bin >> $GITHUB_PATH
