@@ -105,7 +105,7 @@ tasks {
     args.addAll(
       "--push",
       "--update-aliases",
-      "${project.version}",
+      "${project.version}".split(".").take(2).joinToString("."),
       "latest"
     )
   }
