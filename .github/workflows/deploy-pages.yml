@@ -18,6 +18,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve version
+        id: resolve
+        run: |
+          VERSION="${{ inputs.version }}"
+          VERSION="${VERSION:=${{ github.event.inputs.version }}}"
+          echo "::set-output name=version::${VERSION//v}"
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
@@ -44,4 +50,4 @@ jobs:
           git fetch origin gh-pages --depth=1
       - run: |
           pip install mkdocs-material mike
-      - run: ./gradlew :npm-publish-docs:mikeDeploy -Pversion='${{ inputs.version }}'
+      - run: ./gradlew :npm-publish-docs:mikeDeploy -Pversion='${{ steps.resolve.outputs.version }}'
