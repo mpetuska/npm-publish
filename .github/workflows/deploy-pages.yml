@@ -38,5 +38,8 @@ jobs:
         with:
           python-version: 3.x
       - uses: actions/checkout@v2
-      - run: pip install mkdocs-material mike
+      - run: |
+          pip install mkdocs-material mike
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
       - run: ./gradlew :npm-publish-docs:mikeDeploy -Pversion='${{ inputs.version }}'

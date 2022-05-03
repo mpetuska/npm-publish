@@ -6,13 +6,15 @@ plugins {
   signing
 }
 
-gradlePlugin {
-  plugins {
-    create(name) {
-      id = "dev.petuska.npm.publish"
-      displayName = "NPM package publishing to NPM repositories"
-      description = project.description
-      implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
+afterEvaluate {
+  gradlePlugin {
+    plugins {
+      create(name) {
+        id = "dev.petuska.npm.publish"
+        displayName = "NPM package publishing to NPM repositories"
+        description = project.description
+        implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
+      }
     }
   }
 }
