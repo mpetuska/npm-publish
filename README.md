@@ -1,7 +1,7 @@
 [![Slack chat](https://img.shields.io/badge/kotlinlang-%23npm--publish-darkgreen?logo=slack&style=flat-square)](https://kotlinlang.slack.com/channels/npm-publish)
 [![Mkdocs docs](https://img.shields.io/badge/docs-mkdocs-blue?style=flat-square&logo=kotlin&logoColor=white)](https://npm-publish.petuska.dev)
-[![Version gradle-plugin-portal](https://img.shields.io/maven-metadata/v?label=gradle%20plugin%20portal&logo=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fdev.petuska%2Fnpm-publish%2Fmaven-metadata.xml&style=flat-square)](https://plugins.gradle.org/plugin/dev.petuska.npm.publish)
-[![Version maven-central](https://img.shields.io/maven-central/v/dev.petuska/npm-publish?logo=apache-maven&style=flat-square)](https://mvnrepository.com/artifact/dev.petuska/npm-publish/latest)
+[![Version gradle-plugin-portal](https://img.shields.io/maven-metadata/v?label=gradle%20plugin%20portal&logo=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fdev.petuska%2Fnpm-publish-gradle-plugin%2Fmaven-metadata.xml&style=flat-square)](https://plugins.gradle.org/plugin/dev.petuska.npm.publish)
+[![Version maven-central](https://img.shields.io/maven-central/v/dev.petuska/npm-publish-gradle-plugin?logo=apache-maven&style=flat-square)](https://mvnrepository.com/artifact/dev.petuska/npm-publish-gradle-plugin/latest)
 
 # NPM-PUBLISH GRADLE PLUGIN
 
