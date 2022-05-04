@@ -2,87 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/CHANGELOG/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/CONTRIBUTING/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/LICENSE/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/quick-start/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/configuration/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/configuration/extension/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/configuration/package/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/configuration/properties/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/configuration/registry/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/NodeExecTask/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/NpmAssembleTask/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/NpmExecTask/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/NpmPackTask/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mpetuska.github.io/npm-publish/3.0/user-guide/tasks/NpmPublishTask/</loc>
-         <lastmod>2022-05-03</lastmod>
+         <lastmod>2022-05-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
