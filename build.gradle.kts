@@ -24,9 +24,9 @@ nexusPublishing {
 
 println(
   """
-BUILD VERSIONS
+  BUILD VERSIONS
   JDK: ${System.getProperty("java.version")}
   KOTLIN: $embeddedKotlinVersion
   Gradle: ${gradle.gradleVersion}
-""".trimIndent()
+  """.trimIndent()
 )
