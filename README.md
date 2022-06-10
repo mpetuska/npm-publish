@@ -40,7 +40,7 @@ kotlin {
 npmPublish {
   registries {
     register("npmjs") {
-      registry.set("https://registry.npmjs.org")
+      uri.set("https://registry.npmjs.org")
       authToken.set("obfuscated")
     }
   }
