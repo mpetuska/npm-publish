@@ -8,7 +8,7 @@ plugins {
 tasks {
   withType<KotlinCompile>().configureEach {
     kotlinOptions {
-      jvmTarget = targetCompatibility
+      languageVersion = "1.4"
     }
   }
   withType<Test>().configureEach {

@@ -43,7 +43,8 @@ public class NpmPublishPlugin : Plugin<Project> {
     }
     pluginManager.withPlugin(KOTLIN_JS_PLUGIN) {
       extensions.configure<KotlinJsProjectExtension> {
-        configure(js())
+        @Suppress("DEPRECATION")
+        configure(target)
       }
     }
 

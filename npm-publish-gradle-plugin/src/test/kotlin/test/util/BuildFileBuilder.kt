@@ -34,20 +34,20 @@ class BuildFileBuilder(config: BuildFileBuilder.() -> Unit) : ScriptBuilder() {
   }
 
   class Plugins(baseIndent: Int = 0) : ScriptBuilder(baseIndent) {
-    fun id(id: String) {
-      +"""id("$id")"""
+    fun id(id: String, version: String? = null) {
+      +("""id("$id")""" + (version?.let { """ version "$it"""" } ?: ""))
     }
 
-    fun npmPublish() {
-      id("dev.petuska.npm.publish")
+    fun npmPublish(version: String? = null) {
+      id("dev.petuska.npm.publish", version)
     }
 
-    fun kotlinMultiplatform() {
-      id("org.jetbrains.kotlin.multiplatform")
+    fun kotlinMultiplatform(version: String? = null) {
+      id("org.jetbrains.kotlin.multiplatform", version)
     }
 
-    fun kotlinJs() {
-      id("org.jetbrains.kotlin.js")
+    fun kotlinJs(version: String? = null) {
+      id("org.jetbrains.kotlin.js", version)
     }
   }
 

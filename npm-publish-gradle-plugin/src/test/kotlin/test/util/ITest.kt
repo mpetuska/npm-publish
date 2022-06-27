@@ -56,7 +56,7 @@ abstract class ITest {
     init: (projectDir: File) -> Unit = {},
     properties: Map<String, Any> = mapOf(),
   ): TestProject {
-    return projectOf(init, properties + (KotlinJsCompilerType.jsCompilerProperty to compiler.name.lowercase())) {
+    return projectOf(init, properties + (KotlinJsCompilerType.jsCompilerProperty to compiler.name.toLowerCase())) {
       plugins.apply("org.jetbrains.kotlin.js")
       kotlinJs {
         js(compiler) {
