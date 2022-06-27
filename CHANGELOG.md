@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.1] - 2022-06-27
+
+### Verified Versions
+
+- Kotlin: 1.7.0
+- Gradle: 7.4.2
+- JDK: 11
+
+### Added
+
+### Changed
+- Kotlin version bumped to `1.7.0`
+- Downgraded language version to `1.4` for better gradle support
+
+### Removed
+
+---
+
 ## [3.0.0] - 2022-05-03
 
 ### Verified Versions
@@ -230,7 +248,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.0.1...HEAD
+
+[3.0.1]: https://github.com/mpetuska/npm-publish/compare/v3.0.0...3.0.1
 
 [3.0.0]: https://github.com/mpetuska/npm-publish/compare/v2.1.3...3.0.0
 

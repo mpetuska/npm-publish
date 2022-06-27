@@ -34,7 +34,7 @@ internal class ProjectEnhancer(
     converter: (String) -> T
   ) {
     val propName = globalPrefix + name
-    val envName = name.uppercase().replace(".", "_")
+    val envName = name.toUpperCase().replace(".", "_")
 
     convention(
       providers.systemProperty(propName)

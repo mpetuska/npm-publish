@@ -12,7 +12,7 @@ description = """
 kotlin {
   explicitApi()
   dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     implementation("com.google.code.gson:gson:_")
     testImplementation(Testing.kotest.assertions.core)
     testImplementation(Testing.kotest.assertions.json)

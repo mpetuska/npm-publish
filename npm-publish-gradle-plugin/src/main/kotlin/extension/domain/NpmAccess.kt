@@ -8,7 +8,7 @@ public enum class NpmAccess {
   RESTRICTED;
 
   override fun toString(): String {
-    return name.lowercase(Locale.getDefault())
+    return name.toLowerCase(Locale.getDefault())
   }
 
   public companion object {
