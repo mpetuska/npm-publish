@@ -14,6 +14,7 @@ kotlin {
   dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     implementation("com.google.code.gson:gson:_")
+    testImplementation("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
     testImplementation(Testing.kotest.assertions.core)
     testImplementation(Testing.kotest.assertions.json)
     testImplementation(Testing.junit.jupiter.api)

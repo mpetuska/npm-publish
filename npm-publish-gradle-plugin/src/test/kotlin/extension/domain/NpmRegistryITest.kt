@@ -27,7 +27,7 @@ class NpmRegistryITest : ITest() {
 
   @TestFactory
   fun tests(): List<DynamicTest> = listOf<Triple<String, String, NpmRegistry.() -> String?>>(
-    Triple("access", "restricted") { access.orNull?.name?.lowercase() },
+    Triple("access", "restricted") { access.orNull?.name?.toLowerCase() },
     Triple("uri", "https://test.com") { uri.orNull?.toString() },
     Triple("otp", "test") { otp.orNull },
     Triple("authToken", "test") { authToken.orNull },

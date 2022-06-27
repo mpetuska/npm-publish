@@ -27,7 +27,7 @@ class NpmPublishExtensionITest : ITest() {
   fun tests(): List<DynamicTest> = listOf<Triple<String, String, NpmPublishExtension.() -> String?>>(
     Triple("readme", "test") { readme.orNull?.asFile?.name },
     Triple("organization", "test") { organization.orNull },
-    Triple("access", "restricted") { access.orNull?.name?.lowercase() },
+    Triple("access", "restricted") { access.orNull?.name?.toLowerCase() },
     Triple("dry", "true") { dry.orNull.toString() },
     Triple("version", "test") { version.orNull },
     Triple("nodeHome", "test") { nodeHome.orNull?.asFile?.name },

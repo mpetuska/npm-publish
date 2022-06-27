@@ -32,9 +32,12 @@ abstract class FTest {
     val stdOut = LogWriter { logger.info(it) }
     val errOut = LogWriter { logger.error(it) }
     val result = kotlin.runCatching {
-      GradleRunner.create().forwardStdOutput(stdOut).forwardStdError(errOut).withPluginClasspath()
-        .withProjectDir(buildDir).withArguments(listOf("--console=plain") + arguments)
-        .forwardStdError(Writer.nullWriter()).build()
+      GradleRunner.create()
+        .forwardStdOutput(stdOut).forwardStdError(errOut)
+        .withPluginClasspath()
+        .withProjectDir(buildDir)
+        .withArguments(listOf("--console=plain") + arguments)
+        .build()
     }
     stdOut.close()
     errOut.close()
