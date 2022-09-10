@@ -49,9 +49,10 @@ public class NpmPublishPlugin : Plugin<Project> {
     }
 
     afterEvaluate {
-      val nodeDest = rootProject.tasks.named("kotlinNodeJsSetup", NodeJsSetupTask::class.java).map { it.destination }
-      extension.nodeHome.set(layout.dir(nodeDest))
-
+      val kotlinNodeJsSetup = rootProject.tasks.findByName("kotlinNodeJsSetup")
+      if (kotlinNodeJsSetup is NodeJsSetupTask) {
+        extension.nodeHome.set(kotlinNodeJsSetup.destination)
+      }
       tasks.maybeCreate("assemble").apply {
         group = "build"
         dependsOn(tasks.withType(NpmAssembleTask::class.java))

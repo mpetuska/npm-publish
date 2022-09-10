@@ -18,7 +18,9 @@ comments:
     active: true
   UndocumentedPublicProperty:
     active: true
-
+naming:
+  InvalidPackageDeclaration:
+    active: false
 style:
   WildcardImport:
     active: false
