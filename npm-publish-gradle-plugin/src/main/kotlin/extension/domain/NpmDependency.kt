@@ -5,7 +5,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
-import kotlin.math.abs
 
 /**
  * A simple representation of a npm dependency
@@ -58,11 +57,6 @@ public interface NpmDependency : NamedInput {
     PEER,
     DEV,
     NORMAL;
-
-    /**
-     * Type priority in descending order
-     */
-    public inline val priority: Int get() = abs(0 - ordinal)
   }
 }
 
