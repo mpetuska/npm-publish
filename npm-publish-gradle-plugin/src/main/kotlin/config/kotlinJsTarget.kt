@@ -25,7 +25,6 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   if (target !is KotlinJsIrTarget) {
     warn { "${target.name} Kotlin/JS target is not using IR compiler - skipping..." }
   } else {
-
     extension.packages.register(target.name) { pkg ->
       val binary = provider<JsIrBinary> {
         when (val it = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }) {
@@ -105,5 +104,9 @@ private fun ProjectEnhancer.resolveDependencies(
       )
       version.set(dependency.version)
     }
+  }
+}.let {
+  objects.listProperty(NpmDependency::class.java).apply {
+    addAll(it)
   }
 }
