@@ -33,6 +33,23 @@ npmPublish {
           type.set("git")
           url.set("https://github.com/mpetuska/npm-publish.git")
         }
+
+        dependencies {
+          "dep-plain-one" by "*"
+          set("dep-plain-two", "*")
+        }
+        devDependencies {
+          "dev-dep-one" by "*"
+          set("dev-dep-two", "*")
+        }
+        peerDependencies {
+          "peer-dep-one" by "*"
+          set("peer-dep-two", "*")
+        }
+        optionalDependencies {
+          "opt-dep-one" by "*"
+          set("opt-dep-two", "*")
+        }
       }
     }
   }

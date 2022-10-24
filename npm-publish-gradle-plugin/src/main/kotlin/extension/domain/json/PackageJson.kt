@@ -138,22 +138,22 @@ public abstract class PackageJson : GenericJsonObject() {
   /** [dependencies](https://docs.npmjs.com/files/package.json#dependencies) */
   @get:Nested
   @get:Optional
-  public abstract val dependencies: Property<JsonObject<String>>
+  public abstract val dependencies: Property<Dependencies>
 
   /** [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies) */
   @get:Nested
   @get:Optional
-  public abstract val devDependencies: Property<JsonObject<String>>
+  public abstract val devDependencies: Property<Dependencies>
 
   /** [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies) */
   @get:Nested
   @get:Optional
-  public abstract val peerDependencies: Property<JsonObject<String>>
+  public abstract val peerDependencies: Property<Dependencies>
 
   /** [optionalDependencies](https://docs.npmjs.com/files/package.json#optionaldependencies) */
   @get:Nested
   @get:Optional
-  public abstract val optionalDependencies: Property<JsonObject<String>>
+  public abstract val optionalDependencies: Property<Dependencies>
 
   /**
    * [bundledDependencies](https://docs.npmjs.com/files/package.json#bundleddependencies)
@@ -256,7 +256,7 @@ public abstract class PackageJson : GenericJsonObject() {
    * Override and configure the dependencies field
    * @see [dependencies]
    */
-  public fun dependencies(action: Action<JsonObject<String>>) {
+  public fun dependencies(action: Action<Dependencies>) {
     dependencies.configure(action)
   }
 
@@ -264,7 +264,7 @@ public abstract class PackageJson : GenericJsonObject() {
    * Override and configure the devDependencies field
    * @see [devDependencies]
    */
-  public fun devDependencies(action: Action<JsonObject<String>>) {
+  public fun devDependencies(action: Action<Dependencies>) {
     devDependencies.configure(action)
   }
 
@@ -272,7 +272,7 @@ public abstract class PackageJson : GenericJsonObject() {
    * Override and configure the peerDependencies field
    * @see [peerDependencies]
    */
-  public fun peerDependencies(action: Action<JsonObject<String>>) {
+  public fun peerDependencies(action: Action<Dependencies>) {
     peerDependencies.configure(action)
   }
 
@@ -280,7 +280,7 @@ public abstract class PackageJson : GenericJsonObject() {
    * Override and configure the optionalDependencies field
    * @see [optionalDependencies]
    */
-  public fun optionalDependencies(action: Action<JsonObject<String>>) {
+  public fun optionalDependencies(action: Action<Dependencies>) {
     optionalDependencies.configure(action)
   }
 
