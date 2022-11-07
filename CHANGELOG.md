@@ -12,12 +12,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Verified Versions
 
 - Kotlin: 1.6.21
-- Gradle: 7.4.2
+- Gradle: 7.5.1
 - JDK: 11
 
 ### Added
 
 ### Changed
+
+### Removed
+
+---
+
+## [3.1.0] - 2022-11-07
+
+### Verified Versions
+
+- Kotlin: 1.6.21
+- Gradle: 7.5.1
+- JDK: 11
+
+### Added
+
+### Changed
+- Updated dependency versions
+- Configuration cache support
 
 ### Removed
 
@@ -248,7 +266,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.0.1...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.1.0...HEAD
+
+[3.1.0]: https://github.com/mpetuska/npm-publish/compare/3.0.1...3.1.0
 
 [3.0.1]: https://github.com/mpetuska/npm-publish/compare/v3.0.0...3.0.1
 

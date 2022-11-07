@@ -35,20 +35,20 @@ npmPublish {
         }
 
         dependencies {
-          "dep-plain-one" by "*"
-          set("dep-plain-two", "*")
+          "is-odd" by "*"
+          set("is-even", "*")
         }
         devDependencies {
-          "dev-dep-one" by "*"
-          set("dev-dep-two", "*")
+          "is-whitespace" by "*"
+          set("is-number", "*")
         }
         peerDependencies {
-          "peer-dep-one" by "*"
-          set("peer-dep-two", "*")
+          "is-thirteen" by "*"
+          set("left-pad", "*")
         }
         optionalDependencies {
-          "opt-dep-one" by "*"
-          set("opt-dep-two", "*")
+          "is-array" by "*"
+          set("is-object", "*")
         }
       }
     }
