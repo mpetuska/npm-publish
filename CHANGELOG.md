@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New [samples](./samples) project containing examples of various use-cases the plugin is able to cover.
+
 ### Changed
 
 ### Removed
@@ -34,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+
 - Updated dependency versions
 - Configuration cache support
 
@@ -52,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+
 - Kotlin version bumped to `1.7.0`
 - Downgraded language version to `1.4` for better gradle support
 

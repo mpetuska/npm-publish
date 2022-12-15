@@ -13,6 +13,11 @@ plugins {
 
 rootProject.name = "sandbox"
 
+refreshVersions {
+  versionsPropertiesFile = rootDir.resolve("gradle/versions.properties")
+  extraArtifactVersionKeyRules(rootDir.resolve("gradle/versions.rules"))
+}
+
 includeBuild("../")
 include(
   ":mpp",

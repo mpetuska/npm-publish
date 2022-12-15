@@ -1,10 +1,7 @@
-# Ignore Gradle project-specific cache directory
 .gradle/
 .theia/
 .yarn/
 .yarnrc
-
-# Ignore Gradle build output directory
 build
 .idea/
 local.properties
