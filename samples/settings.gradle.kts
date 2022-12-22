@@ -22,4 +22,5 @@ rootProject.name = "samples"
 includeBuild("../")
 include(
   ":publish-to-github-packages",
+  ":no-kotlin-plugin",
 )
