@@ -3,6 +3,7 @@ package dev.petuska.npm.publish.extension.domain
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
 import dev.petuska.npm.publish.util.NamedInput
+import dev.petuska.npm.publish.util.NpmPublishDsl
 import dev.petuska.npm.publish.util.WithGradleFactories
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -23,6 +24,7 @@ import org.gradle.api.tasks.PathSensitivity
  * The main configuration for a package
  */
 @Suppress("unused", "LeakingThis", "MemberVisibilityCanBePrivate")
+@NpmPublishDsl
 public abstract class NpmPackage : NamedInput, WithGradleFactories() {
 
   /**

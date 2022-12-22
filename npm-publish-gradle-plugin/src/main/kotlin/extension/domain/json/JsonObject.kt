@@ -8,6 +8,7 @@ import org.gradle.api.tasks.*
 /**
  * Generic json object container supporting extra properties and Gradle serialisation
  */
+@NpmPublishDsl
 public abstract class JsonObject<T : Any> : WithGradleFactories() {
 
   /**

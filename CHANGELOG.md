@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - New [samples](./samples) project containing examples of various use-cases the plugin is able to cover.
+- `@DslMarkers` to plugin's DSL to prevent incorrect nested property usage. 
 
 ### Changed
 - Fix #73: `nodeHome` override not working when used with kotlin plugin

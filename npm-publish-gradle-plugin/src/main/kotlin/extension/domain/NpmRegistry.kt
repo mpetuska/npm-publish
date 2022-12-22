@@ -4,6 +4,7 @@ import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.task.NpmPublishTask
 import dev.petuska.npm.publish.util.NamedInput
+import dev.petuska.npm.publish.util.NpmPublishDsl
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -14,6 +15,7 @@ import java.net.URI
  * Npm registry configuration
  */
 @Suppress("unused", "LeakingThis")
+@NpmPublishDsl
 public abstract class NpmRegistry : NamedInput {
   /**
    * Registry access
