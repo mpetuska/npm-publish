@@ -128,22 +128,28 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     val dPeer =
       pJson.mergeDependencies("peerDependencies", direct.getOrDefault(NpmDependency.Type.PEER, listOf())) { d ->
         dOptional.keys.none { d == it }.also {
-          if (!it) warn {
-            "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..."
+          if (!it) {
+            warn {
+              "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..."
+            }
           }
         }
       }
     val dDev = pJson.mergeDependencies("devDependencies", direct.getOrDefault(NpmDependency.Type.DEV, listOf())) { d ->
       (dOptional.keys.none { d == it } && dPeer.keys.none { d == it }).also {
-        if (!it) warn {
-          "Registered dev dependency $d for $name package already present in higher priority scope. Skipping..."
+        if (!it) {
+          warn {
+            "Registered dev dependency $d for $name package already present in higher priority scope. Skipping..."
+          }
         }
       }
     }
     pJson.mergeDependencies("dependencies", direct.getOrDefault(NpmDependency.Type.NORMAL, listOf())) { d ->
       (dOptional.keys.none { d == it } && dPeer.keys.none { d == it } && dDev.keys.none { d == it }).also {
-        if (!it) warn {
-          "Registered normal dependency $d for $name package already present in higher priority scope. Skipping..."
+        if (!it) {
+          warn {
+            "Registered normal dependency $d for $name package already present in higher priority scope. Skipping..."
+          }
         }
       }
     }

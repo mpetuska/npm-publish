@@ -38,4 +38,6 @@ internal fun String.toCamelCase(lower: Boolean = false): String {
 
 private fun String.replaceFirstChar(replacer: (Char) -> Char): String = if (isNotEmpty()) {
   replacer(get(0)) + drop(1)
-} else this
+} else {
+  this
+}

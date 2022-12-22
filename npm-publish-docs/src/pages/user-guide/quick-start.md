@@ -14,7 +14,7 @@ Here's a bare minimum setup when using the plugin standalone or together with on
       }
     }
     
-    npmPublishing {
+    npmPublish {
       registries {
         register("npmjs") {
           uri.set(uri("https://registry.npmjs.org")) // (2)
@@ -42,10 +42,10 @@ Here's a bare minimum setup when using the plugin standalone or together with on
       }
     }
     
-    npmPublishing {
+    npmPublish {
       registries {
         register("npmjs") {
-          uri.set("https://registry.npmjs.org") // (2)
+          uri.set(uri("https://registry.npmjs.org")) // (2)
           authToken.set("obfuscated")
         }
       }
@@ -62,7 +62,7 @@ Here's a bare minimum setup when using the plugin standalone or together with on
       id("dev.petuska.npm.publish") version "<VERSION>"
     }
 
-    npmPublishing {
+    npmPublish {
       packages {
         register("js") {
           ...
@@ -70,7 +70,7 @@ Here's a bare minimum setup when using the plugin standalone or together with on
       }
       registries {
         register("npmjs") {
-          uri.set("https://registry.npmjs.org") // (1)
+          uri.set(uri("https://registry.npmjs.org")) // (1)
           authToken.set("obfuscated")
         }
       }

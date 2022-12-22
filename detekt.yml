@@ -30,6 +30,8 @@ style:
     active: false
 
 formatting:
+  Filename:
+    active: false
   NoWildcardImports:
     active: false
   Indentation:

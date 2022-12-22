@@ -1,4 +1,2 @@
-gradle.plugin.com.eden:orchidPlugin
-                       ^^^^^^
-io.github.javaeden.orchid*
-                   ^^^^^^
+version.io.gitlab.arturbosch.detekt
+                             ^^^^^^

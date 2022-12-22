@@ -36,17 +36,23 @@ class NpmPublishPluginITest : ITest() {
   fun tests(): List<DynamicTest> = listOf(
     DynamicTest.dynamicTest("can autoconfigure with K/MPP IR") {
       autoconfigureTest(
-        "multiplatform", KotlinJsCompilerType.IR, true
+        "multiplatform",
+        KotlinJsCompilerType.IR,
+        true
       )
     },
     DynamicTest.dynamicTest("can autoconfigure with K/JS IR") {
       autoconfigureTest(
-        "js", KotlinJsCompilerType.IR, true
+        "js",
+        KotlinJsCompilerType.IR,
+        true
       )
     },
     DynamicTest.dynamicTest("rejects K/MPP Legacy") {
       autoconfigureTest(
-        "multiplatform", KotlinJsCompilerType.LEGACY, false
+        "multiplatform",
+        KotlinJsCompilerType.LEGACY,
+        false
       )
     },
     DynamicTest.dynamicTest("rejects K/JS Legacy") { autoconfigureTest("js", KotlinJsCompilerType.LEGACY, false) },

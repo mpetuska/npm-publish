@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Verified Versions
 
-- Kotlin: 1.6.21
+- Kotlin: 1.8.0
 - Gradle: 7.5.1
 - JDK: 11
 
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New [samples](./samples) project containing examples of various use-cases the plugin is able to cover.
 
 ### Changed
+- Fix #73: `nodeHome` override not working when used with kotlin plugin
 
 ### Removed
 
