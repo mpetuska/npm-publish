@@ -1,7 +1,11 @@
 package dev.petuska.npm.publish.extension.domain
 
+import dev.petuska.npm.publish.config.assembleTaskName
+import dev.petuska.npm.publish.config.packTaskName
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
+import dev.petuska.npm.publish.task.NpmAssembleTask
+import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.util.NamedInput
 import dev.petuska.npm.publish.util.NpmPublishDsl
 import dev.petuska.npm.publish.util.WithGradleFactories
@@ -12,13 +16,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.*
 
 /**
  * The main configuration for a package
@@ -26,6 +24,22 @@ import org.gradle.api.tasks.PathSensitivity
 @Suppress("unused", "LeakingThis", "MemberVisibilityCanBePrivate")
 @NpmPublishDsl
 public abstract class NpmPackage : NamedInput, WithGradleFactories() {
+  @get:Internal
+  internal lateinit var project: Project
+
+  /**
+   * Reference to relevant [NpmAssembleTask] for this package.
+   */
+  @get:Internal
+  public val assembleTask: TaskProvider<NpmAssembleTask>
+    get() = project.tasks.named(assembleTaskName(name), NpmAssembleTask::class.java)
+
+  /**
+   * Reference to relevant [NpmPackTask] for this package.
+   */
+  @get:Internal
+  public val packTask: TaskProvider<NpmPackTask>
+    get() = project.tasks.named(packTaskName(name), NpmPackTask::class.java)
 
   /**
    * Optional npm scope. If set, the package name will be constructed as `@{scope}/{packageName}`.

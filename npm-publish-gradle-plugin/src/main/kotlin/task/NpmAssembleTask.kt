@@ -3,17 +3,12 @@ package dev.petuska.npm.publish.task
 import com.google.gson.GsonBuilder
 import dev.petuska.npm.publish.extension.domain.NpmDependency
 import dev.petuska.npm.publish.extension.domain.NpmPackage
-import dev.petuska.npm.publish.util.PluginLogger
-import dev.petuska.npm.publish.util.configure
-import dev.petuska.npm.publish.util.final
-import dev.petuska.npm.publish.util.finalOrNull
-import dev.petuska.npm.publish.util.npmFullName
-import dev.petuska.npm.publish.util.overrideFrom
-import dev.petuska.npm.publish.util.unsafeCast
+import dev.petuska.npm.publish.util.*
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Nested
@@ -31,6 +26,9 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   private companion object {
     private val gson = GsonBuilder().setPrettyPrinting().create()
   }
+
+  @get:Nested
+  internal abstract val extraDependencies: ListProperty<NpmDependency>
 
   /**
    * The configuration of the package to assemble.
@@ -122,7 +120,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   }
 
   private fun NpmPackage.resolveDependencies(pJson: MutableMap<String, Any>) {
-    val direct = dependencies.toList().groupBy { it.type.final }
+    val direct = (dependencies.toList() + extraDependencies.get()).distinct().groupBy { it.type.final }
     val dOptional =
       pJson.mergeDependencies("optionalDependencies", direct.getOrDefault(NpmDependency.Type.OPTIONAL, listOf()))
     val dPeer =

@@ -3,32 +3,28 @@ plugins {
   id("dev.petuska.npm.publish")
 }
 
-dependencies {
-  implementation(npm("is-odd", "*"))
-  api(devNpm("is-even", "*"))
-  implementation(Ktor.client.core)
-}
-
 kotlin {
   js {
     nodejs()
     useCommonJs()
     binaries.library()
   }
-  sourceSets {
-    all {
-      languageSettings.optIn("kotlin.js.ExperimentalJsExport")
-    }
+  dependencies {
+    implementation(npm("is-number", "*"))
+    implementation(project(":node"))
   }
 }
 
 npmPublish {
-  organization.set(group as String)
+  organization.set(group.toString())
+
   packages {
     named("js") {
-      packageJsonTemplateFile.set(projectDir.resolve("../template.package.json"))
+      packageJsonTemplateFile.set(rootDir.resolve("template.package.json"))
       packageJson {
-        author { name.set("Martynas Petuška") }
+        author {
+          name.set("Martynas Petuška")
+        }
         repository {
           type.set("git")
           url.set("https://github.com/mpetuska/npm-publish.git")

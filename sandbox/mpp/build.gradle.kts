@@ -20,8 +20,8 @@ kotlin {
     all {
       dependencies {
         implementation(Ktor.client.core)
-        implementation(devNpm("axios", "*"))
-        api(npm("snabbdom", "*"))
+        implementation(devNpm("is-odd", "*"))
+        api(npm("is-even", "*"))
       }
       languageSettings.optIn("kotlin.js.ExperimentalJsExport")
     }

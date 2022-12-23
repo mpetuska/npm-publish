@@ -1,26 +1,30 @@
 package dev.petuska.npm.publish.config
 
-import dev.petuska.npm.publish.extension.domain.*
-import dev.petuska.npm.publish.extension.domain.NpmDependency.Type
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import dev.petuska.npm.publish.extension.domain.NpmDependency
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
 import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.util.toCamelCase
 import dev.petuska.npm.publish.util.unsafeCast
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.Library
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.DEV
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.NORMAL
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.OPTIONAL
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.PEER
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.PublicPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency as KJsNpmDependency
 
+@Suppress("LongMethod")
 internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   if (target !is KotlinJsIrTarget) {
     warn { "${target.name} Kotlin/JS target is not using IR compiler - skipping..." }
@@ -43,23 +47,28 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
             }
             null
           }
+
           null -> null
           !is JsIrBinary -> error(
             "Legacy binaries are no longer supported. " +
               "Please consider switching to the new Kotlin/JS IR compiler backend"
           )
+
           else -> error("Unrecognised Kotlin/JS binary type: ${it::class.java.name}")
         }
       }
       val compileKotlinTask = binary.flatMap<Kotlin2JsCompile>(JsIrBinary::linkTask)
+      val publicPackageJsonTask = binary
+        .flatMap { tasks.named(it.compilation.npmProject.publicPackageJsonTaskName, PublicPackageJsonTask::class.java) }
       val processResourcesTask = target.compilations.named("main").flatMap {
         tasks.named(it.processResourcesTaskName, Copy::class.java)
       }
       val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
       val typesFile = outputFile.map { File(it.parentFile, "${it.nameWithoutExtension}.d.ts") }
 
-      tasks.named(assembleTaskName(pkg.name)) {
-        it.dependsOn(compileKotlinTask, processResourcesTask)
+      pkg.assembleTask.configure {
+        it.dependsOn(compileKotlinTask, processResourcesTask, publicPackageJsonTask)
+        it.extraDependencies.addAll(resolveDependencies(publicPackageJsonTask))
       }
 
       pkg.main.sysProjectEnvPropertyConvention(
@@ -71,7 +80,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
         typesFile.map<String> { it.takeIf(File::exists)?.name.unsafeCast() }
           .orElse(pkg.packageJson.flatMap(PackageJson::types))
       )
-      pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
+      pkg.dependencies.addAllLater(resolveDependencies(publicPackageJsonTask))
       pkg.files { files ->
         files.from(outputFile.map(File::getParentFile))
         files.from(processResourcesTask.map(Copy::getDestinationDir))
@@ -81,32 +90,46 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   }
 }
 
+private fun ProjectEnhancer.resolveDependencies(publicPackageJsonTask: Provider<PublicPackageJsonTask>) =
+  publicPackageJsonTask.map {
+    val json = Gson().fromJson(it.packageJsonFile.readText(), JsonObject::class.java)
+    fun JsonObject.parse(scope: NpmDependency.Type) = asMap().mapValues { (_, v) -> v.asString }.map { (n, v) ->
+      objects.newInstance(NpmDependency::class.java, n).apply {
+        type.set(scope)
+        version.set(v)
+      }
+    }
+    json.getAsJsonObject("dependencies").parse(NpmDependency.Type.NORMAL) +
+      json.getAsJsonObject("peerDependencies").parse(NpmDependency.Type.PEER) +
+      json.getAsJsonObject("optionalDependencies").parse(NpmDependency.Type.OPTIONAL)
+  }
+
 private fun ProjectEnhancer.resolveDependencies(
   targetName: String,
   binary: Provider<JsIrBinary>
-) = binary.map { bin ->
+): Provider<List<NpmDependency>> = binary.map { bin ->
   bin.compilation.relatedConfigurationNames.flatMap { conf ->
-    val mainName = "${targetName}Main${conf.substringAfter(targetName)}"
-    val normDeps = configurations.findByName(conf)?.dependencies?.toSet() ?: setOf()
-    val mainDeps = configurations.findByName(mainName)?.dependencies?.toSet() ?: setOf()
-    (normDeps + mainDeps).filterIsInstance<KJsNpmDependency>()
-  }
-}.map { dependencies ->
-  dependencies.map { dependency ->
-    objects.newInstance(NpmDependency::class.java, dependency.name).apply {
-      type.set(
-        when (dependency.scope) {
-          NORMAL -> Type.NORMAL
-          DEV -> Type.DEV
-          OPTIONAL -> Type.OPTIONAL
-          PEER -> Type.PEER
+    listOf(
+      conf,
+      "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalized()}",
+      conf.substringAfter("compilation").toCamelCase(true),
+    )
+      .mapNotNull(configurations::findByName)
+      .flatMap(Configuration::getDependencies)
+      .filterIsInstance<KJsNpmDependency>()
+      .distinct()
+      .map { dependency ->
+        objects.newInstance(NpmDependency::class.java, dependency.name).apply {
+          type.set(
+            when (dependency.scope) {
+              NORMAL -> NpmDependency.Type.NORMAL
+              DEV -> NpmDependency.Type.DEV
+              OPTIONAL -> NpmDependency.Type.OPTIONAL
+              PEER -> NpmDependency.Type.PEER
+            }
+          )
+          version.set(dependency.version)
         }
-      )
-      version.set(dependency.version)
-    }
-  }
-}.let {
-  objects.listProperty(NpmDependency::class.java).apply {
-    addAll(it)
+      }
   }
 }

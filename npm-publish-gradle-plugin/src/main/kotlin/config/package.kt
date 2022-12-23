@@ -7,6 +7,7 @@ import dev.petuska.npm.publish.util.toCamelCase
 
 internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
   val prefix = pkg.prefix
+  pkg.project = project
   pkg.main.sysProjectEnvPropertyConvention(prefix + "main", pkg.packageJson.flatMap(PackageJson::main))
   pkg.types.sysProjectEnvPropertyConvention(prefix + "types", pkg.packageJson.flatMap(PackageJson::types))
   pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme) { layout.projectDirectory.file(it) }

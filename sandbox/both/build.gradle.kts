@@ -11,8 +11,8 @@ kotlin {
     binaries.library()
   }
   dependencies {
-    implementation(npm("axios", "*"))
-    api(devNpm("snabbdom", "*"))
+    implementation(npm("is-odd", "*"))
+    api(devNpm("is-even", "*"))
     implementation(Ktor.client.core)
   }
   sourceSets {
