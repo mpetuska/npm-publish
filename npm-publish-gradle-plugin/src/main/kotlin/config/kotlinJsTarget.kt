@@ -80,7 +80,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
         typesFile.map<String> { it.takeIf(File::exists)?.name.unsafeCast() }
           .orElse(pkg.packageJson.flatMap(PackageJson::types))
       )
-      pkg.dependencies.addAllLater(resolveDependencies(publicPackageJsonTask))
+      pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
         files.from(outputFile.map(File::getParentFile))
         files.from(processResourcesTask.map(Copy::getDestinationDir))
@@ -90,19 +90,20 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   }
 }
 
-private fun ProjectEnhancer.resolveDependencies(publicPackageJsonTask: Provider<PublicPackageJsonTask>) =
-  publicPackageJsonTask.map {
-    val json = Gson().fromJson(it.packageJsonFile.readText(), JsonObject::class.java)
-    fun JsonObject.parse(scope: NpmDependency.Type) = asMap().mapValues { (_, v) -> v.asString }.map { (n, v) ->
-      objects.newInstance(NpmDependency::class.java, n).apply {
-        type.set(scope)
-        version.set(v)
-      }
+private fun ProjectEnhancer.resolveDependencies(
+  publicPackageJsonTask: Provider<PublicPackageJsonTask>
+): Provider<List<NpmDependency>> = publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
+  val json = Gson().fromJson(pJson.readText(), JsonObject::class.java)
+  fun JsonObject.parse(scope: NpmDependency.Type) = asMap().mapValues { (_, v) -> v.asString }.map { (n, v) ->
+    objects.newInstance(NpmDependency::class.java, n).apply {
+      type.set(scope)
+      version.set(v)
     }
-    json.getAsJsonObject("dependencies").parse(NpmDependency.Type.NORMAL) +
-      json.getAsJsonObject("peerDependencies").parse(NpmDependency.Type.PEER) +
-      json.getAsJsonObject("optionalDependencies").parse(NpmDependency.Type.OPTIONAL)
   }
+  json.getAsJsonObject("dependencies").parse(NpmDependency.Type.NORMAL) +
+    json.getAsJsonObject("peerDependencies").parse(NpmDependency.Type.PEER) +
+    json.getAsJsonObject("optionalDependencies").parse(NpmDependency.Type.OPTIONAL)
+}
 
 private fun ProjectEnhancer.resolveDependencies(
   targetName: String,

@@ -74,20 +74,16 @@ java {
 }
 
 tasks {
-  withType<Test> {
-    useJUnitPlatform()
-  }
   withType<Jar> {
     manifest {
-      attributes +=
-        sortedMapOf(
-          "Built-By" to System.getProperty("user.name"),
-          "Build-Jdk" to System.getProperty("java.version"),
-          "Build-Kotlin" to embeddedKotlinVersion,
-          "Implementation-Version" to project.version,
-          "Created-By" to GradleVersion.current(),
-          "Created-From" to Git.headCommitHash
-        )
+      attributes += sortedMapOf(
+        "Built-By" to System.getProperty("user.name"),
+        "Build-Jdk" to System.getProperty("java.version"),
+        "Build-Kotlin" to embeddedKotlinVersion,
+        "Implementation-Version" to project.version,
+        "Created-By" to GradleVersion.current(),
+        "Created-From" to Git.headCommitHash
+      )
     }
   }
 }

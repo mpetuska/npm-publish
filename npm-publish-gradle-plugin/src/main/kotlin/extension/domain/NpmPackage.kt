@@ -21,7 +21,7 @@ import org.gradle.api.tasks.*
 /**
  * The main configuration for a package
  */
-@Suppress("unused", "LeakingThis", "MemberVisibilityCanBePrivate")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 @NpmPublishDsl
 public abstract class NpmPackage : NamedInput, WithGradleFactories() {
   @get:Internal

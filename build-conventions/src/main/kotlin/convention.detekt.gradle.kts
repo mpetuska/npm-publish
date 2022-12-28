@@ -2,7 +2,6 @@ import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
   id("io.gitlab.arturbosch.detekt")
-  idea
 }
 
 dependencies {
@@ -10,24 +9,11 @@ dependencies {
 }
 
 detekt {
-  config.from(rootDir.resolve("detekt.yml"))
+  config.from(rootDir.resolve("gradle/detekt.yml"))
   buildUponDefaultConfig = true
 }
 
-idea {
-  module {
-    isDownloadJavadoc = true
-    isDownloadSources = true
-  }
-}
-
-repositories {
-  mavenLocal()
-  mavenCentral()
-  gradlePluginPortal()
-}
-
-tasks.withType<Detekt>().configureEach {
+tasks.withType<Detekt> {
   reports {
     html.required.set(true) // observe findings in your browser with structure and code snippets
     xml.required.set(true) // checkstyle like format mainly for integrations like Jenkins

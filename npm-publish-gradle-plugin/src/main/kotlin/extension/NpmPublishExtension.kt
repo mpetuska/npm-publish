@@ -1,15 +1,11 @@
 package dev.petuska.npm.publish.extension
 
 import dev.petuska.npm.publish.NpmPublishPlugin
-import dev.petuska.npm.publish.extension.domain.NpmAccess
-import dev.petuska.npm.publish.extension.domain.NpmAccessScope
-import dev.petuska.npm.publish.extension.domain.NpmPackage
-import dev.petuska.npm.publish.extension.domain.NpmPackages
-import dev.petuska.npm.publish.extension.domain.NpmRegistries
-import dev.petuska.npm.publish.extension.domain.NpmRegistry
+import dev.petuska.npm.publish.extension.domain.*
 import dev.petuska.npm.publish.task.NodeExecTask
 import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.task.NpmPublishTask
+import dev.petuska.npm.publish.util.NpmPublishDsl
 import dev.petuska.npm.publish.util.WithGradleFactories
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectProvider
@@ -24,7 +20,8 @@ import java.net.URI
  * An extension for npm-publish plugin configuration
  * @see [NpmPublishPlugin]
  */
-@Suppress("unused", "LeakingThis")
+@Suppress("unused")
+@NpmPublishDsl
 public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAware, NpmAccessScope {
   public companion object {
     internal const val NAME = "npmPublish"

@@ -19,6 +19,7 @@ refreshVersions {
 }
 
 includeBuild("../")
+includeBuild("../build-conventions")
 include(
   ":mpp",
   ":both",

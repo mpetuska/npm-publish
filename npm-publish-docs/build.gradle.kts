@@ -3,7 +3,7 @@ import task.MkDocsExec
 import java.io.FileFilter
 
 plugins {
-  id("plugin.base")
+  id("convention.base")
 }
 
 tasks {

@@ -1,6 +1,7 @@
 package dev.petuska.npm.publish.extension.domain
 
 import dev.petuska.npm.publish.util.NamedInput
+import dev.petuska.npm.publish.util.NpmPublishDsl
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -10,6 +11,7 @@ import org.gradle.api.tasks.Optional
  * A simple representation of a npm dependency
  */
 @Suppress("unused")
+@NpmPublishDsl
 public interface NpmDependency : NamedInput {
   /**
    * Dependency version specification.

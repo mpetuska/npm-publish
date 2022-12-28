@@ -17,15 +17,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Removed
+
+---
+
+## [3.2.0] - 2022-12-28
+
+### Verified Versions
+
+- Kotlin: 1.8.0
+- Gradle: 7.5.1
+- JDK: 11
+
+### Added
+
 - New [samples](./samples) project containing examples of various use-cases the plugin is able to cover.
 - `@DslMarkers` to plugin's DSL to prevent incorrect nested property usage.
 - Pull transitive npm dependencies from project dependencies via `publicPackageJson`
 - New accessors for assemble and pack tasks inside package DSL
+- KGP 1.8.0 support.
 
 ### Changed
+
 - Fix #73: `nodeHome` override not working when used with kotlin plugin
 
 ### Removed
+
+- Support for KGP < 1.8.0!!! **DO NOT UPGRADE IF YOU'RE ON OLDER KOTLIN VERSION**
 
 ---
 
@@ -274,7 +294,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.2.0...HEAD
+
+[3.2.0]: https://github.com/mpetuska/npm-publish/compare/3.1.0...3.2.0
 
 [3.1.0]: https://github.com/mpetuska/npm-publish/compare/3.0.1...3.1.0
 

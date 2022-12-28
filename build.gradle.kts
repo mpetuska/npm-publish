@@ -1,15 +1,8 @@
 plugins {
   id("io.github.gradle-nexus.publish-plugin")
-  id("plugin.base")
+  id("convention.base")
   if (System.getenv("CI") in arrayOf(null, "0", "false", "n")) {
-    id("plugin.git-hooks")
-  }
-}
-
-gradleEnterprise {
-  buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
+    id("convention.git-hooks")
   }
 }
 
@@ -19,6 +12,13 @@ nexusPublishing {
       nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
       snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
     }
+  }
+}
+
+gradleEnterprise {
+  buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
   }
 }
 

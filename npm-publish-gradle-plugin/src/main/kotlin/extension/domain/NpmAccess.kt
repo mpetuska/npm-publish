@@ -1,6 +1,6 @@
 package dev.petuska.npm.publish.extension.domain
 
-import java.util.Locale
+import java.util.*
 
 /** Enum representation of NPM repository access */
 public enum class NpmAccess {

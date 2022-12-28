@@ -5,9 +5,6 @@ import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
-@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
-@DslMarker
-internal annotation class NpmPublishDsl
 internal fun String?.notFalse() = !(
   equals("false", true) ||
     equals("0", true) ||

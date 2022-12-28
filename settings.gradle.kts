@@ -11,6 +11,7 @@ refreshVersions {
 }
 
 rootProject.name = "npm-publish"
+includeBuild("build-conventions")
 include(
   "npm-publish-gradle-plugin",
   "npm-publish-docs",

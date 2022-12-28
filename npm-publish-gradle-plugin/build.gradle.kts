@@ -1,6 +1,6 @@
 plugins {
-  id("plugin.kotlin-jvm")
-  id("plugin.publishing")
+  id("convention.kotlin-jvm")
+  id("convention.publishing")
 }
 
 description = """

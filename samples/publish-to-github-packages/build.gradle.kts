@@ -1,4 +1,5 @@
 plugins {
+  id("convention.base")
   kotlin("js")
   id("dev.petuska.npm.publish")
 }

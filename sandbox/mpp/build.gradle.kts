@@ -1,5 +1,6 @@
 plugins {
   kotlin("multiplatform")
+  id("convention.base")
   id("dev.petuska.npm.publish")
   `maven-publish`
 }
