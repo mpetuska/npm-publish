@@ -1,7 +1,5 @@
 package sandbox
 
-import io.ktor.client.HttpClient
-
 external interface GreetingArgs {
   val name: String
   val sureName: String
@@ -9,7 +7,7 @@ external interface GreetingArgs {
 
 @JsExport
 fun buildGreeting(args: GreetingArgs): String {
-  return "Hi ${args.name} ${args.sureName}! Here's HttpClient::class.simpleName: ${HttpClient::class.simpleName}"
+  return "Hi ${args.name} ${args.sureName}! Here's kotlin.test.Test::class.simpleName: ${kotlin.test.Test::class.simpleName}"
 }
 
 @JsExport

@@ -1,9 +1,9 @@
 package dev.petuska.npm.publish.task
 
-import com.google.gson.Gson
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.util.final
 import dev.petuska.npm.publish.util.unsafeCast
+import groovy.json.JsonSlurper
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -57,8 +57,8 @@ public abstract class NpmPackTask : NpmExecTask() {
     dry.convention(false)
     outputFile.convention(
       packageDir.map { dir ->
-        dir.file("package.json").asFile.takeIf(File::exists)?.let(File::reader)?.let {
-          Gson().fromJson(it, MutableMap::class.java)
+        dir.file("package.json").asFile.takeIf(File::exists)?.let {
+          JsonSlurper().parse(it)
         }.unsafeCast<MutableMap<String, Any>>()
       }.flatMap {
         val name = it["name"]?.toString()?.replace("@", "")?.replace("/", "-")
@@ -85,7 +85,7 @@ public abstract class NpmPackTask : NpmExecTask() {
     npmExec(listOf("pack", pDir, if (d) "--dry-run" else null)) {
       it.workingDir(tmpDir)
     }
-    val outFile = tmpDir.listFiles().firstOrNull() ?: error("Internal error. Temporary packed file not found.")
+    val outFile = tmpDir.listFiles()?.firstOrNull() ?: error("Internal error. Temporary packed file not found.")
     outFile.copyTo(oDir, true)
     if (!d) info { "Packed package at ${pDir.path} to ${oDir.path}" }
   }

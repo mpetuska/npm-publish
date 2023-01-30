@@ -7,7 +7,7 @@ plugins {
 dependencies {
   implementation(npm("is-odd", "*"))
   api(devNpm("is-even", "*"))
-  implementation(Ktor.client.core)
+  implementation(kotlin("test-js"))
 }
 
 kotlin {
