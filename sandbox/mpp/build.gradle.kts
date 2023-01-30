@@ -20,7 +20,7 @@ kotlin {
   sourceSets {
     all {
       dependencies {
-        implementation(Ktor.client.core)
+        implementation(kotlin("test-js"))
         implementation(devNpm("is-odd", "*"))
         api(npm("is-even", "*"))
       }

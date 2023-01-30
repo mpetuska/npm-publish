@@ -1,9 +1,10 @@
 package dev.petuska.npm.publish.task
 
-import com.google.gson.GsonBuilder
 import dev.petuska.npm.publish.extension.domain.NpmDependency
 import dev.petuska.npm.publish.extension.domain.NpmPackage
 import dev.petuska.npm.publish.util.*
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -23,9 +24,6 @@ import java.io.File
 @CacheableTask
 @Suppress("LeakingThis")
 public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
-  private companion object {
-    private val gson = GsonBuilder().setPrettyPrinting().create()
-  }
 
   @get:Nested
   internal abstract val extraDependencies: ListProperty<NpmDependency>
@@ -67,7 +65,14 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
         project.layout.buildDirectory.dir("packages/${it.name}")
       }
     )
-    `package`.convention(project.provider { project.objects.newInstance(NpmPackage::class.java, name) })
+    `package`.convention(
+      project.provider {
+        project.objects.newInstance(
+          NpmPackage::class.java,
+          name
+        )
+      }
+    )
   }
 
   @TaskAction
@@ -91,7 +96,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     val pJsonFile = dest.file("package.json").asFile
     debug { "Resolving package.json for ${pkg.name} package to ${pJsonFile.path}" }
     val pJson = pkg.resolvePackageJson()
-    pJsonFile.writeText(gson.toJson(pJson))
+    pJsonFile.writeText(JsonOutput.prettyPrint(JsonOutput.toJson(pJson)))
     info { "Resolved package.json for ${pkg.name} package to ${pJsonFile.path}" }
     info { "Assembled ${pkg.name} package in ${dest.asFile.path}" }
   }
@@ -99,11 +104,11 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   private fun NpmPackage.resolvePackageJson(): Map<String, Any> {
     packageJsonFile.finalOrNull?.let {
       info { "package.json file set and found for $name package. Not resolving further..." }
-      return gson.fromJson(it.asFile.reader(), Map::class.java).unsafeCast()
+      return JsonSlurper().parse(it.asFile).unsafeCast()
     }
     val pJson = packageJsonTemplateFile.finalOrNull?.let {
       info { "package.json template file set and found for $name package. Using it as a baseline..." }
-      gson.fromJson(it.asFile.reader(), Map::class.java).unsafeCast<MutableMap<String, Any>>()
+      JsonSlurper().parse(it.asFile).unsafeCast<MutableMap<String, Any>>()
     } ?: mutableMapOf()
 
     packageJson.finalOrNull?.finalise()?.let(pJson::overrideFrom)
@@ -120,20 +125,28 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   }
 
   private fun NpmPackage.resolveDependencies(pJson: MutableMap<String, Any>) {
-    val direct = (dependencies.toList() + extraDependencies.get()).distinct().groupBy { it.type.final }
-    val dOptional =
-      pJson.mergeDependencies("optionalDependencies", direct.getOrDefault(NpmDependency.Type.OPTIONAL, listOf()))
-    val dPeer =
-      pJson.mergeDependencies("peerDependencies", direct.getOrDefault(NpmDependency.Type.PEER, listOf())) { d ->
-        dOptional.keys.none { d == it }.also {
-          if (!it) {
-            warn {
-              "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..."
-            }
+    val direct =
+      (dependencies.toList() + extraDependencies.get()).distinct().groupBy { it.type.final }
+    val dOptional = pJson.mergeDependencies(
+      "optionalDependencies",
+      direct.getOrDefault(NpmDependency.Type.OPTIONAL, listOf())
+    )
+    val dPeer = pJson.mergeDependencies(
+      "peerDependencies",
+      direct.getOrDefault(NpmDependency.Type.PEER, listOf())
+    ) { d ->
+      dOptional.keys.none { d == it }.also {
+        if (!it) {
+          warn {
+            "Registered peer dependency $d for $name package already present in higher priority scope. Skipping..."
           }
         }
       }
-    val dDev = pJson.mergeDependencies("devDependencies", direct.getOrDefault(NpmDependency.Type.DEV, listOf())) { d ->
+    }
+    val dDev = pJson.mergeDependencies(
+      "devDependencies",
+      direct.getOrDefault(NpmDependency.Type.DEV, listOf())
+    ) { d ->
       (dOptional.keys.none { d == it } && dPeer.keys.none { d == it }).also {
         if (!it) {
           warn {
@@ -142,7 +155,10 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
         }
       }
     }
-    pJson.mergeDependencies("dependencies", direct.getOrDefault(NpmDependency.Type.NORMAL, listOf())) { d ->
+    pJson.mergeDependencies(
+      "dependencies",
+      direct.getOrDefault(NpmDependency.Type.NORMAL, listOf())
+    ) { d ->
       (dOptional.keys.none { d == it } && dPeer.keys.none { d == it } && dDev.keys.none { d == it }).also {
         if (!it) {
           warn {
@@ -158,8 +174,8 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     direct: List<NpmDependency>,
     filter: (String) -> Boolean = { true },
   ): Map<String, String> {
-    val dDeps =
-      direct.groupBy(NpmDependency::getName).filterKeys(filter).mapValues { (_, v) -> v.first().version.final }
+    val dDeps = direct.groupBy(NpmDependency::getName).filterKeys(filter)
+      .mapValues { (_, v) -> v.first().version.final }
     if (dDeps.isNotEmpty()) {
       putIfAbsent(key, dDeps)
       get(key).unsafeCast<MutableMap<String, Any>>().apply {

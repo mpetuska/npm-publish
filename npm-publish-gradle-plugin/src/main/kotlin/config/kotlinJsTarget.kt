@@ -1,12 +1,11 @@
 package dev.petuska.npm.publish.config
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import dev.petuska.npm.publish.extension.domain.NpmDependency
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
 import dev.petuska.npm.publish.util.ProjectEnhancer
 import dev.petuska.npm.publish.util.toCamelCase
 import dev.petuska.npm.publish.util.unsafeCast
+import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
@@ -59,7 +58,12 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       }
       val compileKotlinTask = binary.flatMap<Kotlin2JsCompile>(JsIrBinary::linkTask)
       val publicPackageJsonTask = binary
-        .flatMap { tasks.named(it.compilation.npmProject.publicPackageJsonTaskName, PublicPackageJsonTask::class.java) }
+        .flatMap {
+          tasks.named(
+            it.compilation.npmProject.publicPackageJsonTaskName,
+            PublicPackageJsonTask::class.java
+          )
+        }
       val processResourcesTask = target.compilations.named("main").flatMap {
         tasks.named(it.processResourcesTaskName, Copy::class.java)
       }
@@ -92,18 +96,20 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
 
 private fun ProjectEnhancer.resolveDependencies(
   publicPackageJsonTask: Provider<PublicPackageJsonTask>
-): Provider<List<NpmDependency>> = publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
-  val json = Gson().fromJson(pJson.readText(), JsonObject::class.java)
-  fun JsonObject.parse(scope: NpmDependency.Type) = asMap().mapValues { (_, v) -> v.asString }.map { (n, v) ->
-    objects.newInstance(NpmDependency::class.java, n).apply {
-      type.set(scope)
-      version.set(v)
+): Provider<List<NpmDependency>> =
+  publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
+    val json = JsonSlurper().parse(pJson).unsafeCast<Map<String, Any>>()
+    fun Map<String, String>.parse(scope: NpmDependency.Type) = map { (n, v) ->
+      objects.newInstance(NpmDependency::class.java, n).apply {
+        type.set(scope)
+        version.set(v)
+      }
     }
+    json["dependencies"].unsafeCast<Map<String, String>>().parse(NpmDependency.Type.NORMAL) +
+      json["peerDependencies"].unsafeCast<Map<String, String>>().parse(NpmDependency.Type.PEER) +
+      json["optionalDependencies"].unsafeCast<Map<String, String>>()
+        .parse(NpmDependency.Type.OPTIONAL)
   }
-  json.getAsJsonObject("dependencies").parse(NpmDependency.Type.NORMAL) +
-    json.getAsJsonObject("peerDependencies").parse(NpmDependency.Type.PEER) +
-    json.getAsJsonObject("optionalDependencies").parse(NpmDependency.Type.OPTIONAL)
-}
 
 private fun ProjectEnhancer.resolveDependencies(
   targetName: String,
