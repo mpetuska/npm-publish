@@ -24,7 +24,7 @@ jobs:
           VERSION="${{ inputs.version }}"
           VERSION="${VERSION:=${{ github.event.inputs.version }}}"
           echo "::set-output name=version::${VERSION//v}"
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: 11
