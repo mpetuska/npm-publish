@@ -11,13 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Verified Versions
 
-- Kotlin: 1.8.0
-- Gradle: 7.5.1
+- Kotlin: 1.8.10
+- Gradle: 7.6
 - JDK: 11
 
 ### Added
 
 ### Changed
+- Pegged plugin compile kotlin version against gradle's embeddedKotlinVersion
 
 ### Removed
 

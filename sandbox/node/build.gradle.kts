@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-  implementation(npm("is-odd", "*"))
-  api(devNpm("is-even", "*"))
+  api(npm("is-even", "*"))
+  implementation(devNpm("is-odd", "*"))
   implementation(kotlin("test-js"))
 }
 

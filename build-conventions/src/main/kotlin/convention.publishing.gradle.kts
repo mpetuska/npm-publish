@@ -6,15 +6,13 @@ plugins {
   signing
 }
 
-afterEvaluate {
-  gradlePlugin {
-    plugins {
-      create(name) {
-        id = "dev.petuska.npm.publish"
-        displayName = "NPM package publishing to NPM repositories"
-        description = project.description
-        implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
-      }
+gradlePlugin {
+  plugins {
+    register(name) {
+      id = "dev.petuska.npm.publish"
+      displayName = "NPM package publishing to NPM repositories"
+      description = project.description
+      implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
     }
   }
 }
@@ -70,7 +68,6 @@ publishing {
 java {
   withSourcesJar()
   withJavadocJar()
-  targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks {

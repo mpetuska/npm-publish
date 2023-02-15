@@ -4,6 +4,7 @@ import dev.petuska.npm.publish.extension.NpmPublishExtension
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import java.util.*
 
 internal class ProjectEnhancer(
   project: Project,
@@ -34,7 +35,7 @@ internal class ProjectEnhancer(
     converter: (String) -> T
   ) {
     val propName = globalPrefix + name
-    val envName = name.toUpperCase().replace(".", "_")
+    val envName = name.uppercase(Locale.getDefault()).replace(".", "_")
 
     convention(
       providers.systemProperty(propName)

@@ -17,8 +17,8 @@ internal fun String.toCamelCase(lower: Boolean = false): String {
     }
     chunk = chunk.replaceFirstChar {
       when {
-        first && lower -> it.toLowerCase().also { first = false }
-        it.isLowerCase() -> it.toTitleCase()
+        first && lower -> it.lowercaseChar().also { first = false }
+        it.isLowerCase() -> it.titlecaseChar()
         else -> it
       }
     }
@@ -27,8 +27,8 @@ internal fun String.toCamelCase(lower: Boolean = false): String {
   var rest: String = subSequence(pos, length).toString()
   rest = rest.replaceFirstChar {
     when {
-      first && lower -> it.toLowerCase().also { first = false }
-      it.isLowerCase() -> it.toTitleCase()
+      first && lower -> it.lowercaseChar().also { first = false }
+      it.isLowerCase() -> it.titlecaseChar()
       else -> it
     }
   }

@@ -7,12 +7,13 @@ plugins {
 }
 
 tasks {
+  withType<JavaCompile> {
+    targetCompatibility = "${JavaVersion.VERSION_11}"
+  }
   withType<KotlinCompile> {
     kotlinOptions {
-      languageVersion = "1.4"
-      kotlinOptions {
-        jvmTarget = "11"
-      }
+      languageVersion = embeddedKotlinVersion.split(".").take(2).joinToString(".")
+      jvmTarget = "11"
     }
   }
   withType<Test> {

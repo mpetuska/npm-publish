@@ -5,8 +5,10 @@ defaults:
 
 on:
   pull_request:
+    paths:
+      - "**/src/**"
     branches:
-      - '**'
+      - master
   workflow_dispatch:
   workflow_call:
 
@@ -26,7 +28,7 @@ jobs:
 
       - name: Restore Gradle cache
         id: cache
-        uses: actions/cache@v3.2.4
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
