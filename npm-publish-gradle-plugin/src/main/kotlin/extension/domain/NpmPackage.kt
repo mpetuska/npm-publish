@@ -169,6 +169,8 @@ public abstract class NpmPackage : NamedInput, WithGradleFactories() {
 
   /**
    * Convenience DSL to configure package's dependencies
+   *
+   * **Note:** In `gradle > 8.1.1` this must use explicit receiver `this` to be resolved
    * @param action to apply
    */
   public fun dependencies(action: Action<NpmDependencies>) {

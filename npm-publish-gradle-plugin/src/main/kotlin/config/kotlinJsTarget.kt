@@ -7,6 +7,7 @@ import dev.petuska.npm.publish.util.toCamelCase
 import dev.petuska.npm.publish.util.unsafeCast
 import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.PublicPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency as KJsNpmDependency
 
@@ -57,17 +59,15 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
         }
       }
       val compileKotlinTask = binary.flatMap<Kotlin2JsCompile>(JsIrBinary::linkTask)
-      val publicPackageJsonTask = binary
-        .flatMap {
-          tasks.named(
-            it.compilation.npmProject.publicPackageJsonTaskName,
-            PublicPackageJsonTask::class.java
-          )
-        }
-      val processResourcesTask = target.compilations.named("main").flatMap {
-        tasks.named(it.processResourcesTaskName, Copy::class.java)
+      val publicPackageJsonTask = binary.flatMap {
+        tasks.named<PublicPackageJsonTask>(it.compilation.npmProject.publicPackageJsonTaskName)
       }
-      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
+      val processResourcesTask = target.compilations.named("main").flatMap {
+        tasks.named<Copy>(it.processResourcesTaskName)
+      }
+      val outputFile = compileKotlinTask.flatMap { it.destinationDirectory.file(it.moduleName) }.map(
+        RegularFile::getAsFile
+      )
       val typesFile = outputFile.map { File(it.parentFile, "${it.nameWithoutExtension}.d.ts") }
 
       pkg.assembleTask.configure {

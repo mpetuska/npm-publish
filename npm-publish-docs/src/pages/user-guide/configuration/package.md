@@ -102,7 +102,7 @@ This ensures that any given dependency does not appear in multiple dependency sc
           }
           packageJsonFile.set(projectDir.resolve("package.json"))
           packageJsonTemplateFile.set(projectDir.resolve("package.template.json"))
-          dependencies {
+          this.dependencies { // (1)
             optional("axios", "*")
             peer("axios", "*")
             dev("axios", "*")
@@ -112,6 +112,8 @@ This ensures that any given dependency does not appear in multiple dependency sc
       }
     }
     ```
+    
+    1. `this` is required in gradle > 8.1.1
 
 ### `scope`
 
@@ -190,6 +192,13 @@ Similar to [`packageJsonFile`](#packagejsonfile) except allows the options to be
 the [`packageJson`](#packagejson) and top-level options.
 
 ### `dependencies`
+
+!!! note
+    Since gradle `8.1.1` it is required to use explicit `this` receiver to access `dependencies` block
+    ````kotlin
+    this.dependencies {
+    }
+    ````
 
 Package's npm dependency container. It can be configured by invoking the property and using provided
 , `optional`, `peer`, `dev` and `normal` DSLs.
