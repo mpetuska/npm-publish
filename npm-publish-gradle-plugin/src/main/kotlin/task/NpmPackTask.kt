@@ -82,9 +82,12 @@ public abstract class NpmPackTask : NpmExecTask() {
       "Packing package at ${pDir.path} to ${oDir.parentFile.path} ${if (d) "with" else "without"} --dry-run flag"
     }
     val tmpDir = temporaryDir
-    npmExec(listOf("pack", pDir, if (d) "--dry-run" else null)) {
-      it.workingDir(tmpDir)
+    val args = buildList {
+      add("pack")
+      add(pDir)
+      if (d) add("--dry-run")
     }
+    npmExec(args) { it.workingDir(tmpDir) }.rethrowFailure()
     val outFile = tmpDir.listFiles()?.firstOrNull() ?: error("Internal error. Temporary packed file not found.")
     outFile.copyTo(oDir, true)
     if (!d) info { "Packed package at ${pDir.path} to ${oDir.path}" }
