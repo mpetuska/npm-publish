@@ -35,7 +35,7 @@ This is a maintenance release with a few minor bugfixes.
 
 ### Added
 
-- New `"key" {}` DSL inside `packageJson` configuration to allow for easy custom object property management
+- New `tag` option for `NpmPublishTask`
 
 ### Changed
 
@@ -43,6 +43,7 @@ This is a maintenance release with a few minor bugfixes.
   receiver
 - Replaced `refreshVersions` plugin with gradle catalogs
 - Upgraded internal dependencies
+- Fixed `otp` option not being properly propagated to npm executable
 
 ### Removed
 

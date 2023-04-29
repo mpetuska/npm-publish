@@ -3,8 +3,6 @@ package dev.petuska.npm.publish.task
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmRegistry
 import dev.petuska.npm.publish.util.configure
-import dev.petuska.npm.publish.util.final
-import dev.petuska.npm.publish.util.finalise
 import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -41,6 +39,15 @@ public abstract class NpmPublishTask : NpmExecTask() {
   public abstract val dry: Property<Boolean>
 
   /**
+   * Optional tag to label the published package version
+   * @see [NpmPublishExtension.dry]
+   */
+  @get:Input
+  @get:Optional
+  @get:Option(option = "tag", description = "Optional tag to label the published package version")
+  public abstract val tag: Property<String>
+
+  /**
    * Configuration DSL allowing to modify a registry config
    * @param action to apply
    */
@@ -63,27 +70,26 @@ public abstract class NpmPublishTask : NpmExecTask() {
   @Suppress("unused")
   @TaskAction
   private fun doAction() {
-    val pDir = packageDir.final.asFile
-    val reg = registry.final
-    val uri = reg.uri.final
+    val pDir = packageDir.asFile.get()
+    val reg = registry.get()
+    val uri = reg.uri.get()
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
-    val d = dry.final
+    val d = dry.get()
     debug {
       "Publishing package at ${pDir.path} to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag"
     }
-    npmExec(
-      listOf(
-        "publish",
-        pDir,
-        "--access",
-        "${reg.access.final}",
-        "--registry",
-        "${uri.scheme.trim()}://$repo",
-        if (reg.authToken.finalise().isPresent) "--//$repo:_authToken=${reg.authToken.get()}" else null,
-        if (reg.otp.finalise().isPresent) "--otp ${reg.otp.get()}" else null,
-        if (d) "--dry-run" else null
-      )
-    ) { it.workingDir(packageDir.final) }
+    val args = buildList {
+      add("publish")
+      add(pDir)
+      add(listOf("--access", reg.access.get()))
+      add(listOf("--registry", "${uri.scheme.trim()}://$repo"))
+      if (reg.otp.isPresent) add(listOf("--otp", reg.otp.get()))
+      if (reg.authToken.isPresent) add("--//$repo:_authToken=${reg.authToken.get()}")
+      if (d) add("--dry-run")
+      if (tag.isPresent) add(listOf("--tag", tag.get()))
+      add("${uri.scheme.trim()}://$repo")
+    }
+    npmExec(args) { it.workingDir(packageDir.get()) }.rethrowFailure()
     if (!d) info { "Published package at ${pDir.path} to ${reg.name} registry" }
   }
 }

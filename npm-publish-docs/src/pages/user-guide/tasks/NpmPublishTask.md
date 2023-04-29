@@ -21,6 +21,7 @@ tasks {
     | [`registry`](#registry)     | NpmRegistry |         |                               |
     | [`packageDir`](#packagedir) | Directory   |         |                               |
     | [`dry`](#dry)               | Boolean     | false   |                               |
+    | [`tag`](#tag)               | String      |         |                               |
 
 === "Keys"
 
@@ -29,6 +30,7 @@ tasks {
     | [`registry`](#registry)         |         |               |             |
     | [`packageDir`](#destinationdir) |         |               |             |
     | [`dry`](#dry)                   | `--dry` |               |             |
+    | [`tag`](#tag)                   | `--tag` |               |             |
 
 === "Usage"
 
@@ -40,6 +42,7 @@ tasks {
         }
         packageDir.set(layout.projectDirectory.dir("src/main/js"))
         dry.set(true)
+        tag.set("latest")
       }
     }
     ```
@@ -55,3 +58,7 @@ The directory where the assembled and ready-to-publish package is
 ### `dry`
 
 Controls dry-tun mode for the execution.
+
+### `tag`
+
+Sets a tag to label published package version
