@@ -1,11 +1,14 @@
 plugins {
-  id("de.fayard.refreshVersions") version "0.51.0"
   id("com.gradle.enterprise") version "3.12.3"
 }
 
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-
-refreshVersions {
-  versionsPropertiesFile = rootDir.resolve("gradle/versions.properties")
-  extraArtifactVersionKeyRules(rootDir.resolve("gradle/versions.rules"))
+@Suppress("UnstableApiUsage")
+dependencyResolutionManagement {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    gradlePluginPortal()
+  }
 }
+
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")

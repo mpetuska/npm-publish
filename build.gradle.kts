@@ -1,17 +1,14 @@
 plugins {
-  id("io.github.gradle-nexus.publish-plugin")
+  alias(libs.plugins.nexus.publish)
   id("convention.base")
-  if (System.getenv("CI") in arrayOf(null, "0", "false", "n")) {
-    id("convention.git-hooks")
-  }
+  id("convention.versions")
+  id("convention.git-hooks")
 }
 
-nexusPublishing {
-  repositories {
-    sonatype {
-      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-    }
+nexusPublishing.repositories {
+  sonatype {
+    nexusUrl by uri("https://s01.oss.sonatype.org/service/local/")
+    snapshotRepositoryUrl by uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
   }
 }
 
@@ -21,12 +18,3 @@ gradleEnterprise {
     termsOfServiceAgree = "yes"
   }
 }
-
-println(
-  """
-  BUILD VERSIONS
-  JDK: ${System.getProperty("java.version")}
-  KOTLIN: $embeddedKotlinVersion
-  Gradle: ${gradle.gradleVersion}
-  """.trimIndent()
-)

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -6,14 +8,21 @@ plugins {
   kotlin("jvm")
 }
 
+dependencies {
+  testImplementation(libs.bundles.kotest.assertions)
+  testImplementation(libs.junit.jupiter.api)
+  testRuntimeOnly(libs.junit.jupiter.engine)
+}
+
 tasks {
   withType<JavaCompile> {
-    targetCompatibility = "${JavaVersion.VERSION_11}"
+    targetCompatibility = libs.versions.java.get()
   }
   withType<KotlinCompile> {
-    kotlinOptions {
-      languageVersion = embeddedKotlinVersion.split(".").take(2).joinToString(".")
-      jvmTarget = "11"
+    compilerOptions {
+      languageVersion by embeddedKotlinVersion.split(".").take(2)
+        .joinToString(".").let(KotlinVersion::fromVersion)
+      jvmTarget by JvmTarget.fromTarget(libs.versions.java.get())
     }
   }
   withType<Test> {

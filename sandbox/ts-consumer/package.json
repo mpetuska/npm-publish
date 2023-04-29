@@ -11,16 +11,14 @@
     "reinstall:both": "yarn remove @mpetuska/both; yarn add ../both/build/packages/js",
     "reinstall:browser": "yarn remove @mpetuska/browser; yarn add ../browser/build/packages/js",
     "reinstall:node": "yarn remove @mpetuska/node; yarn add ../node/build/packages/js",
-    "reinstall:mpp-node": "yarn remove @mpetuska/mpp-node; yarn add ../mpp/build/packages/node",
-    "reinstall:mpp-browser": "yarn remove @mpetuska/mpp-browser; yarn add ../mpp/build/packages/browser",
-    "reinstall": "yarn reinstall:both && yarn reinstall:browser && yarn reinstall:node  && yarn reinstall:mpp-node && yarn reinstall:mpp-browser",
+    "reinstall:mpp": "yarn remove @mpetuska/mpp; yarn add ../mpp/build/packages/js",
+    "reinstall": "yarn reinstall:both && yarn reinstall:browser && yarn reinstall:node  && yarn reinstall:mpp",
     "rebuild": "(cd .. && ./gradlew pack) && yarn reinstall"
   },
   "dependencies": {
     "@mpetuska/both": "../both/build/packages/js",
     "@mpetuska/browser": "../browser/build/packages/js",
-    "@mpetuska/mpp-browser": "../mpp/build/packages/browser",
-    "@mpetuska/mpp-node": "../mpp/build/packages/node",
+    "@mpetuska/mpp": "../mpp/build/packages/js",
     "@mpetuska/node": "../node/build/packages/js"
   },
   "devDependencies": {

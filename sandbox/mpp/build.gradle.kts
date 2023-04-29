@@ -6,24 +6,21 @@ plugins {
 }
 
 kotlin {
-  js("browser") {
-    browser()
-    useCommonJs()
-    binaries.library()
-  }
-  js("node") {
+  js {
     nodejs()
     useCommonJs()
     binaries.library()
   }
 
   sourceSets {
-    all {
+    named("jsMain") {
       dependencies {
         implementation(kotlin("test-js"))
         implementation(devNpm("is-odd", "*"))
         api(npm("is-even", "*"))
       }
+    }
+    all {
       languageSettings.optIn("kotlin.js.ExperimentalJsExport")
     }
   }
@@ -33,17 +30,8 @@ npmPublish {
   organization.set(group as String)
 
   packages {
-    named("browser") {
-      packageName.set("mpp-browser")
-      packageJson {
-        repository {
-          type.set("git")
-          url.set("https://github.com/mpetuska/npm-publish.git")
-        }
-      }
-    }
-    named("node") {
-      packageName.set("mpp-node")
+    named("js") {
+      packageName.set("mpp")
       packageJson {
         author {
           name.set("Custom Author")

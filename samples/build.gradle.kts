@@ -1,10 +1,5 @@
-allprojects {
-  repositories {
-    mavenLocal()
-    mavenCentral()
-    google()
-    gradlePluginPortal()
-  }
+plugins {
+  id("convention.versions")
 }
 
 gradleEnterprise {

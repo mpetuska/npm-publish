@@ -8,9 +8,3 @@ idea {
     isDownloadSources = true
   }
 }
-
-repositories {
-  mavenLocal()
-  mavenCentral()
-  gradlePluginPortal()
-}
