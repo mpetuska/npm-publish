@@ -2,20 +2,15 @@ plugins {
   `kotlin-dsl`
 }
 
-repositories {
-  mavenLocal()
-  mavenCentral()
-  gradlePluginPortal()
-}
-
 dependencies {
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$embeddedKotlinVersion")
-  implementation("org.jetbrains.dokka:dokka-gradle-plugin:_")
-  implementation("com.github.jakemarsden:git-hooks-gradle-plugin:_")
-  implementation("com.gradle.publish:plugin-publish-plugin:_")
-  implementation("io.github.gradle-nexus:publish-plugin:_")
-  implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:_")
-  implementation("dev.petuska:container-tasks-gradle-plugin:_")
+  implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+
+  implementation(libs.plugin.kotlin)
+  implementation(libs.plugin.git.hooks)
+  implementation(libs.plugin.detekt)
+  implementation(libs.plugin.versions)
+  implementation(libs.plugin.versions.update)
+  implementation(libs.plugin.container.tasks)
 }
 
 gradleEnterprise {

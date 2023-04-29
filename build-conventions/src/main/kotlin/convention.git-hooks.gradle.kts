@@ -1,5 +1,5 @@
 plugins {
-  id("com.github.jakemarsden.git-hooks")
+  id("com.github.jakemarsden.git-hooks") apply (System.getenv("CI") !in arrayOf(null, "0", "false", "n", "N"))
 }
 
 gitHooks {
