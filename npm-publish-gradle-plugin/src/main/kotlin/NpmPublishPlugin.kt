@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.utils.named
 
 /**
  * Main entry point for npm-publish plugin
@@ -49,9 +50,10 @@ public class NpmPublishPlugin : Plugin<Project> {
     }
 
     afterEvaluate {
-      val kotlinNodeJsSetup = rootProject.tasks.findByName("kotlinNodeJsSetup")
-      if (kotlinNodeJsSetup is NodeJsSetupTask) {
-        extension.nodeHome.convention(layout.projectDirectory.dir(kotlinNodeJsSetup.destination.absolutePath))
+      if (rootProject.tasks.names.contains("kotlinNodeJsSetup")) {
+        rootProject.tasks.named<NodeJsSetupTask>("kotlinNodeJsSetup").map(NodeJsSetupTask::destination)
+          .let(layout::dir)
+          .let(extension.nodeHome::convention)
       }
       tasks.maybeCreate("assemble").apply {
         group = "build"

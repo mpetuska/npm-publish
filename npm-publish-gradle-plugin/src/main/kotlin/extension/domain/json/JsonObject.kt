@@ -45,13 +45,6 @@ public abstract class JsonObject<T : Any> : WithGradleFactories() {
   public fun json(value: Action<GenericJsonObject>): GenericJsonObject =
     instance(GenericJsonObject::class).also(value::execute)
 
-  /**
-   *  Build a custom object value
-   * @param value configuration to apply to a new [GenericJsonObject] instance
-   */
-  public fun json(value: GenericJsonObject.() -> Unit): GenericJsonObject =
-    instance(GenericJsonObject::class).also(value::invoke)
-
   @get:Input
   protected abstract val extras: MapProperty<String, T>
 

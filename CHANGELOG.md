@@ -9,15 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+This is a maintenance release with a few minor bugfixes.
+
 ### Verified Versions
 
-- Kotlin: 1.8.10
-- Gradle: 7.6
+- Kotlin: 1.8.21
+- Gradle: 8.1.1
 - JDK: 11
 
 ### Added
 
 ### Changed
+
+### Removed
+
+---
+
+## [3.3.0]
+
+### Verified Versions
+
+- Kotlin: 1.8.21
+- Gradle: 8.1.1
+- JDK: 11
+
+### Added
+
+- New `"key" {}` DSL inside `packageJson` configuration to allow for easy custom object property management
+
+### Changed
+
+- Modified KDoc of properties affected by gradle 8.1.1 new resolution strategy. tl;dr; they now require explicit `this`
+  receiver
+- Replaced `refreshVersions` plugin with gradle catalogs
+- Upgraded internal dependencies
 
 ### Removed
 
@@ -34,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+
 - Pegged plugin compile kotlin version against gradle's `embeddedKotlinVersion`
 - Removed `gson` dependency and replaced usages with groovy's `JsonSlurper`
 
@@ -312,7 +338,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.2.1...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.3.3...HEAD
+
+[3.3.0]: https://github.com/mpetuska/npm-publish/compare/3.2.1...3.3.0
 
 [3.2.1]: https://github.com/mpetuska/npm-publish/compare/3.2.0...3.2.1
 

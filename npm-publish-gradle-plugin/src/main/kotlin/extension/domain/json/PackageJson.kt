@@ -254,6 +254,8 @@ public abstract class PackageJson : GenericJsonObject() {
 
   /**
    * Override and configure the dependencies field
+   *
+   * **Note:** In `gradle > 8.1.1` this must use explicit receiver `this` to be resolved
    * @see [dependencies]
    */
   public fun dependencies(action: Action<Dependencies>) {
