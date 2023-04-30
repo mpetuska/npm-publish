@@ -3,6 +3,7 @@ package dev.petuska.npm.publish.test.util
 import dev.petuska.npm.publish.NpmPublishPlugin
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -16,6 +17,7 @@ import java.io.File
 @Suppress("UnnecessaryAbstractClass")
 abstract class ITest {
   class TestProject(project: Project) : Project by project {
+    val projectInternal = project as ProjectInternal
     operator fun <T> T.invoke(action: T.() -> Unit) {
       apply(action)
     }
@@ -31,6 +33,7 @@ abstract class ITest {
 
   @TempDir
   private lateinit var tempDir: File
+
   protected fun projectOf(
     init: (projectDir: File) -> Unit = {},
     properties: Map<String, Any> = mapOf(),
@@ -56,7 +59,7 @@ abstract class ITest {
     init: (projectDir: File) -> Unit = {},
     properties: Map<String, Any> = mapOf(),
   ): TestProject {
-    return projectOf(init, properties + (KotlinJsCompilerType.jsCompilerProperty to compiler.name.toLowerCase())) {
+    return projectOf(init, properties + (KotlinJsCompilerType.jsCompilerProperty to compiler.name.lowercase())) {
       plugins.apply("org.jetbrains.kotlin.js")
       kotlinJs {
         js(compiler) {

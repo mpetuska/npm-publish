@@ -1,0 +1,16 @@
+name: PR
+
+on:
+  pull_request:
+    paths:
+      - "**/src/**"
+    branches:
+      - master
+
+concurrency:
+  cancel-in-progress: true
+  group: PR-${{ github.event.number }}
+
+jobs:
+  check:
+    uses: ./.github/workflows/check.yml

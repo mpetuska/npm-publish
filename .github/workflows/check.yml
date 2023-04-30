@@ -4,11 +4,6 @@ defaults:
     shell: bash
 
 on:
-  pull_request:
-    paths:
-      - "**/src/**"
-    branches:
-      - master
   workflow_dispatch:
   workflow_call:
 

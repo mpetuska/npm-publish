@@ -18,6 +18,7 @@ plugin-container-tasks = "dev.petuska:container-tasks-gradle-plugin:0.0.4"
 plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 plugin-git-hooks = "com.github.jakemarsden:git-hooks-gradle-plugin:0.0.2"
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+plugin-nebula-node = { module = "com.netflix.nebula:nebula-node-plugin", version = "3.0.0" }
 plugin-versions = "com.github.ben-manes:gradle-versions-plugin:0.46.0"
 plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.0"
 

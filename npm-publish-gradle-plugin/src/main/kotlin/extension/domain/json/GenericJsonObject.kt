@@ -14,4 +14,13 @@ public abstract class GenericJsonObject : JsonObject<Any>() {
   public infix fun String.by(value: Action<GenericJsonObject>) {
     this by json(value)
   }
+
+  /**
+   * Set a custom object value for this [JsonObject]
+   * @receiver property key
+   * @param value configuration to apply to a new [GenericJsonObject] instance
+   */
+  public infix fun String.by(value: GenericJsonObject.() -> Unit) {
+    this by json(value)
+  }
 }

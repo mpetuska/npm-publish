@@ -1,7 +1,6 @@
 package dev.petuska.npm.publish.task
 
 import dev.petuska.npm.publish.extension.NpmPublishExtension
-import dev.petuska.npm.publish.util.final
 import dev.petuska.npm.publish.util.unsafeCast
 import groovy.json.JsonSlurper
 import org.gradle.api.file.DirectoryProperty
@@ -75,9 +74,9 @@ public abstract class NpmPackTask : NpmExecTask() {
   @Suppress("unused")
   @TaskAction
   private fun doAction() {
-    val pDir = packageDir.final.asFile
-    val oDir = outputFile.final.asFile
-    val d = dry.final
+    val pDir = packageDir.asFile.get()
+    val oDir = outputFile.asFile.get()
+    val d = dry.get()
     debug {
       "Packing package at ${pDir.path} to ${oDir.parentFile.path} ${if (d) "with" else "without"} --dry-run flag"
     }
