@@ -36,6 +36,8 @@ This is a maintenance release with a few minor bugfixes.
 ### Added
 
 - New `tag` option for `NpmPublishTask`
+- Integration with `com.netflix.nebula:nebula-node-plugin` to allow publishing without having NodeJS installed when
+  kotlin plugin is not being used
 
 ### Changed
 

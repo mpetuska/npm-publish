@@ -78,19 +78,19 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   @TaskAction
   @Suppress("unused")
   private fun action() {
-    val pkg = `package`.final
-    val dest = destinationDir.final
+    val pkg = `package`.get()
+    val dest = destinationDir.get()
     debug { "Assembling ${pkg.name} package in ${dest.asFile.path}" }
     val files = pkg.files.apply(ConfigurableFileCollection::finalizeValue).files
 
     project.copy { cp ->
       cp.from(files)
-      pkg.readme.finalOrNull?.let { md ->
+      pkg.readme.orNull?.let { md ->
         cp.from(md) {
           it.rename(md.asFile.name, "README.md")
         }
       }
-      cp.from(pkg.npmIgnore.finalOrNull)
+      cp.from(pkg.npmIgnore.orNull)
       cp.into(dest)
     }
     val pJsonFile = dest.file("package.json").asFile
@@ -102,21 +102,21 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
   }
 
   private fun NpmPackage.resolvePackageJson(): Map<String, Any> {
-    packageJsonFile.finalOrNull?.let {
+    packageJsonFile.orNull?.let {
       info { "package.json file set and found for $name package. Not resolving further..." }
       return JsonSlurper().parse(it.asFile).unsafeCast()
     }
-    val pJson = packageJsonTemplateFile.finalOrNull?.let {
+    val pJson = packageJsonTemplateFile.orNull?.let {
       info { "package.json template file set and found for $name package. Using it as a baseline..." }
       JsonSlurper().parse(it.asFile).unsafeCast<MutableMap<String, Any>>()
     } ?: mutableMapOf()
 
-    packageJson.finalOrNull?.finalise()?.let(pJson::overrideFrom)
-    main.finalOrNull?.let { pJson.putIfAbsent("main", it) }
-    types.finalOrNull?.let { pJson.putIfAbsent("types", it) }
-    version.finalOrNull?.let { pJson.putIfAbsent("version", it) }
-    packageName.finalOrNull?.let { pName ->
-      pJson.putIfAbsent("name", scope.finalOrNull?.let { s -> npmFullName(pName, s) } ?: pName)
+    packageJson.orNull?.finalise()?.let(pJson::overrideFrom)
+    main.orNull?.let { pJson.putIfAbsent("main", it) }
+    types.orNull?.let { pJson.putIfAbsent("types", it) }
+    version.orNull?.let { pJson.putIfAbsent("version", it) }
+    packageName.orNull?.let { pName ->
+      pJson.putIfAbsent("name", scope.orNull?.let { s -> npmFullName(pName, s) } ?: pName)
     }
 
     resolveDependencies(pJson)
@@ -126,7 +126,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
 
   private fun NpmPackage.resolveDependencies(pJson: MutableMap<String, Any>) {
     val direct =
-      (dependencies.toList() + extraDependencies.get()).distinct().groupBy { it.type.final }
+      (dependencies.toList() + extraDependencies.get()).distinct().groupBy { it.type.get() }
     val dOptional = pJson.mergeDependencies(
       "optionalDependencies",
       direct.getOrDefault(NpmDependency.Type.OPTIONAL, listOf())
@@ -175,7 +175,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     filter: (String) -> Boolean = { true },
   ): Map<String, String> {
     val dDeps = direct.groupBy(NpmDependency::getName).filterKeys(filter)
-      .mapValues { (_, v) -> v.first().version.final }
+      .mapValues { (_, v) -> v.first().version.get() }
     if (dDeps.isNotEmpty()) {
       putIfAbsent(key, dDeps)
       get(key).unsafeCast<MutableMap<String, Any>>().apply {

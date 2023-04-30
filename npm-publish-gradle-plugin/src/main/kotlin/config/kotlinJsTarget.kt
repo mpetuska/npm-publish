@@ -7,7 +7,6 @@ import dev.petuska.npm.publish.util.toCamelCase
 import dev.petuska.npm.publish.util.unsafeCast
 import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
@@ -65,9 +64,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       val processResourcesTask = target.compilations.named("main").flatMap {
         tasks.named<Copy>(it.processResourcesTaskName)
       }
-      val outputFile = compileKotlinTask.flatMap { it.destinationDirectory.file(it.moduleName) }.map(
-        RegularFile::getAsFile
-      )
+      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
       val typesFile = outputFile.map { File(it.parentFile, "${it.nameWithoutExtension}.d.ts") }
 
       pkg.assembleTask.configure {
@@ -81,7 +78,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       )
       pkg.types.sysProjectEnvPropertyConvention(
         pkg.prefix + "types",
-        typesFile.map<String> { it.takeIf(File::exists)?.name.unsafeCast() }
+        typesFile.map<String> { it.takeIf(File::exists).also { println(">>>>> TYPES $it") }?.name.unsafeCast() }
           .orElse(pkg.packageJson.flatMap(PackageJson::types))
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))

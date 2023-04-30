@@ -62,3 +62,4 @@ Controls dry-tun mode for the execution.
 ### `tag`
 
 Sets a tag to label published package version
+[More info](https://docs.npmjs.com/adding-dist-tags-to-packages)

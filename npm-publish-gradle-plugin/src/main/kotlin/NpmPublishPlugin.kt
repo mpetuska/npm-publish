@@ -1,5 +1,6 @@
 package dev.petuska.npm.publish
 
+import com.moowork.gradle.node.task.SetupTask
 import dev.petuska.npm.publish.config.configure
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.task.NpmAssembleTask
@@ -31,6 +32,11 @@ public class NpmPublishPlugin : Plugin<Project> {
 
   private fun ProjectEnhancer.apply() {
     configure(extension)
+    pluginManager.withPlugin(NEBULA_NODE_PLUGIN) {
+      project.tasks.named<SetupTask>(SetupTask.NAME).map(SetupTask::getNodeDir)
+        .let(project.layout::dir)
+        .let(extension.nodeHome::convention)
+    }
     pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
       extensions.configure<KotlinMultiplatformExtension> {
         targets.filterIsInstance<KotlinJsTargetDsl>().forEach { configure(it) }
@@ -73,5 +79,6 @@ public class NpmPublishPlugin : Plugin<Project> {
   private companion object {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
+    private const val NEBULA_NODE_PLUGIN = "com.netflix.nebula.node"
   }
 }

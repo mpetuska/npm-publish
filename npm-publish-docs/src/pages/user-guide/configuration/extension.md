@@ -65,6 +65,11 @@ npmPublish {
 
 Default NodeJS directory to be used when executing npm commands.
 
+!!! info
+    This is set automatically when certain other plugins are applied
+    - `org.jetbrains.kotlin.multiplatform` & `org.jetbrains.kotlin.js`: `kotlinNodeJsSetup` task output
+    - `com.netflix.nebula:nebula-node-plugin`: `nodeSetup` task output
+
 ### `readme`
 
 A location of the default `README.md` file. If set, it will be used as a default for all packages that do not have one
