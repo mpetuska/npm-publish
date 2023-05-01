@@ -173,7 +173,7 @@ $dokka.location:dev.petuska.npm.publish.task////PointingToDeclaration/npm-publi
 $dokka.location:dev.petuska.npm.publish.task/NodeExecTask///PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/index.html
 $dokka.location:dev.petuska.npm.publish.task/NodeExecTask/NodeExecTask/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/-node-exec-task.html
 $dokka.location:dev.petuska.npm.publish.task/NodeExecTask/node/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/node.html
-$dokka.location:dev.petuska.npm.publish.task/NodeExecTask/nodeExec/#kotlin.collections.Collection[kotlin.Any?]#org.gradle.api.Action[org.gradle.process.ExecSpec]/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/node-exec.html
+$dokka.location:dev.petuska.npm.publish.task/NodeExecTask/nodeExec/#kotlin.collections.Collection[kotlin.String?]#org.gradle.api.Action[org.gradle.process.ExecSpec]/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/node-exec.html
 $dokka.location:dev.petuska.npm.publish.task/NodeExecTask/nodeHome/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/node-home.html
 $dokka.location:dev.petuska.npm.publish.task/NodeExecTask/nodeHome/#kotlin.String/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-node-exec-task/node-home.html
 $dokka.location:dev.petuska.npm.publish.task/NpmAssembleTask///PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-assemble-task/index.html
@@ -184,7 +184,7 @@ $dokka.location:dev.petuska.npm.publish.task/NpmAssembleTask/package/#org.gradle
 $dokka.location:dev.petuska.npm.publish.task/NpmExecTask///PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-exec-task/index.html
 $dokka.location:dev.petuska.npm.publish.task/NpmExecTask/NpmExecTask/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-exec-task/-npm-exec-task.html
 $dokka.location:dev.petuska.npm.publish.task/NpmExecTask/npm/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-exec-task/npm.html
-$dokka.location:dev.petuska.npm.publish.task/NpmExecTask/npmExec/#kotlin.collections.Collection[kotlin.Any?]#org.gradle.api.Action[org.gradle.process.ExecSpec]/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-exec-task/npm-exec.html
+$dokka.location:dev.petuska.npm.publish.task/NpmExecTask/npmExec/#kotlin.collections.Collection[kotlin.String?]#org.gradle.api.Action[org.gradle.process.ExecSpec]/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-exec-task/npm-exec.html
 $dokka.location:dev.petuska.npm.publish.task/NpmPackTask///PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-pack-task/index.html
 $dokka.location:dev.petuska.npm.publish.task/NpmPackTask/NpmPackTask/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-pack-task/-npm-pack-task.html
 $dokka.location:dev.petuska.npm.publish.task/NpmPackTask/dry/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-pack-task/dry.html
