@@ -1,6 +1,7 @@
 plugins {
   id("convention.base")
   id("dev.petuska.npm.publish")
+  id("com.netflix.nebula.node") version "+"
 }
 
 tasks {
@@ -16,8 +17,13 @@ tasks {
   }
 }
 
+node {
+  download = true
+}
+
 npmPublish {
-  nodeHome.set(File("${System.getProperty("user.home")}/.gradle/nodejs/node-v16.13.0-linux-x64/"))
+  // Not needed thanks to `com.netflix.nebula.node` plugin
+  // nodeHome.set(File("/path/to/your/node/home"))
   packages {
     register("standalone") {
       version.set("4.20.69")

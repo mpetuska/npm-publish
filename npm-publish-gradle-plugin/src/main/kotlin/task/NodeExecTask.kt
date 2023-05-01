@@ -21,7 +21,6 @@ import java.io.File
  */
 @Suppress("LeakingThis")
 public abstract class NodeExecTask : DefaultTask(), PluginLogger {
-
   /**
    * Base NodeJS directory used to extract other node executables from. Defaults to 'NODE_HOME' env
    * variable.
@@ -61,9 +60,10 @@ public abstract class NodeExecTask : DefaultTask(), PluginLogger {
    * @return execution result
    */
   @Suppress("SpreadOperator")
-  public fun nodeExec(args: Collection<Any?>, config: Action<ExecSpec> = Action {}): ExecResult = project.exec {
-    val cmd = listOfNotNull(node.get(), *args.toTypedArray()).toTypedArray()
-    it.commandLine(*cmd)
+  public fun nodeExec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult = project.exec {
+    val cmd = listOfNotNull(node.get(), *args.toTypedArray())
+    info { "Executing: ${cmd.joinToString(" ")}" }
+    it.commandLine(*cmd.toTypedArray())
     config.execute(it)
   }
 }

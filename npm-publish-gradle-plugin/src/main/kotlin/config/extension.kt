@@ -11,8 +11,9 @@ internal fun ProjectEnhancer.configure(extension: NpmPublishExtension) {
   configure(extension.registries)
   extension.nodeHome.sysProjectEnvPropertyConvention(
     name = "nodeHome",
-    default = providers.environmentVariable("NODE_HOME").map { layout.projectDirectory.dir(it) },
-    converter = { layout.projectDirectory.dir(it) }
+    default = providers.environmentVariable("NODE_HOME")
+      .map(layout.projectDirectory::dir),
+    converter = layout.projectDirectory::dir
   )
   extension.readme.sysProjectEnvPropertyConvention("readme") { layout.projectDirectory.file(it) }
   extension.npmIgnore.sysProjectEnvPropertyConvention(

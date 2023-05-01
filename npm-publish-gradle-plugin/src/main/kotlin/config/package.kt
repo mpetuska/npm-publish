@@ -10,11 +10,12 @@ internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
   pkg.project = project
   pkg.main.sysProjectEnvPropertyConvention(prefix + "main", pkg.packageJson.flatMap(PackageJson::main))
   pkg.types.sysProjectEnvPropertyConvention(prefix + "types", pkg.packageJson.flatMap(PackageJson::types))
-  pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme) { layout.projectDirectory.file(it) }
+  pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme, layout.projectDirectory::file)
   pkg.npmIgnore.sysProjectEnvPropertyConvention(
     prefix + "npmIgnore",
-    extension.npmIgnore
-  ) { layout.projectDirectory.file(it) }
+    extension.npmIgnore,
+    layout.projectDirectory::file
+  )
   pkg.version.sysProjectEnvPropertyConvention(prefix + "version", extension.version)
   pkg.packageName.sysProjectEnvPropertyConvention(prefix + "packageName", provider { project.name })
   pkg.scope.sysProjectEnvPropertyConvention(prefix + "scope", extension.organization)
