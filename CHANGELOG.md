@@ -25,6 +25,25 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
+## [3.3.1]
+
+### Verified Versions
+
+- Kotlin: 1.8.21
+- Gradle: 8.1.1
+- JDK: 11
+
+### Added
+
+### Changed
+
+- Fixed gradle provider chain for nebula node plugin integration
+- Fixed incorrect NodeExec task command line builds and expanded logging
+
+### Removed
+
+---
+
 ## [3.3.0]
 
 ### Verified Versions
@@ -341,7 +360,9 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.3.3...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.3.1...HEAD
+
+[3.3.1]: https://github.com/mpetuska/npm-publish/compare/3.3.0...3.3.1
 
 [3.3.0]: https://github.com/mpetuska/npm-publish/compare/3.2.1...3.3.0
 
