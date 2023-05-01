@@ -81,9 +81,9 @@ public abstract class NpmPackTask : NpmExecTask() {
       "Packing package at ${pDir.path} to ${oDir.parentFile.path} ${if (d) "with" else "without"} --dry-run flag"
     }
     val tmpDir = temporaryDir
-    val args = buildList {
+    val args: List<String> = buildList {
       add("pack")
-      add(pDir)
+      add("$pDir")
       if (d) add("--dry-run")
     }
     npmExec(args) { it.workingDir(tmpDir) }.rethrowFailure()

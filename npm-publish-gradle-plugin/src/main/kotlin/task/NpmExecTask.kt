@@ -35,6 +35,6 @@ public abstract class NpmExecTask : NodeExecTask() {
    * @param config to be applied to the execution process
    * @return execution result
    */
-  public fun npmExec(args: Collection<Any?>, config: Action<ExecSpec> = Action {}): ExecResult =
-    nodeExec(listOf(npm.get()) + args, config)
+  public fun npmExec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult =
+    nodeExec(listOf("${npm.get().asFile}") + args, config)
 }

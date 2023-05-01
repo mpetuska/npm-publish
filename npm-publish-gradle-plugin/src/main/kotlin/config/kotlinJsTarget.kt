@@ -78,7 +78,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       )
       pkg.types.sysProjectEnvPropertyConvention(
         pkg.prefix + "types",
-        typesFile.map<String> { it.takeIf(File::exists).also { println(">>>>> TYPES $it") }?.name.unsafeCast() }
+        typesFile.map<String> { it.takeIf(File::exists)?.name.unsafeCast() }
           .orElse(pkg.packageJson.flatMap(PackageJson::types))
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))

@@ -67,11 +67,7 @@ jobs:
 
       - name: Gradle Check Sandbox
         working-directory: sandbox
-        run: ./gradlew check --scan
-
-      - name: Gradle Assemble Sandbox
-        working-directory: sandbox
-        run: ./gradlew assemble pack --scan
+        run: ./gradlew check assemble pack publish --scan
 
       - uses: actions/upload-artifact@v3
         if: ${{ always() }}
@@ -80,6 +76,18 @@ jobs:
           path: |
             sandbox/**/build/reports
             sandbox/**/build/publications
+
+      - name: Gradle Check Samples
+        working-directory: samples
+        run: ./gradlew check assemble pack publish --scan
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: samples-${{ runner.os }}
+          path: |
+            samples/**/build/reports
+            samples/**/build/publications
 
       - name: ts-consumer Install
         working-directory: sandbox/ts-consumer

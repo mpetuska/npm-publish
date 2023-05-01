@@ -75,21 +75,21 @@ public abstract class NpmPublishTask : NpmExecTask() {
     val uri = reg.uri.get()
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
     val d = dry.get()
-    debug {
-      "Publishing package at ${pDir.path} to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag"
+    info {
+      "Publishing package at $pDir to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag"
     }
-    val args = buildList {
+    val args: List<String> = buildList {
       add("publish")
-      add(pDir)
-      add(listOf("--access", reg.access.get()))
-      add(listOf("--registry", "${uri.scheme.trim()}://$repo"))
-      if (reg.otp.isPresent) add(listOf("--otp", reg.otp.get()))
+      add("$pDir")
+      add("--access=${reg.access.get()}")
+      add("--registry=${uri.scheme.trim()}://$repo")
+      if (reg.otp.isPresent) add("--otp=${reg.otp.get()}")
       if (reg.authToken.isPresent) add("--//$repo:_authToken=${reg.authToken.get()}")
       if (d) add("--dry-run")
-      if (tag.isPresent) add(listOf("--tag", tag.get()))
-      add("${uri.scheme.trim()}://$repo")
+      if (tag.isPresent) add("--tag=${tag.get()}")
+//      add("${uri.scheme.trim()}://$repo")
     }
     npmExec(args) { it.workingDir(packageDir.get()) }.rethrowFailure()
-    if (!d) info { "Published package at ${pDir.path} to ${reg.name} registry" }
+    if (!d) info { "Published package at $pDir to ${reg.name} registry" }
   }
 }
