@@ -1,7 +1,7 @@
 # Sharing dependency versions between projects
 # https://docs.gradle.org/current/userguide/platforms.html
 [versions]
-detekt = "1.22.0"
+detekt = "1.23.0"
 dokka = "1.8.10"
 java = "11"
 junit-jupiter = "5.9.3"
