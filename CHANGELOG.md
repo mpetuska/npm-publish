@@ -13,17 +13,38 @@ This is a maintenance release with a few minor bugfixes.
 
 ### Verified Versions
 
-- Kotlin: 1.8.21
-- Gradle: 8.1.1
+- Kotlin: 1.9.0
+- Gradle: 8.2.1
 - JDK: 11
 
 ### Added
 
 ### Changed
 
-- All sandbox modules and samples have been migrated away from deprecated kotlin/js plugin..
+### Removed
+
+---
+
+## [3.4.0]
+
+This is a maintenance release with a few minor bugfixes.
+
+### Verified Versions
+
+- Kotlin: 1.9.0
+- Gradle: 8.2.1
+- JDK: 11
+
+### Added
+
+### Changed
+
+- All sandbox modules and samples have been migrated away from deprecated kotlin/js plugin.
+- Upgraded dependency versions
 
 ### Removed
+
+- Deprecated kotlin/js plugin integration
 
 ---
 
@@ -362,7 +383,9 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.3.1...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.4.0...HEAD
+
+[3.4.0]: https://github.com/mpetuska/npm-publish/compare/3.3.1...3.4.0
 
 [3.3.1]: https://github.com/mpetuska/npm-publish/compare/3.3.0...3.3.1
 

@@ -1,12 +1,10 @@
-# Sharing dependency versions between projects
-# https://docs.gradle.org/current/userguide/platforms.html
 [versions]
-detekt = "1.22.0"
-dokka = "1.8.10"
+detekt = "1.23.0"
+dokka = "1.8.20"
 java = "11"
 junit-jupiter = "5.9.3"
-kotest = "5.6.1"
-kotlin = "1.8.21"
+kotest = "5.6.2"
+kotlin = "1.9.0"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
@@ -18,14 +16,14 @@ plugin-container-tasks = "dev.petuska:container-tasks-gradle-plugin:0.0.4"
 plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 plugin-git-hooks = "com.github.jakemarsden:git-hooks-gradle-plugin:0.0.2"
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-plugin-nebula-node = { module = "com.netflix.nebula:nebula-node-plugin", version = "3.0.0" }
+plugin-nebula-node = "com.netflix.nebula:nebula-node-plugin:3.0.0"
 plugin-versions = "com.github.ben-manes:gradle-versions-plugin:0.46.0"
 plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.0"
 
 [bundles]
 kotest-assertions = [
-    "kotest-assertions-core",
-    "kotest-assertions-json",
+  "kotest-assertions-core",
+  "kotest-assertions-json",
 ]
 
 [plugins]
