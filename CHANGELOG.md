@@ -21,6 +21,8 @@ This is a maintenance release with a few minor bugfixes.
 
 ### Changed
 
+- All sandbox modules and samples have been migrated away from deprecated kotlin/js plugin..
+
 ### Removed
 
 ---
