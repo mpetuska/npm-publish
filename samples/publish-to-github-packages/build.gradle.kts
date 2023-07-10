@@ -1,6 +1,6 @@
 plugins {
   id("convention.base")
-  kotlin("js")
+  kotlin("multiplatform")
   id("dev.petuska.npm.publish")
 }
 
@@ -10,12 +10,14 @@ kotlin {
     useCommonJs()
     binaries.library()
   }
-  dependencies {
-    implementation(npm("is-odd", "*"))
-    api(devNpm("is-even", "*"))
-    implementation(kotlin("test-js"))
-  }
   sourceSets {
+    named("jsMain") {
+      dependencies {
+        implementation(npm("is-odd", "*"))
+        api(devNpm("is-even", "*"))
+        implementation(kotlin("test-js"))
+      }
+    }
     all {
       languageSettings.optIn("kotlin.js.ExperimentalJsExport")
     }

@@ -11,14 +11,12 @@
     "reinstall:both": "yarn remove @mpetuska/both; yarn add ../both/build/packages/js",
     "reinstall:browser": "yarn remove @mpetuska/browser; yarn add ../browser/build/packages/js",
     "reinstall:node": "yarn remove @mpetuska/node; yarn add ../node/build/packages/js",
-    "reinstall:mpp": "yarn remove @mpetuska/mpp; yarn add ../mpp/build/packages/js",
-    "reinstall": "yarn reinstall:both && yarn reinstall:browser && yarn reinstall:node  && yarn reinstall:mpp",
+    "reinstall": "yarn reinstall:both && yarn reinstall:browser && yarn reinstall:node",
     "rebuild": "(cd .. && ./gradlew pack) && yarn reinstall"
   },
   "dependencies": {
     "@mpetuska/both": "../both/build/packages/js",
     "@mpetuska/browser": "../browser/build/packages/js",
-    "@mpetuska/mpp": "../mpp/build/packages/js",
     "@mpetuska/node": "../node/build/packages/js"
   },
   "devDependencies": {

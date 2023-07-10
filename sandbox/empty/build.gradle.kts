@@ -1,5 +1,5 @@
 plugins {
-  kotlin("js")
+  kotlin("multiplatform")
   id("convention.base")
   id("dev.petuska.npm.publish")
 }
@@ -10,9 +10,14 @@ kotlin {
     useCommonJs()
     binaries.library()
   }
-  dependencies {
-    implementation(npm("is-number", "*"))
-    implementation(project(":node"))
+  sourceSets {
+    named("jsMain") {
+
+      dependencies {
+        implementation(npm("is-number", "*"))
+        implementation(project(":node"))
+      }
+    }
   }
 }
 

@@ -41,11 +41,6 @@
     is-array "*"
     is-object "*"
 
-"@mpetuska/mpp@../mpp/build/packages/js":
-  version "0.0.0"
-  dependencies:
-    is-even "*"
-
 "@mpetuska/node@../node/build/packages/js":
   version "0.0.0"
   dependencies:
