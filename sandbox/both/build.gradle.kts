@@ -9,6 +9,7 @@ kotlin {
     nodejs()
     browser()
     useCommonJs()
+    generateTypeScriptDefinitions()
     binaries.library()
   }
   sourceSets {

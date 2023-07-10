@@ -58,7 +58,7 @@ public interface NpmDependency : NamedInput {
     OPTIONAL,
     PEER,
     DEV,
-    NORMAL;
+    NORMAL
   }
 }
 

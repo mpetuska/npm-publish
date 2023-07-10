@@ -8,11 +8,11 @@ kotlin {
   js {
     nodejs()
     useCommonJs()
+    generateTypeScriptDefinitions()
     binaries.library()
   }
   sourceSets {
     named("jsMain") {
-
       dependencies {
         implementation(npm("is-number", "*"))
         implementation(project(":node"))

@@ -19,7 +19,7 @@ open class ScriptBuilder(val baseIndent: Int = 0) {
     +"}"
   }
 
-  operator fun /* language=kotlin */ String.unaryPlus() {
+  operator fun String.unaryPlus() {
     split("\n").forEach {
       builder.appendLine("$indentChunk$it")
     }

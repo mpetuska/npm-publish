@@ -64,8 +64,8 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       val processResourcesTask = target.compilations.named("main").flatMap {
         tasks.named<Copy>(it.processResourcesTaskName)
       }
-      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
-      val typesFile = outputFile.map { File(it.parentFile, "${it.nameWithoutExtension}.d.ts") }
+      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
+      val typesFile = outputFile.map { File(it.asFile.parentFile, "${it.asFile.nameWithoutExtension}.d.ts") }
 
       pkg.assembleTask.configure {
         it.dependsOn(compileKotlinTask, processResourcesTask, publicPackageJsonTask)
@@ -74,7 +74,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
 
       pkg.main.sysProjectEnvPropertyConvention(
         pkg.prefix + "main",
-        outputFile.map(File::getName).orElse(pkg.packageJson.flatMap(PackageJson::main))
+        outputFile.map { it.asFile.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
       )
       pkg.types.sysProjectEnvPropertyConvention(
         pkg.prefix + "types",
@@ -83,7 +83,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
-        files.from(outputFile.map(File::getParentFile))
+        files.from(outputFile.map { it.asFile.parentFile })
         files.from(processResourcesTask.map(Copy::getDestinationDir))
       }
     }
@@ -93,20 +93,19 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
 
 private fun ProjectEnhancer.resolveDependencies(
   publicPackageJsonTask: Provider<PublicPackageJsonTask>
-): Provider<List<NpmDependency>> =
-  publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
-    val json = JsonSlurper().parse(pJson).unsafeCast<Map<String, Any>>()
-    fun Map<String, String>.parse(scope: NpmDependency.Type) = map { (n, v) ->
-      objects.newInstance(NpmDependency::class.java, n).apply {
-        type.set(scope)
-        version.set(v)
-      }
+): Provider<List<NpmDependency>> = publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
+  val json = JsonSlurper().parse(pJson).unsafeCast<Map<String, Any>>()
+  fun Map<String, String>.parse(scope: NpmDependency.Type) = map { (n, v) ->
+    objects.newInstance(NpmDependency::class.java, n).apply {
+      type.set(scope)
+      version.set(v)
     }
-    json["dependencies"].unsafeCast<Map<String, String>>().parse(NpmDependency.Type.NORMAL) +
-      json["peerDependencies"].unsafeCast<Map<String, String>>().parse(NpmDependency.Type.PEER) +
-      json["optionalDependencies"].unsafeCast<Map<String, String>>()
-        .parse(NpmDependency.Type.OPTIONAL)
   }
+  json["dependencies"].unsafeCast<Map<String, String>>()
+    .parse(NpmDependency.Type.NORMAL) + json["peerDependencies"].unsafeCast<Map<String, String>>()
+    .parse(NpmDependency.Type.PEER) + json["optionalDependencies"].unsafeCast<Map<String, String>>()
+    .parse(NpmDependency.Type.OPTIONAL)
+}
 
 private fun ProjectEnhancer.resolveDependencies(
   targetName: String,
@@ -117,12 +116,8 @@ private fun ProjectEnhancer.resolveDependencies(
       conf,
       "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalized()}",
       conf.substringAfter("compilation").toCamelCase(true),
-    )
-      .mapNotNull(configurations::findByName)
-      .flatMap(Configuration::getDependencies)
-      .filterIsInstance<KJsNpmDependency>()
-      .distinct()
-      .map { dependency ->
+    ).mapNotNull(configurations::findByName).flatMap(Configuration::getDependencies)
+      .filterIsInstance<KJsNpmDependency>().distinct().map { dependency ->
         objects.newInstance(NpmDependency::class.java, dependency.name).apply {
           type.set(
             when (dependency.scope) {

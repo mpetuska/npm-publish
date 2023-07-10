@@ -8,6 +8,7 @@ kotlin {
   js(IR) {
     browser()
     useCommonJs()
+    generateTypeScriptDefinitions()
     binaries.library()
   }
   sourceSets {

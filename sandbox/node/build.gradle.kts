@@ -8,6 +8,7 @@ kotlin {
   js {
     nodejs()
     useCommonJs()
+    generateTypeScriptDefinitions()
     binaries.library()
   }
   sourceSets {
