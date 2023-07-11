@@ -93,12 +93,12 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
 }
 
 private fun KotlinJsCompilation.relatedConfigurationNames() = listOfNotNull(
-    apiConfigurationName,
-    implementationConfigurationName,
-    compileOnlyConfigurationName,
-    runtimeOnlyConfigurationName,
-    compileDependencyConfigurationName,
-    runtimeDependencyConfigurationName,
+  apiConfigurationName,
+  implementationConfigurationName,
+  compileOnlyConfigurationName,
+  runtimeOnlyConfigurationName,
+  compileDependencyConfigurationName,
+  runtimeDependencyConfigurationName,
 )
 
 private fun ProjectEnhancer.resolveDependencies(
