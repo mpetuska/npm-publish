@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
@@ -91,6 +92,15 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
   }
 }
 
+private fun KotlinJsCompilation.relatedConfigurationNames() = listOfNotNull(
+    apiConfigurationName,
+    implementationConfigurationName,
+    compileOnlyConfigurationName,
+    runtimeOnlyConfigurationName,
+    compileDependencyConfigurationName,
+    runtimeDependencyConfigurationName,
+)
+
 private fun ProjectEnhancer.resolveDependencies(
   publicPackageJsonTask: Provider<PublicPackageJsonTask>
 ): Provider<List<NpmDependency>> = publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
@@ -111,7 +121,7 @@ private fun ProjectEnhancer.resolveDependencies(
   targetName: String,
   binary: Provider<JsIrBinary>
 ): Provider<List<NpmDependency>> = binary.map { bin ->
-  bin.compilation.relatedConfigurationNames.flatMap { conf ->
+  bin.compilation.relatedConfigurationNames().flatMap { conf ->
     listOf(
       conf,
       "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalized()}",
