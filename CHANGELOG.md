@@ -37,14 +37,15 @@ This is a maintenance release with a few minor bugfixes.
 
 ### Added
 
+- New [Local TS consumer setup](./samples/local-ts-consumer/README.md) sample
+
 ### Changed
 
 - All sandbox modules and samples have been migrated away from deprecated kotlin/js plugin.
 - Upgraded dependency versions
+- Deprecated kotlin/js plugin integration
 
 ### Removed
-
-- Deprecated kotlin/js plugin integration
 
 ---
 

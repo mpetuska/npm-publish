@@ -1,0 +1,22 @@
+{
+  "name": "@mpetuska/local-ts-consumer",
+  "main": "src/index.ts",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rm -rf node_modules/@mpetuska",
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "build:start": "yarn build && node build/index.js",
+    "reinstall": "yarn remove @mpetuska/kt; yarn add ../kt/build/packages/js",
+    "relink": "(cd ../.. && ./gradlew :local-ts-consumer:kt:assembleJsPackage) && yarn reinstall"
+  },
+  "dependencies": {
+    "@mpetuska/kt": "../kt/build/packages/js"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "ts-node": "^10.1.0",
+    "typescript": "^5.0.0"
+  }
+}

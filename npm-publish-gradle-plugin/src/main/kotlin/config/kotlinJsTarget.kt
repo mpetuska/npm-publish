@@ -65,8 +65,12 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       val processResourcesTask = target.compilations.named("main").flatMap {
         tasks.named<Copy>(it.processResourcesTaskName)
       }
-      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
-      val typesFile = outputFile.map { File(it.asFile.parentFile, "${it.asFile.nameWithoutExtension}.d.ts") }
+      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
+//      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
+//        .zip(compileKotlinTask.flatMap(Kotlin2JsCompile::moduleName)) { dir, file -> dir.file(file).asFile }
+      val typesFile = outputFile.map {
+        it.parentFile.resolve("${it.nameWithoutExtension}.d.ts")
+      }
 
       pkg.assembleTask.configure {
         it.dependsOn(compileKotlinTask, processResourcesTask, publicPackageJsonTask)
@@ -75,7 +79,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
 
       pkg.main.sysProjectEnvPropertyConvention(
         pkg.prefix + "main",
-        outputFile.map { it.asFile.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
+        outputFile.map { it.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
       )
       pkg.types.sysProjectEnvPropertyConvention(
         pkg.prefix + "types",
@@ -84,7 +88,7 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
-        files.from(outputFile.map { it.asFile.parentFile })
+        files.from(outputFile.map { it.parentFile })
         files.from(processResourcesTask.map(Copy::getDestinationDir))
       }
     }

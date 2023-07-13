@@ -18,4 +18,5 @@ includeBuild("../build-conventions")
 include(
   ":publish-to-github-packages",
   ":no-kotlin-plugin",
+  ":local-ts-consumer:kt",
 )
