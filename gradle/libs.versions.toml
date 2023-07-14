@@ -22,8 +22,8 @@ plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.0"
 
 [bundles]
 kotest-assertions = [
-  "kotest-assertions-core",
-  "kotest-assertions-json",
+    "kotest-assertions-core",
+    "kotest-assertions-json",
 ]
 
 [plugins]

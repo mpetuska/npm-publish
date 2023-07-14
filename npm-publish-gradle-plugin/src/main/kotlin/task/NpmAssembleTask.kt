@@ -7,16 +7,17 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import java.io.File
+import javax.inject.Inject
 
 /**
  * A task to assemble all required files for a given [NpmPackage].
@@ -24,9 +25,22 @@ import java.io.File
 @CacheableTask
 @Suppress("LeakingThis")
 public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
+  @get:Inject
+  internal abstract val fs: FileSystemOperations
 
-  @get:Nested
-  internal abstract val extraDependencies: ListProperty<NpmDependency>
+  @get:Inject
+  internal abstract val objects: ObjectFactory
+
+  @get:Inject
+  internal abstract val providers: ProviderFactory
+
+  @get:Inject
+  internal abstract val layout: ProjectLayout
+
+  @get:InputFile
+  @get:Optional
+  @get:PathSensitive(PathSensitivity.RELATIVE)
+  internal abstract val dependencySourcePackageJson: RegularFileProperty
 
   /**
    * The configuration of the package to assemble.
@@ -62,12 +76,12 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     description = "Assembles NPM package"
     destinationDir.convention(
       `package`.flatMap {
-        project.layout.buildDirectory.dir("packages/${it.name}")
+        layout.buildDirectory.dir("packages/${it.name}")
       }
     )
     `package`.convention(
-      project.provider {
-        project.objects.newInstance(
+      providers.provider {
+        objects.newInstance(
           NpmPackage::class.java,
           name
         )
@@ -81,9 +95,9 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     val pkg = `package`.get()
     val dest = destinationDir.get()
     debug { "Assembling ${pkg.name} package in ${dest.asFile.path}" }
-    val files = pkg.files.apply(ConfigurableFileCollection::finalizeValue).files
+    val files = pkg.files.files
 
-    project.copy { cp ->
+    fs.copy { cp ->
       cp.from(files)
       pkg.readme.orNull?.let { md ->
         cp.from(md) {
@@ -124,9 +138,23 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     return pJson
   }
 
+  private fun resolveDependencySourcePackageJson(): List<NpmDependency> = dependencySourcePackageJson.asFile.orNull
+    ?.let { pJson ->
+      val json = JsonSlurper().parse(pJson).unsafeCast<Map<String, Any?>>()
+      fun Any?.parse(scope: NpmDependency.Type) = this?.unsafeCast<Map<String, String>>()?.map { (n, v) ->
+        objects.newInstance(NpmDependency::class.java, n).apply {
+          type.set(scope)
+          version.set(v)
+        }
+      } ?: listOf()
+      json["dependencies"].parse(NpmDependency.Type.NORMAL) +
+        json["peerDependencies"].parse(NpmDependency.Type.PEER) +
+        json["optionalDependencies"].parse(NpmDependency.Type.OPTIONAL)
+    } ?: listOf()
+
   private fun NpmPackage.resolveDependencies(pJson: MutableMap<String, Any>) {
     val direct =
-      (dependencies.toList() + extraDependencies.get()).distinct().groupBy { it.type.get() }
+      (dependencies.toList() + resolveDependencySourcePackageJson()).distinct().groupBy { it.type.get() }
     val dOptional = pJson.mergeDependencies(
       "optionalDependencies",
       direct.getOrDefault(NpmDependency.Type.OPTIONAL, listOf())

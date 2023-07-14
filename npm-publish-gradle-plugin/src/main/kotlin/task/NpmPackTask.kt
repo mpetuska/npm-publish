@@ -4,11 +4,16 @@ import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.util.unsafeCast
 import groovy.json.JsonSlurper
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.ValueSource
+import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import java.io.File
+import javax.inject.Inject
 
 /**
  * A task to pack a `.tgz` archive for the given package
@@ -16,6 +21,11 @@ import java.io.File
 @CacheableTask
 @Suppress("LeakingThis")
 public abstract class NpmPackTask : NpmExecTask() {
+  @get:Inject
+  internal abstract val layout: ProjectLayout
+
+  @get:Inject
+  internal abstract val providers: ProviderFactory
 
   /**
    * The directory where the assembled and ready-to-pack package is.
@@ -50,23 +60,37 @@ public abstract class NpmPackTask : NpmExecTask() {
     outputFile.set(File(path))
   }
 
+  internal abstract class PackageJsonParserValueSource : ValueSource<String, PackageJsonParserValueSource.Params> {
+    internal interface Params : ValueSourceParameters {
+      var packageDir: DirectoryProperty
+    }
+
+    override fun obtain(): String? {
+      return parameters.packageDir.get().file("package.json").asFile.takeIf(File::exists)
+        ?.let { JsonSlurper().parse(it).unsafeCast<MutableMap<String, Any>>() }
+        ?.let {
+          val name = it["name"]?.toString()?.replace("@", "")?.replace("/", "-")
+          val version = it["version"]?.toString()
+          name?.let {
+            var fileName = name
+            version?.let { fileName += "-$version" }
+            "$fileName.tgz"
+          }
+        }
+    }
+  }
+
   init {
     group = "build"
     description = "Packs NPM package"
     dry.convention(false)
     outputFile.convention(
-      packageDir.map { dir ->
-        dir.file("package.json").asFile.takeIf(File::exists)?.let {
-          JsonSlurper().parse(it)
-        }.unsafeCast<MutableMap<String, Any>>()
-      }.flatMap {
-        val name = it["name"]?.toString()?.replace("@", "")?.replace("/", "-")
-        val version = it["version"]?.toString()
-        name?.let {
-          var fileName = name
-          version?.let { fileName += "-$version" }
-          project.layout.buildDirectory.file("packages/$fileName.tgz")
-        }.unsafeCast()
+      layout.buildDirectory.zip(
+        providers.of(PackageJsonParserValueSource::class.java) {
+          it.parameters.packageDir = packageDir
+        }
+      ) { buildDir, fileName ->
+        buildDir.file("packages/$fileName")
       }
     )
   }

@@ -12,15 +12,21 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.options.Option
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Basic task for executing various node commands. Provides access to node executable.
  */
 @Suppress("LeakingThis")
 public abstract class NodeExecTask : DefaultTask(), PluginLogger {
+
+  @get:Inject
+  internal abstract val execOps: ExecOperations
+
   /**
    * Base NodeJS directory used to extract other node executables from. Defaults to 'NODE_HOME' env
    * variable.
@@ -60,7 +66,7 @@ public abstract class NodeExecTask : DefaultTask(), PluginLogger {
    * @return execution result
    */
   @Suppress("SpreadOperator")
-  public fun nodeExec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult = project.exec {
+  public fun nodeExec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult = execOps.exec {
     val cmd = listOfNotNull(node.get(), *args.toTypedArray())
     info { "Executing: ${cmd.joinToString(" ")}" }
     it.commandLine(*cmd.toTypedArray())
