@@ -1,24 +1,39 @@
 package dev.petuska.npm.publish.config
 
+import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmPackage
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
-import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
 import dev.petuska.npm.publish.util.toCamelCase
+import org.gradle.api.Project
+import java.io.File
 
-internal fun ProjectEnhancer.configure(pkg: NpmPackage) {
+internal fun Project.configure(pkg: NpmPackage) {
+  val extension = extensions.getByType(NpmPublishExtension::class.java)
   val prefix = pkg.prefix
-  pkg.project = project
-  pkg.main.sysProjectEnvPropertyConvention(prefix + "main", pkg.packageJson.flatMap(PackageJson::main))
-  pkg.types.sysProjectEnvPropertyConvention(prefix + "types", pkg.packageJson.flatMap(PackageJson::types))
-  pkg.readme.sysProjectEnvPropertyConvention(prefix + "readme", extension.readme, layout.projectDirectory::file)
-  pkg.npmIgnore.sysProjectEnvPropertyConvention(
-    prefix + "npmIgnore",
-    extension.npmIgnore,
-    layout.projectDirectory::file
+  pkg.main.convention(
+    sysProjectEnvPropertyConvention(prefix + "main", pkg.packageJson.flatMap(PackageJson::main))
   )
-  pkg.version.sysProjectEnvPropertyConvention(prefix + "version", extension.version)
-  pkg.packageName.sysProjectEnvPropertyConvention(prefix + "packageName", provider { project.name })
-  pkg.scope.sysProjectEnvPropertyConvention(prefix + "scope", extension.organization)
+  pkg.types.convention(
+    sysProjectEnvPropertyConvention(prefix + "types", pkg.packageJson.flatMap(PackageJson::types))
+  )
+  pkg.readme.convention(
+    sysProjectEnvPropertyConvention(prefix + "readme", extension.readme.asFile.map(File::getAbsolutePath))
+      .map(layout.projectDirectory::file)
+  )
+  pkg.npmIgnore.convention(
+    sysProjectEnvPropertyConvention(prefix + "npmIgnore", extension.npmIgnore.asFile.map(File::getAbsolutePath))
+      .map(layout.projectDirectory::file)
+  )
+  pkg.version.convention(
+    sysProjectEnvPropertyConvention(prefix + "version", extension.version)
+  )
+  pkg.packageName.convention(
+    sysProjectEnvPropertyConvention(prefix + "packageName", provider { project.name })
+  )
+  pkg.scope.convention(
+    sysProjectEnvPropertyConvention(prefix + "scope", extension.organization)
+  )
 }
 
 internal inline val NpmPackage.prefix get() = "package.$name."

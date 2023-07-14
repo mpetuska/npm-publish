@@ -12,13 +12,16 @@ public interface PluginLogger {
   public companion object {
     internal const val prefix = "[npm-publish] "
     internal val marker: Marker = MarkerFactory.getMarker("npm-publish")
+    internal fun wrap(logger: Logger): PluginLogger = object : PluginLogger {
+      override fun getLogger(): Logger = logger
+    }
   }
 
-  @Internal
   /**
    * Logger provider
    * @return logger to use for all logging events
    */
+  @Internal
   public fun getLogger(): Logger
 
   /**

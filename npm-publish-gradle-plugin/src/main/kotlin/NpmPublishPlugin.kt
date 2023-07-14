@@ -7,8 +7,8 @@ import dev.petuska.npm.publish.task.NodeExecTask
 import dev.petuska.npm.publish.task.NpmAssembleTask
 import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.task.NpmPublishTask
-import dev.petuska.npm.publish.util.ProjectEnhancer
 import dev.petuska.npm.publish.util.configure
+import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
 import dev.petuska.npm.publish.util.unsafeCast
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,26 +25,20 @@ import org.jetbrains.kotlin.gradle.utils.named
  */
 @Suppress("unused")
 public class NpmPublishPlugin : Plugin<Project> {
-  override fun apply(project: Project) {
-    ProjectEnhancer(
-      project = project,
-      extension = project.extensions.create(NpmPublishExtension.NAME, NpmPublishExtension::class.java)
-    ).apply()
-  }
-
-  private fun ProjectEnhancer.apply() {
+  override fun apply(project: Project): Unit = with(project) {
+    val extension = extensions.create(NpmPublishExtension.NAME, NpmPublishExtension::class.java)
     configure(extension)
     pluginManager.withPlugin(NEBULA_NODE_PLUGIN) {
       val nebulaNodeHome = project.tasks.named<SetupTask>(SetupTask.NAME)
         .map { it.takeIf { it.enabled }.unsafeCast<SetupTask>() }
         .map(SetupTask::getNodeDir)
         .let(layout::dir)
-      extension.nodeHome.sysProjectEnvPropertyConvention(
-        name = "nodeHome",
-        default = nebulaNodeHome.orElse(
-          providers.environmentVariable("NODE_HOME").map(layout.projectDirectory::dir)
-        ),
-        converter = layout.projectDirectory::dir
+      extension.nodeHome.convention(
+        sysProjectEnvPropertyConvention(
+          name = "nodeHome",
+          default = nebulaNodeHome.map { it.asFile.absolutePath }
+            .orElse(providers.environmentVariable("NODE_HOME")),
+        ).map(layout.projectDirectory::dir)
       )
       tasks.withType(NodeExecTask::class.java) {
         it.dependsOn(nebulaNodeHome)

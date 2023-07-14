@@ -1,11 +1,14 @@
 package dev.petuska.npm.publish.config
 
+import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmDependency
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
-import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.task.NpmAssembleTask
+import dev.petuska.npm.publish.util.PluginLogger
+import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
 import dev.petuska.npm.publish.util.toCamelCase
 import dev.petuska.npm.publish.util.unsafeCast
-import groovy.json.JsonSlurper
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
@@ -26,11 +29,11 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency as KJsNpmDependency
 
 @Suppress("LongMethod")
-internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
+internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLogger.wrap(logger)) {
   if (target !is KotlinJsIrTarget) {
     warn { "${target.name} Kotlin/JS target is not using IR compiler - skipping..." }
   } else {
-    extension.packages.register(target.name) { pkg ->
+    extensions.getByType(NpmPublishExtension::class.java).packages.register(target.name) { pkg ->
       val binary = provider<JsIrBinary> {
         when (val it = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }) {
           is Library -> it
@@ -66,25 +69,32 @@ internal fun ProjectEnhancer.configure(target: KotlinJsTargetDsl) {
         tasks.named<Copy>(it.processResourcesTaskName)
       }
       val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
+// TODO replace the above with this once moduleName can be used to build actual file name
 //      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
 //        .zip(compileKotlinTask.flatMap(Kotlin2JsCompile::moduleName)) { dir, file -> dir.file(file).asFile }
       val typesFile = outputFile.map {
         it.parentFile.resolve("${it.nameWithoutExtension}.d.ts")
       }
 
-      pkg.assembleTask.configure {
+      tasks.named(assembleTaskName(pkg.name), NpmAssembleTask::class.java) {
         it.dependsOn(compileKotlinTask, processResourcesTask, publicPackageJsonTask)
-        it.extraDependencies.addAll(resolveDependencies(publicPackageJsonTask))
+        it.dependencySourcePackageJson.set(
+          publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).let(layout::file)
+        )
       }
 
-      pkg.main.sysProjectEnvPropertyConvention(
-        pkg.prefix + "main",
-        outputFile.map { it.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
+      pkg.main.convention(
+        sysProjectEnvPropertyConvention(
+          pkg.prefix + "main",
+          outputFile.map { it.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
+        )
       )
-      pkg.types.sysProjectEnvPropertyConvention(
-        pkg.prefix + "types",
-        typesFile.map<String> { it.takeIf(File::exists)?.name.unsafeCast() }
-          .orElse(pkg.packageJson.flatMap(PackageJson::types))
+      pkg.types.convention(
+        sysProjectEnvPropertyConvention(
+          pkg.prefix + "types",
+          typesFile.map<String> { it.takeIf(File::exists)?.name.unsafeCast() }
+            .orElse(pkg.packageJson.flatMap(PackageJson::types))
+        )
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
@@ -105,23 +115,7 @@ private fun KotlinJsCompilation.relatedConfigurationNames() = listOfNotNull(
   runtimeDependencyConfigurationName,
 )
 
-private fun ProjectEnhancer.resolveDependencies(
-  publicPackageJsonTask: Provider<PublicPackageJsonTask>
-): Provider<List<NpmDependency>> = publicPackageJsonTask.map(PublicPackageJsonTask::packageJsonFile).map { pJson ->
-  val json = JsonSlurper().parse(pJson).unsafeCast<Map<String, Any>>()
-  fun Map<String, String>.parse(scope: NpmDependency.Type) = map { (n, v) ->
-    objects.newInstance(NpmDependency::class.java, n).apply {
-      type.set(scope)
-      version.set(v)
-    }
-  }
-  json["dependencies"].unsafeCast<Map<String, String>>()
-    .parse(NpmDependency.Type.NORMAL) + json["peerDependencies"].unsafeCast<Map<String, String>>()
-    .parse(NpmDependency.Type.PEER) + json["optionalDependencies"].unsafeCast<Map<String, String>>()
-    .parse(NpmDependency.Type.OPTIONAL)
-}
-
-private fun ProjectEnhancer.resolveDependencies(
+private fun Project.resolveDependencies(
   targetName: String,
   binary: Provider<JsIrBinary>
 ): Provider<List<NpmDependency>> = binary.map { bin ->

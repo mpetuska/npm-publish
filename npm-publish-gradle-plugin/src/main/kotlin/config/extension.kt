@@ -2,26 +2,41 @@ package dev.petuska.npm.publish.config
 
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmAccess
-import dev.petuska.npm.publish.util.ProjectEnhancer
 import dev.petuska.npm.publish.util.notFalse
+import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
 import dev.petuska.npm.publish.util.unsafeCast
+import org.gradle.api.Project
 
-internal fun ProjectEnhancer.configure(extension: NpmPublishExtension) {
+internal fun Project.configure(extension: NpmPublishExtension) {
+  val layout = layout
   configure(extension.packages)
   configure(extension.registries)
-  extension.nodeHome.sysProjectEnvPropertyConvention(
-    name = "nodeHome",
-    default = providers.environmentVariable("NODE_HOME")
-      .map(layout.projectDirectory::dir),
-    converter = layout.projectDirectory::dir
+  extension.nodeHome.convention(
+    sysProjectEnvPropertyConvention(
+      name = "nodeHome",
+      default = providers.environmentVariable("NODE_HOME")
+    ).map(layout.projectDirectory::dir)
   )
-  extension.readme.sysProjectEnvPropertyConvention("readme") { layout.projectDirectory.file(it) }
-  extension.npmIgnore.sysProjectEnvPropertyConvention(
-    "npmIgnore",
-    provider { layout.projectDirectory.file(".npmignore") }.map { (if (it.asFile.exists()) it else null).unsafeCast() }
-  ) { layout.projectDirectory.file(it) }
-  extension.organization.sysProjectEnvPropertyConvention("organization")
-  extension.version.sysProjectEnvPropertyConvention("version", provider { project.version.toString() })
-  extension.access.sysProjectEnvPropertyConvention("access", provider { NpmAccess.PUBLIC }, NpmAccess::fromString)
-  extension.dry.sysProjectEnvPropertyConvention("dry", provider { false }) { it.notFalse() }
+  extension.readme.convention(
+    sysProjectEnvPropertyConvention("readme").map { layout.projectDirectory.file(it) }
+  )
+  extension.npmIgnore.convention(
+    sysProjectEnvPropertyConvention(
+      "npmIgnore",
+      provider { layout.projectDirectory.file(".npmignore") }
+        .map { (if (it.asFile.exists()) it else null).unsafeCast() }
+    ).map { layout.projectDirectory.file(it) }
+  )
+  extension.organization.convention(
+    sysProjectEnvPropertyConvention("organization")
+  )
+  extension.version.convention(
+    sysProjectEnvPropertyConvention("version", provider { project.version.toString() })
+  )
+  extension.access.convention(
+    sysProjectEnvPropertyConvention("access", provider { NpmAccess.PUBLIC.toString() }).map(NpmAccess::fromString)
+  )
+  extension.dry.convention(
+    sysProjectEnvPropertyConvention("dry", provider { "false" }).map { it.notFalse() }
+  )
 }
