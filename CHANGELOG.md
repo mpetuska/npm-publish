@@ -38,6 +38,7 @@ This is a maintenance release with a few minor bugfixes.
 ### Added
 
 - New [Local TS consumer setup](./samples/local-ts-consumer/README.md) sample
+- New `strictSsl` option for `NpmPublishTask`
 
 ### Changed
 

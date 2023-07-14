@@ -40,12 +40,21 @@ public abstract class NpmPublishTask : NpmExecTask() {
 
   /**
    * Optional tag to label the published package version
-   * @see [NpmPublishExtension.dry]
+   * [npm](https://docs.npmjs.com/adding-dist-tags-to-packages)
    */
   @get:Input
   @get:Optional
   @get:Option(option = "tag", description = "Optional tag to label the published package version")
   public abstract val tag: Property<String>
+
+  /**
+   * Optional tag to label the published package version
+   * [npm](https://docs.npmjs.com/adding-dist-tags-to-packages)
+   */
+  @get:Input
+  @get:Optional
+  @get:Option(option = "strict-ssl", description = "Optional flag to enable or disable strict SSL")
+  public abstract val strictSsl: Property<Boolean>
 
   /**
    * Configuration DSL allowing to modify a registry config
@@ -87,7 +96,7 @@ public abstract class NpmPublishTask : NpmExecTask() {
       if (reg.authToken.isPresent) add("--//$repo:_authToken=${reg.authToken.get()}")
       if (d) add("--dry-run")
       if (tag.isPresent) add("--tag=${tag.get()}")
-//      add("${uri.scheme.trim()}://$repo")
+      if (strictSsl.isPresent) add("--strict-ssl=${strictSsl.get()}")
     }
     npmExec(args) { it.workingDir(packageDir.get()) }.rethrowFailure()
     if (!d) info { "Published package at $pDir to ${reg.name} registry" }
