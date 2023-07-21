@@ -6,9 +6,9 @@ The task can be created and configured in a `build.gradle.kts` file by registeri
 
 ```kotlin title="build.gradle.kts"
 tasks {
-  register("name", dev.petuska.npm.publish.task.NpmPublishTask::class) {
-    ...
-  }
+    register("name", dev.petuska.npm.publish.task.NpmPublishTask::class) {
+        ...
+    }
 }
 ```
 
@@ -22,15 +22,17 @@ tasks {
     | [`packageDir`](#packagedir) | Directory   |         |                               |
     | [`dry`](#dry)               | Boolean     | false   |                               |
     | [`tag`](#tag)               | String      |         |                               |
+    | [`strictSsl`](#strictSsl)  | Boolean     |         |                               |
 
 === "Keys"
 
-    | Property                        | CLI     | System/Gradle | Environment |
-    |:--------------------------------|---------|:--------------|-------------|
-    | [`registry`](#registry)         |         |               |             |
-    | [`packageDir`](#destinationdir) |         |               |             |
-    | [`dry`](#dry)                   | `--dry` |               |             |
-    | [`tag`](#tag)                   | `--tag` |               |             |
+    | Property                        | CLI            | System/Gradle | Environment |
+    |:--------------------------------|----------------|:--------------|-------------|
+    | [`registry`](#registry)         |                |               |             |
+    | [`packageDir`](#destinationdir) |                |               |             |
+    | [`dry`](#dry)                   | `--dry`        |               |             |
+    | [`tag`](#tag)                   | `--tag`        |               |             |
+    | [`strictSsl`](#strictSsl)      | `--strict-ssl` |               |             |
 
 === "Usage"
 
@@ -43,6 +45,7 @@ tasks {
         packageDir.set(layout.projectDirectory.dir("src/main/js"))
         dry.set(true)
         tag.set("latest")
+        strictSsl.set(false)
       }
     }
     ```
@@ -63,3 +66,7 @@ Controls dry-tun mode for the execution.
 
 Sets a tag to label published package version
 [More info](https://docs.npmjs.com/adding-dist-tags-to-packages)
+
+### `strictSsl`
+
+Controls strict SSL validation for network requests

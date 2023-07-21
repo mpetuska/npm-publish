@@ -39,6 +39,7 @@ This is a maintenance release with a few minor bugfixes.
 
 - [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html) support
 - New [Local TS consumer setup](./samples/local-ts-consumer/README.md) sample
+- New `strictSsl` option for `NpmPublishTask`
 
 ### Changed
 
