@@ -18,12 +18,12 @@ plugin-git-hooks = "com.github.jakemarsden:git-hooks-gradle-plugin:0.0.2"
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 plugin-nebula-node = "com.netflix.nebula:nebula-node-plugin:3.0.0"
 plugin-versions = "com.github.ben-manes:gradle-versions-plugin:0.47.0"
-plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.0"
+plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.1"
 
 [bundles]
 kotest-assertions = [
-  "kotest-assertions-core",
-  "kotest-assertions-json",
+    "kotest-assertions-core",
+    "kotest-assertions-json",
 ]
 
 [plugins]

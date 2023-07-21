@@ -1,10 +1,13 @@
 package dev.petuska.npm.publish.config
 
+import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmRegistries
-import dev.petuska.npm.publish.util.ProjectEnhancer
+import dev.petuska.npm.publish.util.PluginLogger
+import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
 
-internal fun ProjectEnhancer.configure(registries: NpmRegistries) {
+internal fun Project.configure(registries: NpmRegistries): Unit = with(PluginLogger.wrap(logger)) {
+  val extension = extensions.getByType(NpmPublishExtension::class.java)
   registries.whenObjectAdded {
     configure(it)
     extension.packages.names.forEach { pkgName ->
