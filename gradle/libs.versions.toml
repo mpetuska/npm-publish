@@ -2,7 +2,7 @@
 detekt = "1.23.0"
 dokka = "1.8.20"
 java = "11"
-junit-jupiter = "5.9.3"
+junit-jupiter = "5.10.0"
 kotest = "5.6.2"
 kotlin = "1.9.0"
 
@@ -22,8 +22,8 @@ plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.1"
 
 [bundles]
 kotest-assertions = [
-    "kotest-assertions-core",
-    "kotest-assertions-json",
+  "kotest-assertions-core",
+  "kotest-assertions-json",
 ]
 
 [plugins]

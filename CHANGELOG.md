@@ -25,6 +25,27 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
+## [3.4.1]
+
+### Verified Versions
+
+- Kotlin: 1.9.0
+- Gradle: 8.2.1
+- JDK: 11
+
+### Added
+
+- Utility DSL to set NpmRegistry::uri via Provider<String>
+
+### Changed
+
+- Added trailing slashes to npmjs and github registry convenience DSL URIs
+- Fixed configuration cache issues with Boolean property chains
+
+### Removed
+
+---
+
 ## [3.4.0]
 
 This is a maintenance release with a few minor bugfixes.
@@ -385,7 +406,9 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.4.0...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.4.1...HEAD
+
+[3.4.1]: https://github.com/mpetuska/npm-publish/compare/3.4.0...3.4.1
 
 [3.4.0]: https://github.com/mpetuska/npm-publish/compare/3.3.1...3.4.0
 

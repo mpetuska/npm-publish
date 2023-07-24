@@ -23,7 +23,7 @@ internal fun Project.configure(registry: NpmRegistry) {
   registry.otp.convention(sysProjectEnvPropertyConvention(prefix + "otp"))
   registry.authToken.convention(sysProjectEnvPropertyConvention(prefix + "authToken"))
   registry.dry.convention(
-    sysProjectEnvPropertyConvention(prefix + "dry", extension.dry.map(Boolean::toString)).map { it.notFalse() }
+    sysProjectEnvPropertyConvention(prefix + "dry", extension.dry.map(Boolean?::toString)).map { it.notFalse() }
   )
 }
 
