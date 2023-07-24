@@ -120,7 +120,7 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   public fun NpmRegistries.npmjs(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> {
     val name = "npmjs"
     val config: NpmRegistry.() -> Unit = {
-      uri.set(URI("https://registry.npmjs.org"))
+      uri.set(URI("https://registry.npmjs.org/"))
       action.execute(this)
     }
     return if (names.contains(name)) named(name, config) else register(name, config)
@@ -135,7 +135,7 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   public fun NpmRegistries.github(action: Action<NpmRegistry>): NamedDomainObjectProvider<NpmRegistry> {
     val name = "github"
     val config: NpmRegistry.() -> Unit = {
-      uri.set(URI("https://npm.pkg.github.com"))
+      uri.set(URI("https://npm.pkg.github.com/"))
       action.execute(this)
     }
     return if (names.contains(name)) named(name, config) else register(name, config)

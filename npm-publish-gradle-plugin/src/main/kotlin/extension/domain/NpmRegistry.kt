@@ -7,6 +7,7 @@ import dev.petuska.npm.publish.util.NamedInput
 import dev.petuska.npm.publish.util.NpmPublishDsl
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import java.net.URI
@@ -63,6 +64,14 @@ public abstract class NpmRegistry : NamedInput {
    */
   public fun Property<URI>.set(uri: String) {
     set(URI(uri))
+  }
+
+  /**
+   * Convenience DSL to set [URI] properties via [Provider]<[String]>
+   * @param uri to use when constructing [URI] instance
+   */
+  public fun Property<URI>.set(uri: Provider<String>) {
+    set(uri.map(::URI))
   }
 
   init {

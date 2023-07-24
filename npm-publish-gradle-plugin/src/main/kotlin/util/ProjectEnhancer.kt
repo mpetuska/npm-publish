@@ -10,7 +10,7 @@ private const val GLOBAL_PREFIX: String = "npm.publish."
  * Convention resolution order by descending priority
  * 1. CLI arguments (`--arg=value`)
  * 2. System properties (`-Dprop=value`)
- * 3. Gradle properties (`-Pprop=value`,
+ * 3. Gradle's properties (`-Pprop=value`,
  *    `ORG_GRADLE_PROJECT_prop=value` env variable,
  *    `-Dorg.gradle.project.prop=value` system property
  *    or `prop=value` stored in `gradle.properties` file)
@@ -26,7 +26,6 @@ internal fun Project.sysProjectEnvPropertyConvention(
 ): Provider<String> {
   val propName = GLOBAL_PREFIX + name
   val envName = name.uppercase(Locale.getDefault()).replace(".", "_")
-
   return providers.systemProperty(propName)
     .orElse(providers.provider { extensions.extraProperties.properties[propName]?.toString() })
     .orElse(providers.gradleProperty(propName))

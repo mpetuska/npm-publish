@@ -87,7 +87,6 @@ public abstract class NpmPublishTask : NpmExecTask() {
       if (reg.authToken.isPresent) add("--//$repo:_authToken=${reg.authToken.get()}")
       if (d) add("--dry-run")
       if (tag.isPresent) add("--tag=${tag.get()}")
-//      add("${uri.scheme.trim()}://$repo")
     }
     npmExec(args) { it.workingDir(packageDir.get()) }.rethrowFailure()
     if (!d) info { "Published package at $pDir to ${reg.name} registry" }
