@@ -149,6 +149,7 @@ $dokka.location:dev.petuska.npm.publish.extension.domain/NpmRegistry/authToken/#
 $dokka.location:dev.petuska.npm.publish.extension.domain/NpmRegistry/dry/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension.domain/-npm-registry/dry.html
 $dokka.location:dev.petuska.npm.publish.extension.domain/NpmRegistry/otp/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension.domain/-npm-registry/otp.html
 $dokka.location:dev.petuska.npm.publish.extension.domain/NpmRegistry/set/org.gradle.api.provider.Property[java.net.URI]#kotlin.String/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension.domain/-npm-registry/set.html
+$dokka.location:dev.petuska.npm.publish.extension.domain/NpmRegistry/set/org.gradle.api.provider.Property[java.net.URI]#org.gradle.api.provider.Provider[kotlin.String]/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension.domain/-npm-registry/set.html
 $dokka.location:dev.petuska.npm.publish.extension.domain/NpmRegistry/uri/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension.domain/-npm-registry/uri.html
 $dokka.location:dev.petuska.npm.publish.extension////PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension/index.html
 $dokka.location:dev.petuska.npm.publish.extension/NpmPublishExtension.Companion///PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.extension/-npm-publish-extension/-companion/index.html
