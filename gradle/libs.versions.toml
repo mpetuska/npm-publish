@@ -1,5 +1,5 @@
 [versions]
-detekt = "1.23.0"
+detekt = "1.23.1"
 dokka = "1.8.20"
 java = "11"
 junit-jupiter = "5.10.0"
