@@ -17,7 +17,7 @@ kotlin {
   explicitApi()
   dependencies {
     compileOnly(libs.plugin.kotlin)
-    compileOnly(libs.plugin.nebula.node)
+    compileOnly(libs.plugin.node.gradle)
 
     testImplementation(libs.plugin.kotlin)
   }

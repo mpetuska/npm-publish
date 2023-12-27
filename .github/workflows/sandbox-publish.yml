@@ -1,27 +1,27 @@
 name: Publish Sandbox to GitHub Packages
-on:
-  workflow_dispatch:
-    inputs:
-      version:
+on: 
+  workflow_dispatch: 
+    inputs: 
+      version: 
         required: true
         description: Package version to publish under
-      sandbox-module:
+      sandbox-module: 
         required: false
         default: both
         description: Sandbox module to publish
-jobs:
-  publish:
+jobs: 
+  publish: 
     runs-on: ubuntu-latest
-    permissions:
+    permissions: 
       contents: read
       packages: write
-    steps:
+    steps: 
       - uses: actions/checkout@v3
 
       - name: Restore Gradle cache
         id: cache
         uses: actions/cache@v3
-        with:
+        with: 
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
@@ -33,7 +33,7 @@ jobs:
 
       - name: Set up JDK
         uses: actions/setup-java@v3
-        with:
+        with: 
           java-version: 11
           distribution: 'adopt'
 
@@ -41,7 +41,7 @@ jobs:
         working-directory: sandbox
         run: |
           VERSION=${VERSION:=${{ github.event.inputs.version }}}
-          ./gradlew :${{ github.event.inputs.sandbox-module }}:publishJsNpmPublicationToGitHub \
-              -Pnpm.publish.repository.GitHub.authToken="${{ github.token }}" \
-              -Pnpm.publish.version=${VERSION/v} \
-              -Pnpm.publish.organization=${{ github.repository_owner }}
+          ../gradlew :${{ github.event.inputs.sandbox-module }}:publishJsNpmPublicationToGitHub \
+          -Pnpm.publish.repository.GitHub.authToken="${{ github.token }}" \
+          -Pnpm.publish.version=${VERSION/v} \
+          -Pnpm.publish.organization=${{ github.repository_owner }}

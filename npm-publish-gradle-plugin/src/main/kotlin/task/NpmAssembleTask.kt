@@ -95,7 +95,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     val pkg = `package`.get()
     val dest = destinationDir.get()
     debug { "Assembling ${pkg.name} package in ${dest.asFile.path}" }
-    val files = pkg.files.files
+    val files = pkg.files
 
     fs.copy { cp ->
       cp.from(files)
@@ -126,7 +126,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     } ?: mutableMapOf()
 
     packageJson.orNull?.finalise()?.let(pJson::overrideFrom)
-    main.orNull?.let { pJson.putIfAbsent("main", it) }
+    main.orNull?.let { fixKgpPackageJsonBugForEsModules(it) }?.let { pJson.putIfAbsent("main", it) }
     types.orNull?.let { pJson.putIfAbsent("types", it) }
     version.orNull?.let { pJson.putIfAbsent("version", it) }
     packageName.orNull?.let { pName ->
@@ -136,6 +136,25 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     resolveDependencies(pJson)
 
     return pJson
+  }
+
+  /**
+   * Workaround for https://youtrack.jetbrains.com/issue/KT-59523
+   *
+   * Only required for cunsumers using KGP bellow 1.9.21
+   */
+  private fun NpmPackage.fixKgpPackageJsonBugForEsModules(main: String): String {
+    val fOrig = destinationDir.file(main).get().asFile
+
+    return if (!fOrig.exists()) {
+      arrayOf("js", "mjs").map { ext ->
+        File(fOrig.parentFile, "${fOrig.nameWithoutExtension}.$ext")
+      }.first { f ->
+        f.exists()
+      }.relativeTo(destinationDir.get().asFile).path
+    } else {
+      return main
+    }
   }
 
   private fun resolveDependencySourcePackageJson(): List<NpmDependency> = dependencySourcePackageJson.asFile.orNull
