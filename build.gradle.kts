@@ -5,10 +5,12 @@ plugins {
   id("convention.git-hooks")
 }
 
-nexusPublishing.repositories {
-  sonatype {
-    nexusUrl by uri("https://s01.oss.sonatype.org/service/local/")
-    snapshotRepositoryUrl by uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+nexusPublishing {
+  repositories {
+    sonatype {
+      nexusUrl by uri("https://s01.oss.sonatype.org/service/local/")
+      snapshotRepositoryUrl by uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    }
   }
 }
 

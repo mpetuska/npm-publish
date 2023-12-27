@@ -98,7 +98,7 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
-        files.from(outputFile.map { it.parentFile })
+        files.from(outputFile.map(File::getParentFile))
         files.from(processResourcesTask.map(Copy::getDestinationDir))
       }
     }

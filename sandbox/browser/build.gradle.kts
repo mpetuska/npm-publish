@@ -7,7 +7,7 @@ plugins {
 kotlin {
   js(IR) {
     browser()
-    useCommonJs()
+    useEsModules()
     generateTypeScriptDefinitions()
     binaries.library()
   }

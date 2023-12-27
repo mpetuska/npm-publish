@@ -21,7 +21,10 @@ internal fun <T : Any, P : Property<T>> P.configure(config: Action<T>) {
   set(map { it.apply(config::execute) })
 }
 
-internal fun <T : Any, P : Provider<T>> P.configure(config: Action<T>): Provider<T> = map { config.execute(it); it }
+internal fun <T : Any, P : Provider<T>> P.configure(config: Action<T>): Provider<T> = map {
+  config.execute(it)
+  it
+}
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T> Any?.unsafeCast(): T = this as T
