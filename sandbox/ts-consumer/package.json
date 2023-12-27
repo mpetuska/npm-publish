@@ -3,16 +3,19 @@
   "main": "src/index.ts",
   "version": "0.0.0",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "clean": "rm -rf node_modules/@mpetuska",
-    "start": "ts-node src/index.ts",
+    "start": "tsx ./src/index.ts",
     "build": "tsc",
     "build:start": "yarn build && node build/index.js",
     "reinstall:both": "yarn remove @mpetuska/both; yarn add ../both/build/packages/js",
     "reinstall:browser": "yarn remove @mpetuska/browser; yarn add ../browser/build/packages/js",
     "reinstall:node": "yarn remove @mpetuska/node; yarn add ../node/build/packages/js",
     "reinstall": "yarn reinstall:both && yarn reinstall:browser && yarn reinstall:node",
-    "rebuild": "(cd .. && ./gradlew pack) && yarn reinstall"
+    "rebuild": "(cd .. && ../gradlew pack) && yarn reinstall"
   },
   "dependencies": {
     "@mpetuska/both": "../both/build/packages/js",
@@ -20,8 +23,8 @@
     "@mpetuska/node": "../node/build/packages/js"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
-    "ts-node": "^10.1.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^20.10.5",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }

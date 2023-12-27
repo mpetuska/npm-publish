@@ -9,7 +9,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Verified Versions
+
+- Kotlin: 1.9.22
+- Gradle: 8.5
+- JDK: 11
+
+### Added
+
+### Changed
+
+### Removed
+
+---
+
+## [3.4.2]
+
 This is a maintenance release with a few minor bugfixes.
+
+### Verified Versions
+
+- Kotlin: 1.9.22
+- Gradle: 8.5
+- JDK: 11
+
+### Added
+
+### Changed
+
+- Upgraded dependencies
+- Switched out `com.netflix.nebula.node` plugin hook for node autoconfig to `com.github.node-gradle.node` plugin which
+  it depends on
+- Implemented a patch for older KGP users to remedy https://youtrack.jetbrains.com/issue/KT-59523 when using ESM
+
+### Removed
+
+---
+
+## [3.4.1]
 
 ### Verified Versions
 
@@ -19,7 +56,12 @@ This is a maintenance release with a few minor bugfixes.
 
 ### Added
 
+- Utility DSL to set NpmRegistry::uri via Provider<String>
+
 ### Changed
+
+- Added trailing slashes to npmjs and github registry convenience DSL URIs
+- Fixed configuration cache issues with Boolean property chains
 
 ### Removed
 
@@ -406,7 +448,9 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.4.1...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.4.2...HEAD
+
+[3.4.2]: https://github.com/mpetuska/npm-publish/compare/3.4.1...3.4.2
 
 [3.4.1]: https://github.com/mpetuska/npm-publish/compare/3.4.0...3.4.1
 

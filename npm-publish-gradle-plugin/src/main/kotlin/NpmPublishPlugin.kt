@@ -1,6 +1,6 @@
 package dev.petuska.npm.publish
 
-import com.moowork.gradle.node.task.SetupTask
+import com.github.gradle.node.task.NodeSetupTask
 import dev.petuska.npm.publish.config.configure
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.task.NodeExecTask
@@ -28,11 +28,10 @@ public class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project): Unit = with(project) {
     val extension = extensions.create(NpmPublishExtension.NAME, NpmPublishExtension::class.java)
     configure(extension)
-    pluginManager.withPlugin(NEBULA_NODE_PLUGIN) {
-      val nebulaNodeHome = project.tasks.named<SetupTask>(SetupTask.NAME)
-        .map { it.takeIf { it.enabled }.unsafeCast<SetupTask>() }
-        .map(SetupTask::getNodeDir)
-        .let(layout::dir)
+    pluginManager.withPlugin(NODE_GRADLE_PLUGIN) {
+      val nebulaNodeHome = project.tasks.named<NodeSetupTask>(NodeSetupTask.NAME)
+        .map { it.takeIf { it.enabled }.unsafeCast<NodeSetupTask>() }
+        .flatMap(NodeSetupTask::nodeDir)
       extension.nodeHome.convention(
         sysProjectEnvPropertyConvention(
           name = "nodeHome",
@@ -87,6 +86,6 @@ public class NpmPublishPlugin : Plugin<Project> {
   private companion object {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
-    private const val NEBULA_NODE_PLUGIN = "com.netflix.nebula.node"
+    private const val NODE_GRADLE_PLUGIN = "com.github.node-gradle.node"
   }
 }

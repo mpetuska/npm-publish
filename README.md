@@ -26,24 +26,24 @@ tasks:
 
 ```kotlin title="build.gradle.kts"
 plugins {
-  id("dev.petuska.npm.publish") version "<VERSION>"
-  kotlin("multiplatform") version "<VERSION>>" // Optional, also supports "js"
+    id("dev.petuska.npm.publish") version "<VERSION>"
+    kotlin("multiplatform") version "<VERSION>>" // Optional, also supports "js"
 }
 
 kotlin {
-  js(IR) {
-    binaries.library()
-    browser() // or nodejs()
-  }
+    js(IR) {
+        binaries.library()
+        browser() // or nodejs()
+    }
 }
 
 npmPublish {
-  registries {
-    register("npmjs") {
-      uri.set("https://registry.npmjs.org")
-      authToken.set("obfuscated")
+    registries {
+        register("npmjs") {
+            uri.set("https://registry.npmjs.org")
+            authToken.set("obfuscated")
+        }
     }
-  }
 }
 ```
 
