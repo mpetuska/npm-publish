@@ -1,3 +1,5 @@
+import dev.petuska.npm.publish.extension.domain.json.ExportedPath
+
 plugins {
   kotlin("multiplatform")
   id("dev.petuska.npm.publish")
@@ -20,4 +22,11 @@ kotlin {
 
 npmPublish {
   organization.set("mpetuska")
+  packages {
+    named("js") {
+      packageJson {
+        exports by "index.mjs"
+      }
+    }
+  }
 }

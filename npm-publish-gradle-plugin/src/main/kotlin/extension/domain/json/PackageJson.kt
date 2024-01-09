@@ -1,5 +1,6 @@
 package dev.petuska.npm.publish.extension.domain.json
 
+import dev.petuska.npm.publish.util.configure
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -163,6 +164,13 @@ public abstract class PackageJson : GenericJsonObject() {
   @get:Optional
   public abstract val bundledDependencies: SetProperty<String>
 
+  /**
+   * [exports](https://docs.npmjs.com/files/package.json#bundleddependencies)
+   */
+  @get:Input
+  @get:Optional
+  public abstract val exports: Property<Exports>
+
   // region DSL
 
   /**
@@ -286,6 +294,45 @@ public abstract class PackageJson : GenericJsonObject() {
     optionalDependencies.configure(action)
   }
 
+  /**
+   * Set exports to a single path that will map "."
+   * @see [exports]
+   */
+  public infix fun Property<Exports>.by(path: String) {
+    configure({ exports ->
+      exports.paths.configure { paths ->
+        paths["."] = instance(ExportedPath::class).apply {
+          default.set(path)
+        }
+      }
+    })
+  }
+
+  /**
+   * Set exports to a single path that will map ".", this path may have several export
+   * @see [exports]
+   */
+  public infix fun Property<Exports>.by(pathAction: Action<ExportedPath>) {
+    this by mapOf("." to pathAction)
+  }
+
+  /**
+   * Configure exports to a map of configurable paths
+   * @see [exports]
+   */
+  public infix fun Property<Exports>.by(paths: Map<String, Action<ExportedPath>>) {
+    exports.set(
+      instance(Exports::class).also {
+        it.paths.putAll(
+          paths.mapValues { (_, action) -> ExportedPath(action) }
+        )
+      }
+    )
+  }
+
+  private fun ExportedPath(action: Action<ExportedPath>): ExportedPath =
+    instance(ExportedPath::class).apply(action::execute)
+
   // endregion
 
   @Suppress("ComplexMethod")
@@ -319,5 +366,6 @@ public abstract class PackageJson : GenericJsonObject() {
     peerDependencies.finalOrNull?.let { put("peerDependencies", it.finalise()) }
     optionalDependencies.finalOrNull?.let { put("optionalDependencies", it.finalise()) }
     bundledDependencies.final?.let { put("bundledDependencies", it) }
+    exports.finalOrNull?.let { put("exports", it) }
   }
 }
