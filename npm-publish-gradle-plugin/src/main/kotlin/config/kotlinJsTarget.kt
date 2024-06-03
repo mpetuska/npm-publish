@@ -68,10 +68,8 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
       val processResourcesTask = target.compilations.named("main").flatMap {
         tasks.named<Copy>(it.processResourcesTaskName)
       }
-      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::outputFileProperty)
-// TODO replace the above with this once moduleName can be used to build actual file name
-//      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
-//        .zip(compileKotlinTask.flatMap(Kotlin2JsCompile::moduleName)) { dir, file -> dir.file(file).asFile }
+      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
+        .zip(compileKotlinTask.flatMap(Kotlin2JsCompile::moduleName)) { dir, file -> dir.file(file).asFile }
       val typesFile = outputFile.map {
         it.parentFile.resolve("${it.nameWithoutExtension}.d.ts")
       }

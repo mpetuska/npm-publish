@@ -4,7 +4,7 @@ dokka = "1.9.10"
 java = "11"
 junit-jupiter = "5.10.1"
 kotest = "5.8.0"
-kotlin = "1.9.22"
+kotlin = "2.0.0"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
