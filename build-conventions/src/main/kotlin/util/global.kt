@@ -14,7 +14,7 @@ infix fun <T> Property<T>.by(value: Provider<T>) = set(value)
 
 object Git {
   val headCommitHash by lazy {
-    val child = Runtime.getRuntime().exec("git rev-parse --verify HEAD")
+    val child = Runtime.getRuntime().exec(arrayOf("git","rev-parse", "--verify","HEAD"))
     child.waitFor()
     child.inputStream.readAllBytes().toString(Charset.defaultCharset()).trim()
   }
