@@ -1,5 +1,12 @@
 plugins {
-  id("com.gradle.enterprise") version "+"
+  id("com.gradle.develocity") version "+"
+}
+
+develocity {
+  buildScan{
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    termsOfUseAgree = "yes"
+  }
 }
 
 @Suppress("UnstableApiUsage")

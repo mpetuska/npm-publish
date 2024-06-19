@@ -53,11 +53,6 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
           }
 
           null -> null
-          !is JsIrBinary -> error(
-            "Legacy binaries are no longer supported. " +
-              "Please consider switching to the new Kotlin/JS IR compiler backend"
-          )
-
           else -> error("Unrecognised Kotlin/JS binary type: ${it::class.java.name}")
         }
       }
@@ -65,13 +60,14 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
       val publicPackageJsonTask = binary.flatMap {
         tasks.named<PublicPackageJsonTask>(it.compilation.npmProject.publicPackageJsonTaskName)
       }
-      val processResourcesTask = target.compilations.named("main").flatMap {
+      val mainCompilation = target.compilations.named("main")
+      val processResourcesTask = mainCompilation.flatMap {
         tasks.named<Copy>(it.processResourcesTaskName)
       }
-      val outputFile = compileKotlinTask.flatMap(Kotlin2JsCompile::destinationDirectory)
-        .zip(compileKotlinTask.flatMap(Kotlin2JsCompile::moduleName)) { dir, file -> dir.file(file).asFile }
+
+      val outputFile = binary.flatMap(JsIrBinary::mainFile)
       val typesFile = outputFile.map {
-        it.parentFile.resolve("${it.nameWithoutExtension}.d.ts")
+        it.asFile.parentFile.resolve("${it.asFile.nameWithoutExtension}.d.ts")
       }
 
       tasks.named(assembleTaskName(pkg.name), NpmAssembleTask::class.java) {
@@ -84,7 +80,7 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
       pkg.main.convention(
         sysProjectEnvPropertyConvention(
           pkg.prefix + "main",
-          outputFile.map { it.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
+          outputFile.map { it.asFile.name }.orElse(pkg.packageJson.flatMap(PackageJson::main))
         )
       )
       pkg.types.convention(
@@ -96,7 +92,7 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
       )
       pkg.dependencies.addAllLater(resolveDependencies(target.name, binary))
       pkg.files { files ->
-        files.from(outputFile.map(File::getParentFile))
+        files.from(outputFile.map { it.asFile.getParentFile() })
         files.from(processResourcesTask.map(Copy::getDestinationDir))
       }
     }
@@ -117,24 +113,30 @@ private fun Project.resolveDependencies(
   targetName: String,
   binary: Provider<JsIrBinary>
 ): Provider<List<NpmDependency>> = binary.map { bin ->
-  bin.compilation.relatedConfigurationNames().flatMap { conf ->
-    listOf(
-      conf,
-      "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalized()}",
-      conf.substringAfter("compilation").toCamelCase(true),
-    ).mapNotNull(configurations::findByName).flatMap(Configuration::getDependencies)
-      .filterIsInstance<KJsNpmDependency>().distinct().map { dependency ->
-        objects.newInstance(NpmDependency::class.java, dependency.name).apply {
-          type.set(
-            when (dependency.scope) {
-              NORMAL -> NpmDependency.Type.NORMAL
-              DEV -> NpmDependency.Type.DEV
-              OPTIONAL -> NpmDependency.Type.OPTIONAL
-              PEER -> NpmDependency.Type.PEER
-            }
-          )
-          version.set(dependency.version)
-        }
-      }
-  }
+  bin.compilation
+    .relatedConfigurationNames()
+    .flatMap { conf ->
+      sequenceOf(
+        conf,
+        "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalized()}",
+        conf.substringAfter("compilation").toCamelCase(true),
+      )
+        .mapNotNull(configurations::findByName)
+        .flatMap(Configuration::getDependencies)
+        .filterIsInstance<KJsNpmDependency>()
+        .distinct()
+        .map { dependency ->
+          objects.newInstance(NpmDependency::class.java, dependency.name).apply {
+            type.set(
+              when (dependency.scope) {
+                NORMAL -> NpmDependency.Type.NORMAL
+                DEV -> NpmDependency.Type.DEV
+                OPTIONAL -> NpmDependency.Type.OPTIONAL
+                PEER -> NpmDependency.Type.PEER
+              }
+            )
+            version.set(dependency.version)
+          }
+        }.toList()
+    }
 }

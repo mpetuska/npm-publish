@@ -8,13 +8,13 @@ plugins {
 
 tasks {
   val src = projectDir.resolve("src")
-  val mkdocsDir = buildDir.resolve("mkdocs")
-  val outDir = mkdocsDir.resolve("site")
+  val mkdocsDir = layout.buildDirectory.dir("mkdocs")
+  val outDir = mkdocsDir.map { it.dir("site") }
   val dokkaHtml = getByPath(":npm-publish-gradle-plugin:dokkaHtml")
   val docsAssemble = register("docsAssemble", Copy::class) {
     dependsOn(dokkaHtml)
     outputs.upToDateWhen { false }
-    destinationDir = mkdocsDir.resolve("source").also(outputs::dir)
+    destinationDir = mkdocsDir.map { it.dir("source") }.get().asFile.also(outputs::dir)
     val readme = rootDir.resolve("README.md").also(inputs::file)
     val license = rootDir.resolve("LICENSE").also(inputs::file)
     val changelog = rootDir.resolve("CHANGELOG.md").also(inputs::file)
@@ -47,7 +47,7 @@ tasks {
         mapOf(
           "srcDir" to srcDir.absolutePath,
           "themeDir" to themeDir.absolutePath,
-          "outDir" to outDir.absolutePath,
+          "outDir" to outDir.get().asFile.absolutePath,
         )
       )
     }
@@ -75,7 +75,7 @@ tasks {
   register("mkdocsBuild", MkDocsExec.Build::class) {
     dependsOn(docsAssemble)
     workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
-    containerVolumes.put(outDir, outDir)
+    containerVolumes.put(outDir.get().asFile, outDir.get().asFile)
     outputs.dir(outDir)
   }
   register("mikeList", MikeExec.List::class) {
@@ -114,6 +114,6 @@ tasks {
     workingDir.set(layout.dir(docsAssemble.map { it.destinationDir }))
   }
   register("clean", Delete::class) {
-    delete(buildDir)
+    delete(layout.buildDirectory)
   }
 }
