@@ -22,6 +22,9 @@ internal fun Project.configure(registry: NpmRegistry) {
   registry.uri.convention(sysProjectEnvPropertyConvention(prefix + "uri").map(::URI))
   registry.otp.convention(sysProjectEnvPropertyConvention(prefix + "otp"))
   registry.authToken.convention(sysProjectEnvPropertyConvention(prefix + "authToken"))
+  registry.auth.convention(sysProjectEnvPropertyConvention(prefix + "auth"))
+  registry.username.convention(sysProjectEnvPropertyConvention(prefix + "username"))
+  registry.password.convention(sysProjectEnvPropertyConvention(prefix + "password"))
   registry.dry.convention(
     sysProjectEnvPropertyConvention(prefix + "dry", extension.dry.map(Boolean?::toString)).map { it.notFalse() }
   )

@@ -8,7 +8,9 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.plugins.PublishingPlugin.PUBLISH_TASK_GROUP
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
+import java.util.*
 
 /**
  * A publishing task that publishes a given package to a given registry.
@@ -74,6 +76,7 @@ public abstract class NpmPublishTask : NpmExecTask() {
     val reg = registry.get()
     val uri = reg.uri.get()
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
+
     val d = dry.get()
     info {
       "Publishing package at $pDir to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag"
@@ -85,6 +88,13 @@ public abstract class NpmPublishTask : NpmExecTask() {
       add("--registry=${uri.scheme.trim()}://$repo")
       if (reg.otp.isPresent) add("--otp=${reg.otp.get()}")
       if (reg.authToken.isPresent) add("--//$repo:_authToken=${reg.authToken.get()}")
+      if (reg.auth.isPresent) add("--//$repo:_auth=${reg.auth.get()}")
+      if (reg.username.isPresent) add("--//$repo:username=${reg.username.get()}")
+      if (reg.password.isPresent) {
+        val password = reg.password.get()
+        val encoded = Base64.getEncoder().encodeToString(password.toByteArray(Charsets.UTF_8))
+        add("--//$repo:_password=${encoded}")
+      }
       if (d) add("--dry-run")
       if (tag.isPresent) add("--tag=${tag.get()}")
     }
