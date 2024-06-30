@@ -41,11 +41,36 @@ public abstract class NpmRegistry : NamedInput {
 
   /**
    * Auth token to use when authenticating with the registry.
+   * Either authToken, auth or a username + password should be provided.
    * [More info](https://docs.npmjs.com/about-access-tokens)
    */
   @get:Input
   @get:Optional
   public abstract val authToken: Property<String>
+
+  /**
+   * Base64 authentication string when authenticating with the registry.
+   * Either authToken, auth or a username + password should be provided.
+   */
+  @get:Input
+  @get:Optional
+  public abstract val auth: Property<String>
+
+  /**
+   * Username to use when authenticating with the registry.
+   * Either authToken, auth or a username + password should be provided.
+   */
+  @get:Input
+  @get:Optional
+  public abstract val username: Property<String>
+
+  /**
+   * Password to use when authenticating with the registry.
+   * Either authToken, auth or a username + password should be provided.
+   */
+  @get:Input
+  @get:Optional
+  public abstract val password: Property<String>
 
   /**
    * Specifies if a dry-run should be added to the npm command arguments by default. Dry run does all the

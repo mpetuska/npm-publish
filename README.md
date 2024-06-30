@@ -39,9 +39,19 @@ kotlin {
 
 npmPublish {
     registries {
+        // For registries expecting an authentiation token, use authToken
         register("npmjs") {
             uri.set("https://registry.npmjs.org")
             authToken.set("obfuscated")
+        }
+        
+        // For registries expecting a username and password, use auth or username + password
+        register("nexus") {
+            uri.set("https://nexus.example.com/repository/npm-internal")
+            username.set("obfuscated")
+            password.set("obfuscated")
+            // Or:
+            // auth.set("base64-encoded-string")
         }
     }
 }
