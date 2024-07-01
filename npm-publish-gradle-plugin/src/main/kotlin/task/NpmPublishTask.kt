@@ -93,7 +93,7 @@ public abstract class NpmPublishTask : NpmExecTask() {
       if (reg.password.isPresent) {
         val password = reg.password.get()
         val encoded = Base64.getEncoder().encodeToString(password.toByteArray(Charsets.UTF_8))
-        add("--//$repo:_password=${encoded}")
+        add("--//$repo:_password=$encoded")
       }
       if (d) add("--dry-run")
       if (tag.isPresent) add("--tag=${tag.get()}")
