@@ -32,7 +32,7 @@ abstract class ITest {
   }
 
   @TempDir
-  private lateinit var tempDir: File
+  protected lateinit var tempDir: File
 
   protected fun projectOf(
     init: (projectDir: File) -> Unit = {},

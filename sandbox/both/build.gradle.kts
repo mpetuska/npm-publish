@@ -1,6 +1,5 @@
 plugins {
-  kotlin("multiplatform")
-  id("convention.base")
+  id("kmp")
   id("dev.petuska.npm.publish")
 }
 
@@ -27,32 +26,32 @@ kotlin {
 }
 
 npmPublish {
-  organization.set(group.toString())
+  organization = group.toString()
 
   packages {
     named("js") {
-      packageJsonTemplateFile.set(rootDir.resolve("template.package.json"))
+      packageJsonTemplateFile = rootDir.resolve("template.package.json")
       packageJson {
         author {
-          name.set("Martynas Petuška")
+          name = "Martynas Petuška"
         }
         repository {
-          type.set("git")
-          url.set("https://github.com/mpetuska/npm-publish.git")
+          type = "git"
+          url = "https://github.com/mpetuska/npm-publish.git"
         }
       }
     }
   }
   registries {
     npmjs {
-      dry.set(true)
+      dry = true
     }
     github {
-      dry.set(true)
+      dry = true
     }
     register("custom") {
-      uri.set(uri("https://registry.custom.com/"))
-      dry.set(true)
+      uri = uri("https://registry.custom.com/")
+      dry = true
     }
   }
 }

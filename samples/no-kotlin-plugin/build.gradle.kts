@@ -1,5 +1,4 @@
 plugins {
-  id("convention.base")
   id("dev.petuska.npm.publish")
   id("com.netflix.nebula.node") version "+"
 }

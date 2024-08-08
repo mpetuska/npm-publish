@@ -1,10 +1,13 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-  id("convention.kotlin-jvm")
+  id("kjvm")
+  id("detekt")
+  id("pgp-signing")
+  id("pom-defaults")
+  id("github-publish")
   alias(libs.plugins.plugin.publish)
   alias(libs.plugins.dokka)
-  signing
 }
 
 description = """
@@ -13,78 +16,31 @@ description = """
   setup publishing to NPM repositories for all JS targets.
 """.trimIndent()
 
+repositories {
+  mavenCentral()
+  gradlePluginPortal()
+}
+
 kotlin {
-  explicitApi()
   dependencies {
     compileOnly(libs.plugin.kotlin)
     compileOnly(libs.plugin.node.gradle)
 
     testImplementation(libs.plugin.kotlin)
+    testImplementation(libs.bundles.kotest.assertions)
   }
 }
 
 gradlePlugin {
-  website by "https://npm-publish.petuska.dev"
-  vcsUrl by "https://github.com/mpetuska/npm-publish"
+  website = "https://npm-publish.petuska.dev"
+  vcsUrl = "https://github.com/mpetuska/npm-publish"
   plugins {
     register(name) {
       id = "dev.petuska.npm.publish"
       implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
       displayName = "NPM package publishing to NPM repositories"
       description = project.description
-      tags.set(listOf("npm", "publishing", "kotlin", "node", "js"))
+      tags = listOf("npm", "publishing", "kotlin", "node", "js")
     }
-  }
-}
-
-publishing {
-  publications {
-    withType<MavenPublication> {
-      pom {
-        name by project.name
-        url by gradlePlugin.website
-        description by provider { project.description }
-
-        licenses {
-          license {
-            name by "The Apache License, Version 2.0"
-            url by "https://www.apache.org/licenses/LICENSE-2.0.txt"
-          }
-        }
-
-        developers {
-          developer {
-            id by "mpetuska"
-            name by "Martynas Petuška"
-            email by "martynas@petuska.dev"
-          }
-        }
-
-        scm {
-          connection by "scm:git:git://github.com/mpetuska/npm-publish.git"
-          developerConnection by "scm:git:git@github.com:mpetuska/npm-publish.git"
-          url by gradlePlugin.vcsUrl
-          tag by provider { Git.headCommitHash }
-        }
-      }
-    }
-    repositories {
-      maven("https://maven.pkg.github.com/mpetuska/npm-publish") {
-        name = "GitHub"
-        credentials {
-          username = System.getenv("GH_USERNAME")
-          password = System.getenv("GH_PASSWORD")
-        }
-      }
-    }
-  }
-}
-
-signing {
-  val signingKey: String? by project
-  val signingPassword: String? by project
-  if (signingKey != null) {
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications)
   }
 }

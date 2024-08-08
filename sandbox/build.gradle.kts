@@ -1,3 +1,4 @@
 plugins {
-  id("convention.base")
+  id("versions")
+  id("detekt")
 }
