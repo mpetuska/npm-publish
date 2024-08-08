@@ -4,7 +4,7 @@ import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmDependency
 import dev.petuska.npm.publish.extension.domain.json.PackageJson
 import dev.petuska.npm.publish.task.NpmAssembleTask
-import dev.petuska.npm.publish.util.PluginLogger
+import dev.petuska.npm.publish.util.*
 import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
 import dev.petuska.npm.publish.util.toCamelCase
 import dev.petuska.npm.publish.util.unsafeCast
@@ -12,7 +12,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -118,7 +117,7 @@ private fun Project.resolveDependencies(
     .flatMap { conf ->
       sequenceOf(
         conf,
-        "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalized()}",
+        "${targetName}Main${conf.substringAfter("${targetName}Compilation").capitalised()}",
         conf.substringAfter("compilation").toCamelCase(true),
       )
         .mapNotNull(configurations::findByName)
