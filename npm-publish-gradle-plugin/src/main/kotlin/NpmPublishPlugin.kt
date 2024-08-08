@@ -1,15 +1,12 @@
 package dev.petuska.npm.publish
 
-import com.github.gradle.node.task.NodeSetupTask
 import dev.petuska.npm.publish.config.configure
+import dev.petuska.npm.publish.config.configureNebulaNode
 import dev.petuska.npm.publish.extension.NpmPublishExtension
-import dev.petuska.npm.publish.task.NodeExecTask
 import dev.petuska.npm.publish.task.NpmAssembleTask
 import dev.petuska.npm.publish.task.NpmPackTask
 import dev.petuska.npm.publish.task.NpmPublishTask
 import dev.petuska.npm.publish.util.configure
-import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
-import dev.petuska.npm.publish.util.unsafeCast
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.plugins.PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME
@@ -28,21 +25,7 @@ public class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project): Unit = with(project) {
     val extension = extensions.create(NpmPublishExtension.NAME, NpmPublishExtension::class.java)
     configure(extension)
-    pluginManager.withPlugin(NODE_GRADLE_PLUGIN) {
-      val nebulaNodeHome = project.tasks.named<NodeSetupTask>(NodeSetupTask.NAME)
-        .map { it.takeIf { it.enabled }.unsafeCast<NodeSetupTask>() }
-        .flatMap(NodeSetupTask::nodeDir)
-      extension.nodeHome.convention(
-        sysProjectEnvPropertyConvention(
-          name = "nodeHome",
-          default = nebulaNodeHome.map { it.asFile.absolutePath }
-            .orElse(providers.environmentVariable("NODE_HOME")),
-        ).map(layout.projectDirectory::dir)
-      )
-      tasks.withType(NodeExecTask::class.java) {
-        it.dependsOn(nebulaNodeHome)
-      }
-    }
+    configureNebulaNode(extension)
     pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
       extensions.configure<KotlinMultiplatformExtension> {
         targets.filterIsInstance<KotlinJsTargetDsl>().forEach { configure(it) }
@@ -86,6 +69,5 @@ public class NpmPublishPlugin : Plugin<Project> {
   private companion object {
     private const val KOTLIN_JS_PLUGIN = "org.jetbrains.kotlin.js"
     private const val KOTLIN_MPP_PLUGIN = "org.jetbrains.kotlin.multiplatform"
-    private const val NODE_GRADLE_PLUGIN = "com.github.node-gradle.node"
   }
 }

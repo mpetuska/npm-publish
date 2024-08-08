@@ -1,0 +1,4 @@
+[submodule "build-conventions"]
+	path = build-conventions
+	url = git@github.com:mpetuska/build-conventions.git
+	branch = master

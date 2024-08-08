@@ -18,7 +18,7 @@ The configuration values are resolved in the following descending priority order
 
 2. [Extension](extension.md)
 3. [Package](package.md) / [Registry](registry.md)
-4. [Tasks](../tasks)
+4. [Tasks](../tasks/index.md)
 
 !!! important
     The layering only works for properties that have no explicit values set via the DSL

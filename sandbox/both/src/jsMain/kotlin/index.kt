@@ -1,8 +1,8 @@
 package sandbox
 
-external interface GreetingArgs {
-  val name: String
-  val sureName: String
+public external interface GreetingArgs {
+  public val name: String
+  public val sureName: String
 }
 
 @JsModule("is-even")
@@ -10,14 +10,14 @@ external interface GreetingArgs {
 private external fun isEven(number: Number): Boolean
 
 @JsExport
-fun checkEven(number: Int) = isEven(number)
+public fun checkEven(number: Int): Boolean = isEven(number)
 
 @JsExport
-fun buildGreeting(args: GreetingArgs): String {
+public fun buildGreeting(args: GreetingArgs): String {
   return "Hi ${args.name} ${args.sureName}! Here's kotlin.test.Test::class.simpleName: ${kotlin.test.Test::class.simpleName}"
 }
 
 @JsExport
-fun greet(args: GreetingArgs) {
+public fun greet(args: GreetingArgs) {
   println(buildGreeting(args))
 }

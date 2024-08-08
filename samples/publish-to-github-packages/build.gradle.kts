@@ -1,5 +1,4 @@
 plugins {
-  id("convention.base")
   kotlin("multiplatform")
   id("dev.petuska.npm.publish")
 }
@@ -40,6 +39,6 @@ npmPublish {
     }
   }
   registries {
-    github {}
+    github {  }
   }
 }
