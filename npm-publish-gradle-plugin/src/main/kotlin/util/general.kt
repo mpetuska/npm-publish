@@ -4,6 +4,7 @@ import org.gradle.api.Action
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import java.util.*
 
 internal fun String?.notFalse() = !(
   equals("false", true) ||
@@ -13,6 +14,14 @@ internal fun String?.notFalse() = !(
     equals("f", true) ||
     equals("F", true)
   )
+
+internal fun String.capitalised() = replaceFirstChar { if (it.isLowerCase()) {
+  it.titlecase(
+    Locale.getDefault()
+  )
+} else {
+  it.toString()
+} }
 
 internal fun npmFullName(name: String, scope: String?) =
   "${scope?.let { "@${it.trim()}/" } ?: ""}${name.trim()}"

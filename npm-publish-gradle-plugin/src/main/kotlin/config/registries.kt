@@ -3,8 +3,8 @@ package dev.petuska.npm.publish.config
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmRegistries
 import dev.petuska.npm.publish.util.PluginLogger
+import dev.petuska.npm.publish.util.capitalised
 import org.gradle.api.Project
-import org.gradle.configurationcache.extensions.capitalized
 
 internal fun Project.configure(registries: NpmRegistries): Unit = with(PluginLogger.wrap(logger)) {
   val extension = extensions.getByType(NpmPublishExtension::class.java)
@@ -17,7 +17,7 @@ internal fun Project.configure(registries: NpmRegistries): Unit = with(PluginLog
   registries.whenObjectRemoved {
     tasks.names.filter { name ->
       name.startsWith("publish") &&
-        name.endsWith("PackageTo${it.name.capitalized()}Registry")
+        name.endsWith("PackageTo${it.name.capitalised()}Registry")
     }.mapNotNull(tasks::findByName).forEach { task ->
       tasks.remove(task)
       info { "Removed [${task.name}] NpmPublishTask due to removed [${it.name}] NpmRegistry" }

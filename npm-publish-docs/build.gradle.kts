@@ -1,5 +1,3 @@
-import java.io.FileFilter
-
 plugins {
   id("mkdocs")
 }
@@ -8,7 +6,7 @@ mkdocs {
   strict = false
 }
 
-//tasks {
+// tasks {
 //  val src = projectDir.resolve("src")
 //  val mkdocsDir = layout.buildDirectory.dir("mkdocs")
 //  val outDir = mkdocsDir.map { it.dir("site") }
@@ -118,4 +116,4 @@ mkdocs {
 //  register("clean", Delete::class) {
 //    delete(layout.buildDirectory)
 //  }
-//}
+// }
