@@ -1,28 +1,30 @@
-plugins {
-  id("com.gradle.develocity") version "+"
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    google()
+  }
+
+  includeBuild("./build-conventions")
 }
 
-develocity {
-  buildScan{
-    termsOfUseUrl = "https://gradle.com/terms-of-service"
-    termsOfUseAgree = "yes"
-  }
+plugins {
+  id("settings")
 }
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
   repositories {
-    mavenLocal()
     mavenCentral()
     gradlePluginPortal()
+    google()
   }
 }
 
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 rootProject.name = "npm-publish"
-includeBuild("build-conventions")
-include(
-  "npm-publish-gradle-plugin",
-  "npm-publish-docs",
-)
+//include(
+//  "npm-publish-gradle-plugin",
+//  "npm-publish-docs",
+//)
