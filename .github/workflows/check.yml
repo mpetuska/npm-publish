@@ -15,6 +15,8 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=true"
     steps: 
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
       - uses: actions/setup-java@v3
         with: 

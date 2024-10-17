@@ -1,6 +1,5 @@
 [versions]
 detekt = "1.23.6"
-dokka = "1.9.20"
 kotest = "5.9.1"
 kotlin = "2.0.21"
 
@@ -18,5 +17,4 @@ kotest-assertions = [
 ]
 
 [plugins]
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 plugin-publish = "com.gradle.plugin-publish:1.3.0"

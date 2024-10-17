@@ -3,11 +3,9 @@
 plugins {
   id("kjvm")
   id("detekt")
-  id("pgp-signing")
-  id("pom-defaults")
-  id("github-publish")
+  id("dokkatoo")
+  id("full-publishing")
   alias(libs.plugins.plugin.publish)
-  alias(libs.plugins.dokka)
 }
 
 description = """
@@ -35,12 +33,30 @@ gradlePlugin {
   website = "https://npm-publish.petuska.dev"
   vcsUrl = "https://github.com/mpetuska/npm-publish"
   plugins {
-    register(name) {
+    create(name) {
       id = "dev.petuska.npm.publish"
       implementationClass = "dev.petuska.npm.publish.NpmPublishPlugin"
       displayName = "NPM package publishing to NPM repositories"
       description = project.description
       tags = listOf("npm", "publishing", "kotlin", "node", "js")
+    }
+  }
+}
+
+deployer {
+  content {
+    gradlePluginComponents()
+  }
+}
+
+tasks {
+  register<Jar>("javadocJar") {
+    from(dokkatooGeneratePublicationHtml)
+    archiveClassifier = "javadoc"
+  }
+  whenTaskAdded {
+    if (name.contains("CentralPortal", ignoreCase = true) || name.contains("Github", ignoreCase = true)) {
+      dependsOn("javadocJar", "sourcesJar", "jar", "makeEmptyDocsJar", "makeEmptySourcesJar")
     }
   }
 }
