@@ -11,13 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Verified Versions
 
-- Kotlin: 1.9.22
-- Gradle: 8.5
+- Kotlin: 2.0.21
+- Gradle: 8.10
 - JDK: 11
 
 ### Added
+- Auth, username and password properties of registries.
+- K2 support
 
 ### Changed
+- Version upgrades
 
 ### Removed
 

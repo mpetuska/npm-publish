@@ -44,10 +44,12 @@ jobs:
         with:
           python-version: 3.x
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git fetch origin gh-pages --depth=1
-      - run: |
-          pip install mkdocs-material mike
-      - run: ./gradlew :npm-publish-docs:mikeDeploy -Pversion='${{ steps.resolve.outputs.version }}'
+      - run: ./gradlew :npm-publish-docs:mkdocsPublish -Pversion='${{ steps.resolve.outputs.version }}'
+        env:
+          GRGIT_USER: ${{ github.actor }}
+          GRGIT_PASS: ${{ github.token }}

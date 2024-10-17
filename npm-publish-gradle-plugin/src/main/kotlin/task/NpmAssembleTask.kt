@@ -97,7 +97,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
     debug { "Assembling ${pkg.name} package in ${dest.asFile.path}" }
     val files = pkg.files
 
-    fs.copy { cp ->
+    fs.sync { cp ->
       cp.from(files)
       pkg.readme.orNull?.let { md ->
         cp.from(md) {
