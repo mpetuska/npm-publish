@@ -45,6 +45,9 @@ npmPublish {
     | [`uri`](#uri)             | URI       |                                                      |                               |
     | [`otp`](#otp)             | String    |                                                      |                               |
     | [`authToken`](#authtoken) | String    |                                                      |                               |
+    | [`auth`](#auth)           | String    |                                                      |                               |
+    | [`username`](#username)   | String    |                                                      |                               |
+    | [`password`](#password)   | String    |                                                      |                               |
 
 === "Keys"
 
@@ -55,6 +58,9 @@ npmPublish {
     | [`uri`](#uri)             |     | `npm.publish.registry.<name>.uri`       | `NPM_PUBLISH_REGISTRY_<NAME>_URI`       |
     | [`otp`](#otp)             |     | `npm.publish.registry.<name>.otp`       | `NPM_PUBLISH_REGISTRY_<NAME>_OTP`       |
     | [`authToken`](#authToken) |     | `npm.publish.registry.<name>.authToken` | `NPM_PUBLISH_REGISTRY_<NAME>_AUTHTOKEN` |
+    | [`auth`](#auth)           |     | `npm.publish.registry.<name>.auth`      | `NPM_PUBLISH_REGISTRY_<NAME>_AUTH` |
+    | [`username`](#username)   |     | `npm.publish.registry.<name>.username`  | `NPM_PUBLISH_REGISTRY_<NAME>_USERNAME` |
+    | [`password`](#password)   |     | `npm.publish.registry.<name>.password`  | `NPM_PUBLISH_REGISTRY_<NAME>_PASSWORD` |
 
 === "Usage"
 
@@ -66,7 +72,13 @@ npmPublish {
           dry.set(true)
           uri.set(uri("https://registry.npmjs.org")) // (1)
           otp.set("obfuscated")
+          // Either (2)
           authToken.set("obfuscated")
+          // or
+          auth.set("obfuscated")
+          // or
+          username.set("obfuscated")
+          password.set("obfuscated")
         }
       }
     }
@@ -74,6 +86,7 @@ npmPublish {
 
     1. `uri` can also be set from String as `uri.set("https://registry.npmjs.org")` 
         in which case the plugin will construct an URI instance from the string for you
+    2. Only one of `authToken`, `auth` or `username` + `password` should be specified.
 
 ### `access`
 
@@ -97,3 +110,29 @@ Optional OTP to use when authenticating with the registry
 
 Auth token to use when authenticating with the registry.
 [More info](https://docs.npmjs.com/about-access-tokens)
+
+!!! note
+    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+
+### `auth`
+
+Base64 authentication string when authenticating with the registry.
+
+!!! note
+    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+
+### `username`
+
+Username to use when authenticating with the registry.
+Should always be specified together with a password.
+
+!!! note
+    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+
+### `password`
+
+Password to use when authenticating with the registry.
+Should always be specified together with a username.
+
+!!! note
+    Only one of `authToken`, `auth` or `username` + `password` should be provided.

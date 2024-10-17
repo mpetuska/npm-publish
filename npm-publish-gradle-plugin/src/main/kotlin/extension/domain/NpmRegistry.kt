@@ -41,7 +41,7 @@ public abstract class NpmRegistry : NamedInput {
 
   /**
    * Auth token to use when authenticating with the registry.
-   * Either authToken, auth or a username + password should be provided.
+   * Either [authToken], [auth] or [username] + [password] should be provided.
    * [More info](https://docs.npmjs.com/about-access-tokens)
    */
   @get:Input
@@ -50,7 +50,7 @@ public abstract class NpmRegistry : NamedInput {
 
   /**
    * Base64 authentication string when authenticating with the registry.
-   * Either authToken, auth or a username + password should be provided.
+   * Either [authToken], [auth] or [username] + [password] should be provided.
    */
   @get:Input
   @get:Optional
@@ -58,7 +58,8 @@ public abstract class NpmRegistry : NamedInput {
 
   /**
    * Username to use when authenticating with the registry.
-   * Either authToken, auth or a username + password should be provided.
+   * Should always be specified together with a [password].
+   * Either [authToken], [auth] or [username] + [password] should be provided.
    */
   @get:Input
   @get:Optional
@@ -66,7 +67,8 @@ public abstract class NpmRegistry : NamedInput {
 
   /**
    * Password to use when authenticating with the registry.
-   * Either authToken, auth or a username + password should be provided.
+   * Should always be specified together with a [username].
+   * Either [authToken], [auth] or [username] + [password] should be provided.
    */
   @get:Input
   @get:Optional

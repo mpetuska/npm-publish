@@ -1,6 +1,6 @@
 theme:
   name: material
-  custom_dir: ${themeDir}
+  custom_dir: theme/
   features:
     - header.autohide
     - search.suggest
