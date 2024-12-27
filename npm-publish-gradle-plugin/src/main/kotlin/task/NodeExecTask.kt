@@ -5,8 +5,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.Provider
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
@@ -47,16 +46,27 @@ public abstract class NodeExecTask : DefaultTask(), PluginLogger {
   /** Main NodeJS executable. Allows for executing any js script from your builds. */
   @get:InputFile
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
-  public val node: Provider<RegularFile> = nodeHome.file(
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-      "node.exe"
-    } else {
-      "bin/node"
-    }
-  )
+  public abstract val node: RegularFileProperty
 
   init {
     nodeHome.convention(project.layout.projectDirectory.dir(project.providers.environmentVariable("NODE_HOME")))
+    node.convention(
+      nodeHome.file(
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+          "node.exe"
+        } else {
+          "bin/node"
+        }
+      )
+    )
+  }
+
+  protected fun exec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult = execOps.exec {
+    val cmd = args.toTypedArray().filterNotNull()
+    info { "Executing: ${cmd.joinToString(" ")}" }
+    @Suppress("SpreadOperator")
+    it.commandLine(*cmd.toTypedArray())
+    config.execute(it)
   }
 
   /**
@@ -66,10 +76,8 @@ public abstract class NodeExecTask : DefaultTask(), PluginLogger {
    * @return execution result
    */
   @Suppress("SpreadOperator")
-  public fun nodeExec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult = execOps.exec {
-    val cmd = listOfNotNull(node.get(), *args.toTypedArray())
-    info { "Executing: ${cmd.joinToString(" ")}" }
-    it.commandLine(*cmd.toTypedArray())
-    config.execute(it)
-  }
+  public fun nodeExec(
+    args: Collection<String?>,
+    config: Action<ExecSpec> = Action {}
+  ): ExecResult = exec(listOf(node.get().asFile.absolutePath) + args, config)
 }

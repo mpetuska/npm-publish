@@ -36,6 +36,16 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   public abstract val nodeHome: DirectoryProperty
 
   /**
+   * Path to node executable. If not set, defaults to `[nodeHome]/bin/node`.
+   */
+  public abstract val nodeBin: RegularFileProperty
+
+  /**
+   * Path to npm executable. If not set, defaults to `[nodeHome]/bin/npm`.
+   */
+  public abstract val npmBin: RegularFileProperty
+
+  /**
    * A location of the default `README.md` file.
    * If set, it will be used as a default for all packages that do not have one set explicitly.
    * @see [NpmPackage.readme]

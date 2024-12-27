@@ -18,6 +18,8 @@ npmPublish {
     | Property                        | Type          | Default                  | When Kotlin plugin is present   |
     |:--------------------------------|---------------|:-------------------------|---------------------------------|
     | [`nodeHome`](#nodehome)         | Directory     | `NODE_HOME` env variable | `kotlinNodeJsSetup` task output |
+    | [`nodeBin`](#nodeBin)           | RegularFile   | `$nodeHome/bin/node`     |                                 |
+    | [`npmBin`](#npmBin)             | RegularFile   | `$nodeHome/bin/npm`      |                                 |
     | [`readme`](#readme)             | RegularFile   |                          |                                 |
     | [`npmIgnore`](#npmignore)       | RegularFile   | `$projectDir/.npmignore` |                                 |
     | [`organization`](#organization) | String        |                          |                                 |
@@ -32,6 +34,8 @@ npmPublish {
     | Property                        | CLI | System/Gradle              | Environment                |
     |:--------------------------------|-----|:---------------------------|----------------------------|
     | [`nodeHome`](#nodehome)         |     | `npm.publish.nodeHome`     | `NPM_PUBLISH_NODEHOME`     |
+    | [`nodeBin`](#nodeBin)           |     | `npm.publish.nodeBin`      | `NPM_PUBLISH_NODEBIN`      |
+    | [`npmBin`](#npmBin)             |     | `npm.publish.npmBin`       | `NPM_PUBLISH_NPMBIN`       |
     | [`readme`](#readme)             |     | `npm.publish.readme`       | `NPM_PUBLISH_README`       |
     | [`npmIgnore`](#npmignore)       |     | `npm.publish.npmIgnore`    | `NPM_PUBLISH_NPMIGNORE`    |
     | [`organization`](#organization) |     | `npm.publish.organization` | `NPM_PUBLISH_ORGANIZATION` |
@@ -46,6 +50,8 @@ npmPublish {
     ```kotlin title="build.gradle.kts"
     npmPublish {
       nodeHome.set(File("/path/to/node"))
+      nodeBin.set(File("/path/to/node/bin/node"))
+      npmBin.set(File("/path/to/node/bin/npm"))
       readme.set(rootDir.resolve("README.md"))
       npmIgnore.set(projectDir.resolve(".npmIgnore"))
       organization.set("${project.group}")
@@ -69,6 +75,14 @@ Default NodeJS directory to be used when executing npm commands.
     This is set automatically when certain other plugins are applied
     - `org.jetbrains.kotlin.multiplatform` & `org.jetbrains.kotlin.js`: `kotlinNodeJsSetup` task output
     - `com.netflix.nebula:nebula-node-plugin`: `nodeSetup` task output
+
+### `nodeBin`
+
+Default node executable to be used when executing node commands. Usually configured by default.
+
+### `npmBin`
+
+Default npm executable to be used when executing npm commands. Usually configured by default.
 
 ### `readme`
 

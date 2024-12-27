@@ -6,9 +6,9 @@ The task can be created and configured in a `build.gradle.kts` file by registeri
 
 ```kotlin title="build.gradle.kts"
 tasks {
-  register("name", dev.petuska.npm.publish.task.NodeExecTask::class) {
-    ...
-  }
+    register("name", dev.petuska.npm.publish.task.NodeExecTask::class) {
+        ...
+    }
 }
 ```
 
@@ -16,9 +16,10 @@ tasks {
 
 === "Properties"
 
-    | Property                        | Type              | Default                  | When Kotlin plugin is present   |
-    |:--------------------------------|-------------------|:-------------------------|---------------------------------|
-    | [`nodeHome`](#nodehome)         | DirectoryProperty | `NODE_HOME` env variable | `kotlinNodeJsSetup` task output |
+    | Property                        | Type                | Default                  | When Kotlin plugin is present   |
+    |:--------------------------------|---------------------|:-------------------------|---------------------------------|
+    | [`nodeHome`](#nodehome)         | DirectoryProperty   | `NODE_HOME` env variable | `kotlinNodeJsSetup` task output |
+    | [`node`](#node)                 | RegularFileProperty | `$nodeHome/bin/node`     |                                 |
 
 === "Keys"
 
@@ -32,6 +33,7 @@ tasks {
     tasks {
       register("name", dev.petuska.npm.publish.task.NodeExecTask::class) {
         nodeHome.set(layout.projectDirectory.dir("/usr/share/node"))
+        node.set(layout.projectDirectory.dir("/usr/share/node/bin/node"))
         doLast {
           val args = listOf("--help")
           nodeExec(args)
@@ -43,3 +45,7 @@ tasks {
 ### `nodeHome`
 
 Base NodeJS directory used to extract other node executables from.
+
+### `node`
+
+Direct node executable.

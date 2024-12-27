@@ -37,6 +37,8 @@ internal fun Project.registerPublishTask(packageName: String, registryName: Stri
       description = "Publishes $packageName package to $registryName registry"
       task.registry.set(extension.registries.named(registryName))
       task.nodeHome.set(extension.nodeHome)
+      task.node.set(extension.nodeBin)
+      task.npm.set(extension.npmBin)
       task.packageDir.set(
         tasks.named(assembleTaskName(packageName), NpmAssembleTask::class.java).flatMap(NpmAssembleTask::destinationDir)
       )

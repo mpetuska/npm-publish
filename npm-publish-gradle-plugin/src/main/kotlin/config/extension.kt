@@ -17,6 +17,8 @@ internal fun Project.configure(extension: NpmPublishExtension) {
       default = providers.environmentVariable("NODE_HOME")
     ).map(layout.projectDirectory::dir)
   )
+  extension.nodeBin.convention(extension.nodeHome.map { it.file("bin/node") })
+  extension.npmBin.convention(extension.nodeHome.map { it.file("bin/npm") })
   extension.readme.convention(
     sysProjectEnvPropertyConvention("readme").map { layout.projectDirectory.file(it) }
   )
