@@ -5,10 +5,6 @@
 
 # NPM-PUBLISH GRADLE PLUGIN
 
-> DISCLAIMER: If you still depend on the old LEGACY Kotlin/JS compiler, please stick
-> with [`npm-publish:2.1.x`](https://github.com/mpetuska/npm-publish/tree/2.1.x) version.
-> LEGACY backend support was dropped since `npm-publish:3.0.0`.
-
 Gradle plugin enabling NPM publishing (essentially `maven-publish` for NPM packages). Integrates seamlessly with
 Kotlin/JS/MPP plugin if applied, providing auto configurations.
 

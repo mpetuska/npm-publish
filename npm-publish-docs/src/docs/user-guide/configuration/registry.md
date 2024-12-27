@@ -9,9 +9,9 @@ The registries can be accessed and configured from a `build.gradle.kts` file via
 
 ```kotlin title="build.gradle.kts"
 npmPublish {
-  registries {
-    ...
-  }
+    registries {
+        ...
+    }
 }
 ```
 
@@ -23,14 +23,14 @@ detect and configure existing registries on subsequent invocations.
 
 ```kotlin title="build.gradle.kts"
 npmPublish {
-  registries {
-    npmjs {
-      authToken.set("obfuscated")
+    registries {
+        npmjs {
+            authToken.set("obfuscated")
+        }
+        github {
+            authToken.set("obfuscated")
+        }
     }
-    github {
-      authToken.set("obfuscated")
-    }
-  }
 }
 ```
 
@@ -59,9 +59,10 @@ npmPublish {
     | [`uri`](#uri)             |     | `npm.publish.registry.<name>.uri`       | `NPM_PUBLISH_REGISTRY_<NAME>_URI`       |
     | [`otp`](#otp)             |     | `npm.publish.registry.<name>.otp`       | `NPM_PUBLISH_REGISTRY_<NAME>_OTP`       |
     | [`authToken`](#authToken) |     | `npm.publish.registry.<name>.authToken` | `NPM_PUBLISH_REGISTRY_<NAME>_AUTHTOKEN` |
-    | [`auth`](#auth)           |     | `npm.publish.registry.<name>.auth`      | `NPM_PUBLISH_REGISTRY_<NAME>_AUTH` |
-    | [`username`](#username)   |     | `npm.publish.registry.<name>.username`  | `NPM_PUBLISH_REGISTRY_<NAME>_USERNAME` |
-    | [`password`](#password)   |     | `npm.publish.registry.<name>.password`  | `NPM_PUBLISH_REGISTRY_<NAME>_PASSWORD` |
+    | [`auth`](#auth)           |     | `npm.publish.registry.<name>.auth`      | `NPM_PUBLISH_REGISTRY_<NAME>_AUTH`      |
+    | [`username`](#username)   |     | `npm.publish.registry.<name>.username`  | `NPM_PUBLISH_REGISTRY_<NAME>_USERNAME`  |
+    | [`password`](#password)   |     | `npm.publish.registry.<name>.password`  | `NPM_PUBLISH_REGISTRY_<NAME>_PASSWORD`  |
+    | [`npmrc`](#npmrc)         |     | `npm.publish.registry.<name>.npmrc`     | `NPM_PUBLISH_REGISTRY_<NAME>_NPMRC`     |
 
 === "Usage"
 
@@ -80,6 +81,7 @@ npmPublish {
           // or
           username.set("obfuscated")
           password.set("obfuscated")
+          npmrc.set(projectDir.resolve(".npmrc"))
         }
       }
     }
@@ -113,14 +115,14 @@ Auth token to use when authenticating with the registry.
 [More info](https://docs.npmjs.com/about-access-tokens)
 
 !!! note
-    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+Only one of `authToken`, `auth` or `username` + `password` should be provided.
 
 ### `auth`
 
 Base64 authentication string when authenticating with the registry.
 
 !!! note
-    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+Only one of `authToken`, `auth` or `username` + `password` should be provided.
 
 ### `username`
 
@@ -128,7 +130,7 @@ Username to use when authenticating with the registry.
 Should always be specified together with a password.
 
 !!! note
-    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+Only one of `authToken`, `auth` or `username` + `password` should be provided.
 
 ### `password`
 
@@ -136,7 +138,7 @@ Password to use when authenticating with the registry.
 Should always be specified together with a username.
 
 !!! note
-    Only one of `authToken`, `auth` or `username` + `password` should be provided.
+Only one of `authToken`, `auth` or `username` + `password` should be provided.
 
 ### `npmrc`
 

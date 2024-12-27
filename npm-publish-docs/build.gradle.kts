@@ -5,7 +5,7 @@ plugins {
 mkdocs {
   publish {
     existingVersionsFile = "https://raw.githubusercontent.com/mpetuska/npm-publish/refs/heads/gh-pages/versions.json"
-    versionTitle = "${project.version}".split(".").take(2).joinToString(".")
+    docPath = "${project.version}".split(".").take(2).joinToString(".")
     setVersionAliases("latest")
     rootRedirectTo = "latest"
   }
