@@ -1,7 +1,7 @@
 [versions]
-detekt = "1.23.6"
+detekt = "1.23.7"
 kotest = "5.9.1"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
