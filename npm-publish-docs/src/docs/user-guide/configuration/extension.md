@@ -22,6 +22,7 @@ npmPublish {
     | [`npmBin`](#npmBin)             | RegularFile   | `$nodeHome/bin/npm`      |                                 |
     | [`readme`](#readme)             | RegularFile   |                          |                                 |
     | [`npmIgnore`](#npmignore)       | RegularFile   | `$projectDir/.npmignore` |                                 |
+    | [`npmrc`](#npmrc)               | RegularFile   | `$projectDir/.npmrc`     |                                 |
     | [`organization`](#organization) | String        |                          |                                 |
     | [`version`](#version)           | String        | `Project::version`       |                                 |
     | [`access`](#access)             | NpmAccess     | `NpmAccess.PUBLIC`       |                                 |
@@ -38,6 +39,7 @@ npmPublish {
     | [`npmBin`](#npmBin)             |     | `npm.publish.npmBin`       | `NPM_PUBLISH_NPMBIN`       |
     | [`readme`](#readme)             |     | `npm.publish.readme`       | `NPM_PUBLISH_README`       |
     | [`npmIgnore`](#npmignore)       |     | `npm.publish.npmIgnore`    | `NPM_PUBLISH_NPMIGNORE`    |
+    | [`npmrc`](#npmrc)               |     | `npm.publish.npmrc`        | `NPM_PUBLISH_NPMRC`        |
     | [`organization`](#organization) |     | `npm.publish.organization` | `NPM_PUBLISH_ORGANIZATION` |
     | [`version`](#version)           |     | `npm.publish.version`      | `NPM_PUBLISH_VERSION`      |
     | [`access`](#access)             |     | `npm.publish.access`       | `NPM_PUBLISH_ACCESS`       |
@@ -54,6 +56,7 @@ npmPublish {
       npmBin.set(File("/path/to/node/bin/npm"))
       readme.set(rootDir.resolve("README.md"))
       npmIgnore.set(projectDir.resolve(".npmIgnore"))
+      npmrc.set(projectDir.resolve(".npmrc"))
       organization.set("${project.group}")
       version.set("${project.version}")
       access.set(RESTRICTED)
@@ -93,6 +96,11 @@ explicitly. The file name is ignored and renamed to `README.md` when assembling.
 ### `npmIgnore`
 
 A location of the default `.npmignore` file. If set, it will be used as a default for all packages that do not have one
+set explicitly.
+
+### `npmrc`
+
+A location of the default `.npmrc` file. If set, it will be used as a default for all registries that do not have one
 set explicitly.
 
 ### `organization`

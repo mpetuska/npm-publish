@@ -60,6 +60,13 @@ public abstract class NpmPublishExtension : WithGradleFactories(), ExtensionAwar
   public abstract val npmIgnore: RegularFileProperty
 
   /**
+   * A location of the default `.npmrc` file.
+   * If set, it will be used as a default for all registries that do not have one set explicitly.
+   * @see [NpmRegistry.npmrc]
+   */
+  public abstract val npmrc: RegularFileProperty
+
+  /**
    * Default package scope.
    * If set, it will be used as a default for all packages that do not have one set explicitly.
    * @see [NpmPackage.scope]

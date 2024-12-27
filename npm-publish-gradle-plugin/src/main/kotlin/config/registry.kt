@@ -10,6 +10,7 @@ import dev.petuska.npm.publish.util.notFalse
 import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
 import dev.petuska.npm.publish.util.toCamelCase
 import org.gradle.api.Project
+import java.io.File
 import java.net.URI
 
 internal fun Project.configure(registry: NpmRegistry) {
@@ -25,6 +26,10 @@ internal fun Project.configure(registry: NpmRegistry) {
   registry.auth.convention(sysProjectEnvPropertyConvention(prefix + "auth"))
   registry.username.convention(sysProjectEnvPropertyConvention(prefix + "username"))
   registry.password.convention(sysProjectEnvPropertyConvention(prefix + "password"))
+  registry.npmrc.convention(
+    sysProjectEnvPropertyConvention(prefix + "npmrc", extension.npmrc.asFile.map(File::getAbsolutePath))
+      .map(layout.projectDirectory::file)
+  )
   registry.dry.convention(
     sysProjectEnvPropertyConvention(prefix + "dry", extension.dry.map(Boolean?::toString)).map { it.notFalse() }
   )

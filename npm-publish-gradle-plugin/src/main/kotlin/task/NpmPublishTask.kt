@@ -5,12 +5,14 @@ import dev.petuska.npm.publish.extension.domain.NpmRegistry
 import dev.petuska.npm.publish.util.configure
 import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.plugins.PublishingPlugin.PUBLISH_TASK_GROUP
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import java.util.*
+import javax.inject.Inject
 
 /**
  * A publishing task that publishes a given package to a given registry.
@@ -18,6 +20,9 @@ import java.util.*
 @Suppress("LeakingThis")
 @UntrackedTask(because = "Must always run")
 public abstract class NpmPublishTask : NpmExecTask() {
+  @get:Inject
+  internal abstract val fs: FileSystemOperations
+
   /**
    * A registry to publish to
    * @see [NpmRegistry]
@@ -98,7 +103,13 @@ public abstract class NpmPublishTask : NpmExecTask() {
       if (d) add("--dry-run")
       if (tag.isPresent) add("--tag=${tag.get()}")
     }
-    npmExec(args) { it.workingDir(packageDir.get()) }.rethrowFailure()
+    val workingDir = project.layout.buildDirectory.dir("registries/${reg.name}/${packageDir.get().asFile.name}")
+    fs.sync {
+      it.from(packageDir)
+      if (reg.npmrc.isPresent) it.from(reg.npmrc)
+      it.into(workingDir)
+    }
+    npmExec(args) { it.workingDir(workingDir.get()) }.rethrowFailure()
     if (!d) info { "Published package at $pDir to ${reg.name} registry" }
   }
 }
