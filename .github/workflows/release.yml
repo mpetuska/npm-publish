@@ -82,7 +82,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 21
           distribution: 'adopt'
 
       - name: Publish to Gradle Plugin Portal
@@ -121,7 +121,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 21
           distribution: 'adopt'
 
       - name: Publish to GitHub Packages
@@ -159,7 +159,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 21
           distribution: 'adopt'
 
       - name: Publish to MavenCentral

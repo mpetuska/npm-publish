@@ -77,18 +77,19 @@ public abstract class NpmPublishTask : NpmExecTask() {
   @Suppress("unused")
   @TaskAction
   private fun doAction() {
-    val pDir = packageDir.asFile.get()
     val reg = registry.get()
     val uri = reg.uri.get()
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
+    val pDir = packageDir.asFile.get()
+    val workingDir = project.layout.buildDirectory.dir("registries/${reg.name}/${pDir.name}").get().asFile
 
     val d = dry.get()
     info {
-      "Publishing package at $pDir to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag"
+      "Publishing package at $workingDir to ${reg.name} registry ${if (d) "with" else "without"} --dry-run flag"
     }
     val args: List<String> = buildList {
       add("publish")
-      add("$pDir")
+      add("$workingDir")
       add("--access=${reg.access.get()}")
       add("--registry=${uri.scheme.trim()}://$repo")
       if (reg.otp.isPresent) add("--otp=${reg.otp.get()}")
@@ -103,13 +104,12 @@ public abstract class NpmPublishTask : NpmExecTask() {
       if (d) add("--dry-run")
       if (tag.isPresent) add("--tag=${tag.get()}")
     }
-    val workingDir = project.layout.buildDirectory.dir("registries/${reg.name}/${packageDir.get().asFile.name}")
     fs.sync {
       it.from(packageDir)
       if (reg.npmrc.isPresent) it.from(reg.npmrc)
       it.into(workingDir)
     }
-    npmExec(args) { it.workingDir(workingDir.get()) }.rethrowFailure()
-    if (!d) info { "Published package at $pDir to ${reg.name} registry" }
+    npmExec(args) { it.workingDir(workingDir) }.rethrowFailure()
+    if (!d) info { "Published package at $workingDir to ${reg.name} registry" }
   }
 }
