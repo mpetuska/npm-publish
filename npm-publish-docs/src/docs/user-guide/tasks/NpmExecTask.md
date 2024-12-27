@@ -17,8 +17,9 @@ tasks {
 
 === "Properties"
 
-    | Property                        | Type              | Default                  | When Kotlin plugin is present   |
-    |:--------------------------------|-------------------|:-------------------------|---------------------------------|
+    | Property                        | Type                | Default                  | When Kotlin plugin is present   |
+    |:--------------------------------|---------------------|:-------------------------|---------------------------------|
+    | [`npm`](#npm)                   | RegularFileProperty | `$nodeHome/bin/npm`      |                                 |
 
 === "Keys"
 
@@ -30,6 +31,7 @@ tasks {
     ```kotlin title="build.gradle.kts"
     tasks {
       register("name", dev.petuska.npm.publish.task.NpmExecTask::class) {
+        npm.set(layout.projectDirectory.dir("/usr/share/node/bin/npm"))
         doLast {
           val args = listOf("--help")
           npmExec(args)
@@ -37,3 +39,7 @@ tasks {
       }
     }
     ```
+
+### `npm`
+
+Direct npm executable.

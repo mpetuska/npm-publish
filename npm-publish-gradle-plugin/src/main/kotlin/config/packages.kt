@@ -23,6 +23,8 @@ internal fun Project.configure(packages: NpmPackages): Unit = with(PluginLogger.
       task.dry.set(extension.dry)
       task.packageDir.set(assTask.flatMap(NpmAssembleTask::destinationDir))
       task.nodeHome.set(extension.nodeHome)
+      task.node.set(extension.nodeBin)
+      task.npm.set(extension.npmBin)
     }.also { task -> info { "Registered [${task.name}] NpmPackTask for [${it.name}] NpmPackage" } }
 
     extension.registries.names.forEach { registryName ->
