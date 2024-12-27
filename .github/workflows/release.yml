@@ -41,7 +41,7 @@ jobs:
           VERSION=${VERSION:=${{ github.event.inputs.version }}}
           VERSION=${VERSION/v}
           echo "VERSION=${VERSION//v}" >> $GITHUB_ENV
-          echo "::set-output name=version::${VERSION//v}"
+          echo "version=${VERSION//v}" >> $GITHUB_OUTPUT
       - name: report
         run: |
           echo "VERSION=${{ env.VERSION }}"
