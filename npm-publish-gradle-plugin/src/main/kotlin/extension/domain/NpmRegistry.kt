@@ -6,10 +6,14 @@ import dev.petuska.npm.publish.task.NpmPublishTask
 import dev.petuska.npm.publish.util.NamedInput
 import dev.petuska.npm.publish.util.NpmPublishDsl
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import java.net.URI
 
 /**
@@ -73,6 +77,15 @@ public abstract class NpmRegistry : NamedInput {
   @get:Input
   @get:Optional
   public abstract val password: Property<String>
+
+  /**
+   * A location of the default `.npmrc` file.
+   * If set, it will be used as a default for all registries that do not have one set explicitly.
+   */
+  @get:InputFile
+  @get:Optional
+  @get:PathSensitive(PathSensitivity.RELATIVE)
+  public abstract val npmrc: RegularFileProperty
 
   /**
    * Specifies if a dry-run should be added to the npm command arguments by default. Dry run does all the

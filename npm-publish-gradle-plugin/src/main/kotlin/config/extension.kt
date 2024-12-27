@@ -4,7 +4,6 @@ import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.extension.domain.NpmAccess
 import dev.petuska.npm.publish.util.notFalse
 import dev.petuska.npm.publish.util.sysProjectEnvPropertyConvention
-import dev.petuska.npm.publish.util.unsafeCast
 import org.gradle.api.Project
 
 internal fun Project.configure(extension: NpmPublishExtension) {
@@ -20,14 +19,21 @@ internal fun Project.configure(extension: NpmPublishExtension) {
   extension.nodeBin.convention(extension.nodeHome.map { it.file("bin/node") })
   extension.npmBin.convention(extension.nodeHome.map { it.file("bin/npm") })
   extension.readme.convention(
-    sysProjectEnvPropertyConvention("readme").map { layout.projectDirectory.file(it) }
+    sysProjectEnvPropertyConvention("readme").map(layout.projectDirectory::file)
   )
   extension.npmIgnore.convention(
     sysProjectEnvPropertyConvention(
       "npmIgnore",
-      provider { layout.projectDirectory.file(".npmignore") }
-        .map { (if (it.asFile.exists()) it else null).unsafeCast() }
-    ).map { layout.projectDirectory.file(it) }
+      provider { layout.projectDirectory.file(".npmignore").asFile }
+        .map { (if (it.exists()) it.absolutePath else null) }
+    ).map(layout.projectDirectory::file)
+  )
+  extension.npmrc.convention(
+    sysProjectEnvPropertyConvention(
+      "npmrc",
+      provider { layout.projectDirectory.file(".npmrc").asFile }
+        .map { (if (it.exists()) it.absolutePath else null) }
+    ).map(layout.projectDirectory::file)
   )
   extension.organization.convention(
     sysProjectEnvPropertyConvention("organization")

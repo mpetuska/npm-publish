@@ -38,16 +38,17 @@ npmPublish {
 
 === "Properties"
 
-    | Property                  | Type      | Default                                              | When Kotlin plugin is present |
-    |:--------------------------|-----------|:-----------------------------------------------------|-------------------------------|
-    | [`access`](#access)       | NpmAccess | [`NpmPublishExtension::access`](extension.md#access) |                               |
-    | [`dry`](#dry)             | NpmAccess | [`NpmPublishExtension::dry`](extension.md#dry)       |                               |
-    | [`uri`](#uri)             | URI       |                                                      |                               |
-    | [`otp`](#otp)             | String    |                                                      |                               |
-    | [`authToken`](#authtoken) | String    |                                                      |                               |
-    | [`auth`](#auth)           | String    |                                                      |                               |
-    | [`username`](#username)   | String    |                                                      |                               |
-    | [`password`](#password)   | String    |                                                      |                               |
+    | Property                  | Type        | Default                                              | When Kotlin plugin is present |
+    |:--------------------------|-------------|:-----------------------------------------------------|-------------------------------|
+    | [`access`](#access)       | NpmAccess   | [`NpmPublishExtension::access`](extension.md#access) |                               |
+    | [`dry`](#dry)             | NpmAccess   | [`NpmPublishExtension::dry`](extension.md#dry)       |                               |
+    | [`uri`](#uri)             | URI         |                                                      |                               |
+    | [`otp`](#otp)             | String      |                                                      |                               |
+    | [`authToken`](#authtoken) | String      |                                                      |                               |
+    | [`auth`](#auth)           | String      |                                                      |                               |
+    | [`username`](#username)   | String      |                                                      |                               |
+    | [`password`](#password)   | String      |                                                      |                               |
+    | [`npmrc`](#npmrc)         | RegularFile | [`NpmPublishExtension::npmrc`](extension.md#npmrc)   |                                                                         |
 
 === "Keys"
 
@@ -136,3 +137,7 @@ Should always be specified together with a username.
 
 !!! note
     Only one of `authToken`, `auth` or `username` + `password` should be provided.
+
+### `npmrc`
+
+An optional `.npmrc` to use when publishing packages to this registry.
