@@ -1210,9 +1210,9 @@ generated and added as a dependency to the <code>publish</code> lifecycle task.<
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
 <span class="normal"><a href="#__codelineno-0-4">4</a></span>
 <span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="n">npmPublish</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="n">registries</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="p">...</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="n">registries</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">        </span><span class="p">...</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="shortcuts">Shortcuts</h2>
@@ -1229,14 +1229,14 @@ detect and configure existing registries on subsequent invocations.</p>
 <span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
 <span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-1-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">npmPublish</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="n">registries</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span><span class="n">npmjs</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">      </span><span class="n">authToken</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;obfuscated&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="n">github</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">      </span><span class="n">authToken</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;obfuscated&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">    </span><span class="n">registries</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">        </span><span class="n">npmjs</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">            </span><span class="n">authToken</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;obfuscated&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">        </span><span class="n">github</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">            </span><span class="n">authToken</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;obfuscated&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="properties">Properties</h2>
@@ -1369,6 +1369,12 @@ detect and configure existing registries on subsequent invocations.</p>
 <td style="text-align: left;"><code>npm.publish.registry.&lt;name&gt;.password</code></td>
 <td><code>NPM_PUBLISH_REGISTRY_&lt;NAME&gt;_PASSWORD</code></td>
 </tr>
+<tr>
+<td style="text-align: left;"><a href="#npmrc"><code>npmrc</code></a></td>
+<td></td>
+<td style="text-align: left;"><code>npm.publish.registry.&lt;name&gt;.npmrc</code></td>
+<td><code>NPM_PUBLISH_REGISTRY_&lt;NAME&gt;_NPMRC</code></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1389,7 +1395,8 @@ detect and configure existing registries on subsequent invocations.</p>
 <span class="normal"><a href="#__codelineno-2-14">14</a></span>
 <span class="normal"><a href="#__codelineno-2-15">15</a></span>
 <span class="normal"><a href="#__codelineno-2-16">16</a></span>
-<span class="normal"><a href="#__codelineno-2-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">npmPublish</span><span class="w"> </span><span class="p">{</span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">npmPublish</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="n">registries</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">    </span><span class="n">register</span><span class="p">(</span><span class="s">&quot;npmjs&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">      </span><span class="n">access</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">RESTRICTED</span><span class="p">)</span>
@@ -1403,9 +1410,10 @@ detect and configure existing registries on subsequent invocations.</p>
 <a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">      </span><span class="c1">// or</span>
 <a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">      </span><span class="n">username</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;obfuscated&quot;</span><span class="p">)</span>
 <a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">      </span><span class="n">password</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;obfuscated&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="p">}</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">      </span><span class="n">npmrc</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">projectDir</span><span class="p">.</span><span class="na">resolve</span><span class="p">(</span><span class="s">&quot;.npmrc&quot;</span><span class="p">))</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <ol>
 <li><code>uri</code> can also be set from String as <code>uri.set("https://registry.npmjs.org")</code> 
@@ -1430,28 +1438,28 @@ or <code>String</code></p>
 <a href="https://docs.npmjs.com/about-access-tokens">More info</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 </div>
+<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 <h3 id="auth"><code>auth</code></h3>
 <p>Base64 authentication string when authenticating with the registry.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 </div>
+<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 <h3 id="username"><code>username</code></h3>
 <p>Username to use when authenticating with the registry.
 Should always be specified together with a password.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 </div>
+<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 <h3 id="password"><code>password</code></h3>
 <p>Password to use when authenticating with the registry.
 Should always be specified together with a username.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 </div>
+<p>Only one of <code>authToken</code>, <code>auth</code> or <code>username</code> + <code>password</code> should be provided.</p>
 <h3 id="npmrc"><code>npmrc</code></h3>
 <p>An optional <code>.npmrc</code> to use when publishing packages to this registry.</p>
 
