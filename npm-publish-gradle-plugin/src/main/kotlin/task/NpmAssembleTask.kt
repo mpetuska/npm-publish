@@ -91,7 +91,7 @@ public abstract class NpmAssembleTask : DefaultTask(), PluginLogger {
 
   @TaskAction
   @Suppress("unused")
-  private fun action() {
+  fun action() {
     val pkg = `package`.get()
     val dest = destinationDir.get()
     debug { "Assembling ${pkg.name} package in ${dest.asFile.path}" }
