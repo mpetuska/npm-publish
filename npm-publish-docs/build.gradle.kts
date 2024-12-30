@@ -11,6 +11,10 @@ mkdocs {
   }
 }
 
+python {
+  envPath = rootDir.resolve(".gradle/python").absolutePath
+}
+
 tasks {
   mkdocsAssemble {
     into("docs") {
