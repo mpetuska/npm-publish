@@ -16,8 +16,18 @@ internal fun Project.configure(extension: NpmPublishExtension) {
       default = providers.environmentVariable("NODE_HOME")
     ).map(layout.projectDirectory::dir)
   )
-  extension.nodeBin.convention(extension.nodeHome.map { it.file("bin/node") })
-  extension.npmBin.convention(extension.nodeHome.map { it.file("bin/npm") })
+  extension.nodeBin.convention(
+    sysProjectEnvPropertyConvention(
+      "nodeBin",
+      extension.nodeHome.map { it.file("bin/node").asFile.absolutePath }
+    ).map(layout.projectDirectory::file)
+  )
+  extension.npmBin.convention(
+    sysProjectEnvPropertyConvention(
+      "npmBin",
+      extension.nodeHome.map { it.file("bin/npm").asFile.absolutePath }
+    ).map(layout.projectDirectory::file)
+  )
   extension.readme.convention(
     sysProjectEnvPropertyConvention("readme").map(layout.projectDirectory::file)
   )

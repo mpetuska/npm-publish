@@ -52,7 +52,6 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
           }
 
           null -> null
-          else -> error("Unrecognised Kotlin/JS binary type: ${it::class.java.name}")
         }
       }
       val compileKotlinTask = binary.flatMap<Kotlin2JsCompile>(JsIrBinary::linkTask)
