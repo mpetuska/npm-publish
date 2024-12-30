@@ -97,7 +97,7 @@ public abstract class NpmPackTask : NpmExecTask() {
 
   @Suppress("unused")
   @TaskAction
-  private fun doAction() {
+  internal fun doAction() {
     val pDir = packageDir.asFile.get()
     val oDir = outputFile.asFile.get()
     val d = dry.get()

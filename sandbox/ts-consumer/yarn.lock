@@ -125,13 +125,11 @@
 "@mpetuska/both@../both/build/packages/js":
   version "0.0.0"
   dependencies:
-    format-util "^1.0.5"
     is-odd "*"
 
 "@mpetuska/browser@../browser/build/packages/js":
   version "0.0.0"
   dependencies:
-    format-util "^1.0.5"
     is-even "*"
     is-odd "*"
   optionalDependencies:
@@ -141,7 +139,6 @@
 "@mpetuska/node@../node/build/packages/js":
   version "0.0.0"
   dependencies:
-    format-util "^1.0.5"
     is-even "*"
 
 "@types/node@^20.10.5":
@@ -180,11 +177,6 @@ esbuild@~0.23.0:
     "@esbuild/win32-arm64" "0.23.1"
     "@esbuild/win32-ia32" "0.23.1"
     "@esbuild/win32-x64" "0.23.1"
-
-format-util@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/format-util/-/format-util-1.0.5.tgz#1ffb450c8a03e7bccffe40643180918cc297d271"
-  integrity sha512-varLbTj0e0yVyRpqQhuWV+8hlePAgaoFRhNFj50BNjEIrw1/DphHSObtqwskVCPWNgzwPoQrZAbfa/SBiicNeg==
 
 fsevents@~2.3.3:
   version "2.3.3"

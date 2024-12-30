@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.5.1]
+
+### Verified Versions
+
+- Kotlin: 2.1.0
+- Gradle: 8.12
+- JDK: 21
+
+### Added
+
+### Changed
+
+- #117 Make task actions non-private
+
+### Removed
+
+---
+
 ## [3.5.0]
 
 ### Verified Versions
@@ -472,7 +490,9 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.5.0...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.5.1...HEAD
+
+[3.5.1]: https://github.com/mpetuska/npm-publish/compare/3.5.0...3.5.1
 
 [3.5.0]: https://github.com/mpetuska/npm-publish/compare/3.4.2...3.5.0
 

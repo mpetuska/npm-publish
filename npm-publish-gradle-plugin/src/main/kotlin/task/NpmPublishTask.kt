@@ -76,7 +76,7 @@ public abstract class NpmPublishTask : NpmExecTask() {
 
   @Suppress("unused")
   @TaskAction
-  private fun doAction() {
+  internal fun doAction() {
     val reg = registry.get()
     val uri = reg.uri.get()
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
