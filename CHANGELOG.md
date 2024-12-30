@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Verified Versions
 
 - Kotlin: 2.1.0
-- Gradle: 8.10
+- Gradle: 8.12
 - JDK: 21
 
 ### Added
