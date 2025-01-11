@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.utils.named
 
 private const val NODE_GRADLE_PLUGIN = "com.github.node-gradle.node"
 
-internal fun Project.configureNebulaNode(extension: NpmPublishExtension) {
+internal fun Project.configureNodeGradlePlugin(extension: NpmPublishExtension) {
   pluginManager.withPlugin(NODE_GRADLE_PLUGIN) {
     val nodeGradleHome = project.tasks.named<NodeSetupTask>(NodeSetupTask.NAME)
       .map { it.takeIf { it.enabled }.unsafeCast<NodeSetupTask>() }

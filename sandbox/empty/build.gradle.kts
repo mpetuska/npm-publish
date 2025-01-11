@@ -1,6 +1,11 @@
 plugins {
   id("kmp")
   id("dev.petuska.npm.publish")
+  id("com.github.node-gradle.node") version "7.1.0"
+}
+
+repositories {
+  mavenCentral()
 }
 
 kotlin {
@@ -18,6 +23,10 @@ kotlin {
       }
     }
   }
+}
+
+node {
+  download = true
 }
 
 npmPublish {

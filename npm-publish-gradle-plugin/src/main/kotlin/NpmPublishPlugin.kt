@@ -1,7 +1,7 @@
 package dev.petuska.npm.publish
 
 import dev.petuska.npm.publish.config.configure
-import dev.petuska.npm.publish.config.configureNebulaNode
+import dev.petuska.npm.publish.config.configureNodeGradlePlugin
 import dev.petuska.npm.publish.extension.NpmPublishExtension
 import dev.petuska.npm.publish.task.NodeExecTask
 import dev.petuska.npm.publish.task.NpmAssembleTask
@@ -26,7 +26,7 @@ public class NpmPublishPlugin : Plugin<Project> {
   override fun apply(project: Project): Unit = with(project) {
     val extension = extensions.create(NpmPublishExtension.NAME, NpmPublishExtension::class.java)
     configure(extension)
-    configureNebulaNode(extension)
+    configureNodeGradlePlugin(extension)
     pluginManager.withPlugin(KOTLIN_MPP_PLUGIN) {
       extensions.configure<KotlinMultiplatformExtension> {
         targets.filterIsInstance<KotlinJsTargetDsl>().forEach { configure(it) }

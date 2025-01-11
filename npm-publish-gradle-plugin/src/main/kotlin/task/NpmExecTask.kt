@@ -41,5 +41,5 @@ public abstract class NpmExecTask : NodeExecTask() {
    * @return execution result
    */
   public fun npmExec(args: Collection<String?>, config: Action<ExecSpec> = Action {}): ExecResult =
-    exec(listOf(npm.get().asFile.absolutePath) + args, config)
+    nodeExec(listOf(npm.get().asFile.absolutePath) + args, config)
 }
