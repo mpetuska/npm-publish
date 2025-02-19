@@ -60,7 +60,7 @@ jobs:
       - name: Gradle Assemble
         run: ./gradlew assemble --scan
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with: 
           name: reports-${{ runner.os }}
@@ -71,7 +71,7 @@ jobs:
         working-directory: sandbox
         run: ../gradlew check assemble pack publish --scan
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with: 
           name: sandbox-${{ runner.os }}
@@ -83,7 +83,7 @@ jobs:
         working-directory: samples
         run: ../gradlew check assemble pack publish --scan
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with: 
           name: samples-${{ runner.os }}
@@ -103,7 +103,7 @@ jobs:
         working-directory: sandbox/ts-consumer
         run: yarn start
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with: 
           name: ts-consumer-${{ runner.os }}
