@@ -209,6 +209,7 @@ $dokka.location:dev.petuska.npm.publish.task/NpmPublishTask/packageDir/#/Pointin
 $dokka.location:dev.petuska.npm.publish.task/NpmPublishTask/registry/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-publish-task/registry.html
 $dokka.location:dev.petuska.npm.publish.task/NpmPublishTask/registry/#org.gradle.api.Action[dev.petuska.npm.publish.extension.domain.NpmRegistry]/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-publish-task/registry.html
 $dokka.location:dev.petuska.npm.publish.task/NpmPublishTask/tag/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-publish-task/tag.html
+$dokka.location:dev.petuska.npm.publish.task/NpmPublishTask/workingDir/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.task/-npm-publish-task/working-dir.html
 $dokka.location:dev.petuska.npm.publish.util////PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.util/index.html
 $dokka.location:dev.petuska.npm.publish.util/NamedInput///PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.util/-named-input/index.html
 $dokka.location:dev.petuska.npm.publish.util/NamedInput/getName/#/PointingToDeclaration/npm-publish-gradle-plugin/dev.petuska.npm.publish.util/-named-input/get-name.html
