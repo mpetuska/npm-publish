@@ -1,5 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
+
 plugins {
   id("kjvm")
   id("detekt")
@@ -49,7 +53,14 @@ deployer {
   }
 }
 
+java {
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
 tasks {
+  withType<KotlinJvmCompile> {
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
+  }
   register<Jar>("javadocJar") {
     from(dokkatooGeneratePublicationHtml)
     archiveClassifier = "javadoc"

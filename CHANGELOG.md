@@ -13,11 +13,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Kotlin: 2.1.0
 - Gradle: 8.12
-- JDK: 21
+- JDK: 11
 
 ### Added
 
 ### Changed
+
+### Removed
+
+---
+
+## [3.5.3]
+
+### Verified Versions
+
+- Kotlin: 2.1.0
+- Gradle: 8.12
+- JDK: 11
+
+### Added
+
+### Changed
+
+- Downgrade targetSdk to 11
+- Fix NpmPublishTask configuration task issue
 
 ### Removed
 
@@ -508,11 +527,13 @@ This is a maintenance release with a few minor bugfixes.
 
 ---
 
-[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.5.2...HEAD
+[Unreleased]: https://github.com/mpetuska/npm-publish/compare/3.5.3...HEAD
 
-[3.5.1]: https://github.com/mpetuska/npm-publish/compare/3.5.0...3.5.1
+[3.5.3]: https://github.com/mpetuska/npm-publish/compare/3.5.2...3.5.3
 
 [3.5.2]: https://github.com/mpetuska/npm-publish/compare/3.5.1...3.5.2
+
+[3.5.1]: https://github.com/mpetuska/npm-publish/compare/3.5.0...3.5.1
 
 [3.5.0]: https://github.com/mpetuska/npm-publish/compare/3.4.2...3.5.0
 

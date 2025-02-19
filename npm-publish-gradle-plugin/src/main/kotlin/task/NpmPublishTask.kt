@@ -63,10 +63,19 @@ public abstract class NpmPublishTask : NpmExecTask() {
     registry.configure(action)
   }
 
+  /**
+   * A working directory where final publishing layout is assembled.
+   */
+  @get:OutputDirectory
+  public abstract val workingDir: DirectoryProperty
+
   init {
     group = PUBLISH_TASK_GROUP
     description = "Publishes NPM package to NPM registry"
     dry.convention(registry.flatMap(NpmRegistry::dry))
+    workingDir.convention(project.layout.buildDirectory.dir(registry.zip(packageDir) { reg, pDir ->
+      "registries/${reg.name}/${pDir.asFile.name}"
+    }))
     registry.convention(
       project.provider {
         project.objects.newInstance(NpmRegistry::class.java, name)
@@ -80,8 +89,7 @@ public abstract class NpmPublishTask : NpmExecTask() {
     val reg = registry.get()
     val uri = reg.uri.get()
     val repo = "${uri.authority.trim()}${uri.path.trim()}/"
-    val pDir = packageDir.asFile.get()
-    val workingDir = project.layout.buildDirectory.dir("registries/${reg.name}/${pDir.name}").get().asFile
+    val workingDir = workingDir.get().asFile
 
     val d = dry.get()
     info {
