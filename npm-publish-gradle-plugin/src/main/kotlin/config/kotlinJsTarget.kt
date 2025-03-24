@@ -35,11 +35,13 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
     extensions.getByType(NpmPublishExtension::class.java).packages.register(target.name) { pkg ->
       val binary = provider<JsIrBinary> {
         when (val it = target.binaries.find { it.mode == KotlinJsBinaryMode.PRODUCTION }) {
+          null -> null
           is Library -> it
-          is Executable -> {
+          // Kotlin 2.1.20 introduces LibraryWasm and ExecutableWasm.
+          else -> {
             warn {
               """
-                Kotlin/JS executable binaries are not valid npm package targets.
+                Kotlin/JS ${it::class.simpleName} binaries are not valid npm package targets.
                 Consider switching to Kotlin/JS library binary:
                   kotlin {
                     js(IR) {
@@ -50,8 +52,6 @@ internal fun Project.configure(target: KotlinJsTargetDsl): Unit = with(PluginLog
             }
             null
           }
-
-          null -> null
         }
       }
       val compileKotlinTask = binary.flatMap<Kotlin2JsCompile>(JsIrBinary::linkTask)
